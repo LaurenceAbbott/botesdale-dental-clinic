@@ -53,9 +53,6 @@ ARC = ('<svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hid
 
 SMILE_DEFS = '''<svg class="svg-defs" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="smileClip" clipPathUnits="objectBoundingBox">
-      <path d="M0,0.08 Q0.5,0.4 1,0.08 L1,1 L0,1 Z"/>
-    </clipPath>
     <!-- The same smile, on the bottom edge of the dark hero panels. The control
          point sits past 1 so the curve reaches exactly full height at the
          centre and lifts to 0.955 at the sides — the panel keeps its depth
@@ -68,9 +65,7 @@ SMILE_DEFS = '''<svg class="svg-defs" aria-hidden="true" focusable="false">
 
 
 def btn(label, href, variant='solid', extra=''):
-    return ('<a class="btn btn--%s%s" href="%s">'
-            '<span class="btn__fill"></span>'
-            '<span class="btn__label">%s</span></a>'
+    return ('<a class="btn btn--%s%s" href="%s"><span class="btn__label">%s</span></a>'
             % (variant, (' ' + extra) if extra else '', href, esc(label)))
 
 
@@ -238,9 +233,9 @@ def build_footer(depth):
       <a href="{cookies}">Cookie Policy</a> for details.</p>
     <div class="cookie__actions">
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="accepted">
-        <span class="btn__fill"></span><span class="btn__label">Accept</span></button>
+        <span class="btn__label">Accept</span></button>
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="essential">
-        <span class="btn__fill"></span><span class="btn__label">Essential only</span></button>
+        <span class="btn__label">Essential only</span></button>
     </div>
   </div>
 </div>

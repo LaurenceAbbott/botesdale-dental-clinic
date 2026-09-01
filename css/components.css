@@ -80,36 +80,46 @@
    across; the label uses mix-blend-mode so it inverts against whatever is
    behind it. Variants: --solid, --outline, --light (for dark grounds), --sm.
    -------------------------------------------------------------------------- */
+/* No sweep. The fill was clipped to the arc and driven by :hover, so on a
+   touch screen it never ran — and iOS keeps :hover after a tap, which left
+   the arc frozen part-way across the button. A button changes colour instead.
+   The old .btn__fill span is gone from the markup; .btn__label stays because
+   every usage has it. */
 .btn {
-  position: relative; display: inline-block; overflow: hidden;
+  position: relative; display: inline-block;
   padding: 15px 30px;
   font-size: var(--fs-xs); letter-spacing: var(--ls-cta); text-transform: uppercase;
   font-weight: var(--fw-medium);
   border: var(--hair) solid var(--black);
   cursor: pointer;
-  transition: transform .08s var(--ease);
   text-align: center;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease), transform .08s var(--ease);
 }
 .btn:active { transform: scale(.98); }
-.btn__fill {
-  position: absolute; top: 0; bottom: 0; z-index: 0;
-  clip-path: url(#smileClip);
-  transition: right var(--t) var(--ease), left var(--t) var(--ease);
+.btn__label { position: relative; }
+
+/* Primary — one per page. The brand accent, with an INK label: white on
+   --accent is 2.78:1 and fails AA at this size, where ink gives 6.8:1.
+   That choice sets how far the button can darken. An ink label needs a fill
+   of at least L 0.2, which --accent-600 clears at 4.8:1 and --accent-700 does
+   not (3.3:1) — so there is exactly one darker step available. Hover takes
+   it; press darkens the border instead of the fill, which reads as pressed
+   without dragging the label under contrast. */
+.btn--solid {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--black);
 }
-.btn__label { position: relative; z-index: 1; mix-blend-mode: difference; color: #fff; }
+.btn--solid:hover { background: var(--accent-600); border-color: var(--accent-600); }
+.btn--solid:active { background: var(--accent-600); border-color: var(--accent-800); }
 
-.btn--solid { background: var(--black); }
-.btn--solid .btn__fill { background: var(--paper); left: 0; right: 100%; }
-.btn--solid:hover .btn__fill { right: 0; }
-
-.btn--outline { background: var(--paper); }
-.btn--outline .btn__fill { background: var(--black); left: 100%; right: 0; }
-.btn--outline:hover .btn__fill { left: 0; }
+.btn--outline { background: transparent; color: var(--black); }
+.btn--outline:hover { background: var(--black); color: var(--paper); }
 
 /* For use on dark grounds */
-.btn--light { background: transparent; border-color: var(--paper); }
-.btn--light .btn__fill { background: var(--paper); left: 100%; right: 0; }
-.btn--light:hover .btn__fill { left: 0; }
+.btn--light { background: transparent; border-color: var(--paper); color: var(--paper); }
+.btn--light:hover { background: var(--paper); color: var(--black); }
 
 .btn--sm { padding: 11px 20px; font-size: var(--fs-label); }
 .btn--block { display: block; width: 100%; }

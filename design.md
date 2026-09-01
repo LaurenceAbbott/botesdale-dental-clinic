@@ -12,19 +12,18 @@ The reference for this system is precision-engineering brand design — Porsche 
 1. **One rail.** Every piece of text on the site — inside a centred container or inside a full-bleed section — starts or stops on the same vertical line. Media is the only thing allowed to cross it. See §2.3.
 2. **Lines, not boxes.** Structure is expressed with 1px hairlines and alignment. Shadows are almost never used; corners are square (`--radius: 0`). **Form controls are the deliberate exception** — an input is a thing you put something into, and it has to look like one, so fields are bordered boxes (§4.24). The border is the same hairline and the corners are still square, so they sit inside the system rather than beside it.
 3. **Two grounds.** A warm off-white (`--paper`) and a near-black (`--black`). Every section belongs to one of them. Dark sections are used deliberately, for emphasis, roughly one per screenful of scrolling.
-4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings and validation. It is never used as a background for large areas.
+4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings, validation, text links (§4.2) and the fill of the one primary button a page is allowed (§4.1). It is never used as a background for large areas — a button is the largest thing it fills.
 5. **Editorial rhythm.** Full-bleed media/copy splits, generous vertical space, and a short uppercase micro-label above almost every heading. Copy is left-aligned throughout — including quotes and closing calls to action.
 6. **Restrained motion.** 200–480ms, ease-out, and only on hover, reveal and open/close. Everything respects `prefers-reduced-motion`.
 
 ### The arc
 
-The practice's signature motif is a shallow arc — a smile. It appears in three places:
+The practice's signature motif is a shallow arc — a smile. It appears in two places:
 
 * **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3. On a device that cannot hover, tapping one of these links draws the arc and the navigation waits for it; see §4.3a.
-* **`#smileClip`** — an SVG `clipPath` that gives button hover-fills a curved leading edge.
 * **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
 
-All are defined once per page (`<svg class="svg-defs">`) and referenced everywhere. If you remove the `svg-defs` block, buttons lose their curved fill and the hero panels go back to a straight bottom edge.
+Both are defined once per page (`<svg class="svg-defs">`). If you remove the `svg-defs` block, the hero panels go back to a straight bottom edge. It once also held `#smileClip`, which clipped a sweeping fill across buttons on hover; that is gone (§4.1).
 
 The arc is **cut into** the panel rather than drawn on top of it, so whatever is behind shows through the curve — which is the page ground, since the panel still occupies its full height in layout. That means the section following a hero has to be on `--paper` (or have no background of its own). Every page currently satisfies this; if you ever put a `--paper-3` band directly under a page head, the sliver revealed by the arc will be the wrong colour.
 
@@ -52,7 +51,8 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--paper-soft` | `rgba(247,246,243,.70)` | Body copy on black |
 | `--paper-mute` | `rgba(247,246,243,.45)` | Micro-labels on black |
 | `--accent` | `#17A6DE` | Arc motif, markers, focus, validation |
-| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | Hover / small text on light |
+| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
+| `--accent-800` | `#08506E` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
 > **Note on the brand blue.** The written brief specifies `#009ee3`. The approved design system uses `#17A6DE`, which sits better against the warm paper ground. To switch, change `--accent` (and optionally `--accent-600/700`) in `css/base.css` — nothing else needs touching.
@@ -155,16 +155,33 @@ Each entry lists the file it lives in, the markup, and the modifiers available. 
 ### 4.1 Button — `components.css`
 
 ```html
-<a class="btn btn--solid" href="#">
-  <span class="btn__fill"></span>
-  <span class="btn__label">Book a visit</span>
-</a>
+<a class="btn btn--solid" href="#"><span class="btn__label">Book a visit</span></a>
 ```
 
-The `__fill` span sweeps across on hover, clipped by `#smileClip`. The `__label` uses `mix-blend-mode: difference` so it inverts against whatever is behind it — which is why both spans are required.
+**There is no sweep.** A fill clipped to the arc used to slide across on hover. It was driven entirely by `:hover`, so on a touch screen it never ran — and iOS keeps `:hover` after a tap, which left the arc frozen part-way across the button. Buttons change colour now. `#smileClip` had no other user and has gone from the shared defs.
 
-**Modifiers:** `--solid` (dark), `--outline` (paper), `--light` (for dark grounds), `--sm`, `--block`, `.is-disabled`.
-Wrap groups in `.btn-row`.
+**One primary per page.** `--solid` is the primary and a page gets one: the single thing you most want the visitor to do. Where a page carries a form, the form's submit is that primary and the closing CTA is demoted — `c_cta(..., demote=True)` renders its leading button as an outline. Where a page carries two forms, the secondary one is built with `f_form(..., variant='outline')`, which also carries through to the wizard's *Continue* via `data-step-variant`, so a stepped form never shows a primary the page has not allotted it. The style guide is the one exception: it is a component reference and has to show every variant at once.
+
+| Modifier | Ground | Rest | Hover | Press |
+|---|---|---|---|---|
+| `--solid` | paper or dark | `--accent` + ink label — 6.8:1 | `--accent-600` — 4.8:1 | `--accent-600`, border `--accent-800` |
+| `--outline` | paper | none, ink border | inverts to ink | — |
+| `--light` | dark only | none, paper border | inverts to paper | — |
+
+**Why the label is ink and not white.** White on `--accent` is **2.78:1** — it fails AA badly, and at 13px there is no large-text exemption to fall back on. Ink on `--accent` is 6.8:1.
+
+**Why press darkens the border, not the fill.** The ink label is what limits the range. It needs a fill of at least L 0.2 to clear 4.5:1, and the steps go:
+
+| Fill | Ink label | White label |
+|---|---|---|
+| `--accent` `#17A6DE` | **6.80:1** | 2.78:1 |
+| `--accent-600` `#1189BB` | **4.79:1** | 3.95:1 |
+| `--accent-700` `#0B6E97` | 3.32:1 | **5.69:1** |
+| `--accent-800` `#08506E` | 2.15:1 | **8.81:1** |
+
+So an ink label has exactly one darker step available. Hover takes it, and press darkens the border instead — pressed still reads as pressed, and the label never drops under contrast. Going darker than `--accent-600` would mean flipping the label to white mid-interaction, which is worse than a border change.
+
+Also `--sm`, `--block`, `.is-disabled`. Wrap groups in `.btn-row`.
 
 ### 4.2 Arc link — `components.css`
 
@@ -205,6 +222,8 @@ Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
+
+**The sheet has no rules between its items.** It used to: every `.menu__link` carried a `border-bottom`, but the link is `width: fit-content`, so each rule stopped at the end of its own text while `.menu__group` ran the full width — a ragged mix of stub and full-width lines down the sheet. They were separating items that 26px type and 18px of padding already separate. Sub-items are indented by `--s-5` instead, which does the hierarchy the rules were failing to. This is the exception that proves §1.2: a hairline earns its place by doing work no other means does. Down a list of large type in open space, it does none.
 
 ### 4.4 Image placeholder — `.ph`
 

@@ -20,7 +20,7 @@ The reference for this system is precision-engineering brand design — Porsche 
 
 The practice's signature motif is a shallow arc — a smile. It appears in three places:
 
-* **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3.
+* **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3. On a device that cannot hover, tapping one of these links draws the arc and the navigation waits for it; see §4.3a.
 * **`#smileClip`** — an SVG `clipPath` that gives button hover-fills a curved leading edge.
 * **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
 
@@ -182,6 +182,25 @@ The standard "read more" affordance.
 * Two usages are `<span class="arc-link">` inside a card that is itself a link — affordance text rather than a nested link. They take the same styling.
 
 The general rule this follows: **hover may enhance an affordance, never carry it.** The arc is still right on nav and footer links, which read as navigation from their position; it was wrong as the only cue on a standalone call to action.
+
+### 4.3a Letting the arc finish before the page changes — `js/ui.js`
+
+On the links that kept the arc, a tap on a touch device would previously navigate before the arc drew at all, so the motif was invisible to anyone without a mouse. Tapping one now draws the arc and holds the navigation until it finishes.
+
+A delayed navigation is a slower navigation, so this is deliberately narrow. It is skipped — the click is never cancelled — when any of these hold:
+
+| Condition | Why |
+|---|---|
+| The arc has already drawn | On a hovering pointer it finished before the click landed; there is nothing to wait for, so **desktop is never delayed** |
+| `prefers-reduced-motion` | No animation to wait for |
+| Modifier or middle click | The browser is about to open a tab; never interfere |
+| Off-site, `tel:`, `mailto:`, `download` | Not a page transition |
+| A link to the current page | Nothing is opening |
+| No `.arc` inside the link | Nothing to draw — this is what exempts `.arc-link` |
+
+In practice the wait only happens on touch and keyboard, where it doubles as feedback that the tap registered. It is capped at 400ms and backed by a timer as well as `transitionend`, so a transition event that never arrives cannot strand someone on the page they tried to leave. The click is only cancelled once every check above has passed, so if the script fails the links stay ordinary links.
+
+Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover` does.
 
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
 

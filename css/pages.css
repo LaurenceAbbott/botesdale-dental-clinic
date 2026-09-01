@@ -1,0 +1,66 @@
+/* =============================================================================
+   BOTESDALE DENTAL — 04 PAGES
+   Page-specific composition only. If a rule here would be useful on a second
+   page, promote it to components.css instead.
+   -----------------------------------------------------------------------------
+   CONTENTS
+     01. Home
+     02. Contact
+     03. Case studies
+     04. Legal pages
+     05. Style guide
+     06. 404
+   ========================================================================== */
+
+/* -- 01. HOME --------------------------------------------------------------- */
+.home-intro { padding-block: var(--section-y); }
+.home-intro__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--s-10); align-items: start; }
+@media (max-width: 860px) { .home-intro__grid { grid-template-columns: 1fr; gap: var(--s-7); } }
+.home-intro h2 { max-width: 20ch; }
+.home-intro__body { max-width: 56ch; }
+.home-intro__body p { color: var(--ink-soft); }
+.home-intro__media { display: grid; }
+.home-intro__media .ph { aspect-ratio: 4 / 3; }
+
+/* -- 02. CONTACT ------------------------------------------------------------ */
+.contact-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: var(--s-10); align-items: start; }
+@media (max-width: 940px) { .contact-grid { grid-template-columns: 1fr; gap: var(--s-9); } }
+.contact-aside { display: flex; flex-direction: column; gap: var(--s-7); }
+
+/* -- 03. CASE STUDIES ------------------------------------------------------- */
+.case-meta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-bottom: var(--s-6); }
+.case-body h2 { margin-top: var(--s-8); }
+.case-body h2:first-child { margin-top: 0; }
+.case-consent { margin-top: var(--s-9); }
+
+/* -- 04. LEGAL -------------------------------------------------------------- */
+.legal { padding-block: var(--s-9) var(--s-11); }
+.legal__updated { font-size: var(--fs-xs); color: var(--ink-mute); margin-bottom: var(--s-7); letter-spacing: .04em; }
+.legal .prose { max-width: 68ch; }
+
+/* -- 05. STYLE GUIDE -------------------------------------------------------- */
+.sg-section { padding-block: var(--s-9); border-top: var(--hair) solid var(--line); }
+.sg-section > .label { display: block; margin-bottom: var(--s-3); }
+.sg-section > h2 { margin-bottom: var(--s-7); }
+.sg-demo { padding: var(--s-7); border: var(--hair) dashed var(--line); background: var(--paper-2); }
+.sg-demo + .sg-demo { margin-top: var(--s-5); }
+.sg-demo--dark { background: var(--black); border-color: var(--line-dark); }
+.sg-swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: var(--s-4); }
+.sg-swatch__chip { height: 68px; border: var(--hair) solid var(--line); }
+.sg-swatch__name { margin-top: var(--s-2); font-size: var(--fs-xs); }
+.sg-swatch__val { font-family: var(--font-mono); font-size: var(--fs-label); color: var(--ink-mute); }
+.sg-type-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-5); padding-block: var(--s-4); border-bottom: var(--hair) solid var(--line); }
+.sg-type-row__meta { font-family: var(--font-mono); font-size: var(--fs-label); color: var(--ink-mute); min-width: 190px; }
+.sg-scale { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: flex-end; }
+.sg-scale__box { background: var(--accent-tint); border: var(--hair) solid var(--accent-line); }
+.sg-sample { font-family: var(--font-head); font-weight: var(--fw-semi); letter-spacing: var(--ls-head); line-height: var(--lh-snug); color: var(--black); }
+.sg-sample--display { font-size: var(--fs-hero); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); }
+.sg-sample--h1 { font-size: var(--fs-h1); line-height: var(--lh-tight); letter-spacing: var(--ls-tight); }
+.sg-sample--h2 { font-size: var(--fs-h2); }
+.sg-sample--h3 { font-size: var(--fs-h3); }
+.sg-sample--h4 { font-size: var(--fs-h4); }
+.sg-scale__label { font-family: var(--font-mono); font-size: var(--fs-label); color: var(--ink-mute); margin-top: var(--s-2); }
+
+/* -- 06. 404 ---------------------------------------------------------------- */
+.notfound { min-height: 70vh; display: grid; place-items: center; text-align: center; padding-block: var(--s-11); }
+.notfound__code { font-family: var(--font-head); font-size: clamp(4rem, 2rem + 12vw, 9rem); line-height: 1; letter-spacing: var(--ls-tight); color: var(--black); }

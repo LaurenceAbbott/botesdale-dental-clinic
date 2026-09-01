@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en-GB" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style guide | Botesdale Dental design system</title>
+<meta name="description" content="Living reference for the Botesdale Dental design system — colour, type, spacing and every reusable component.">
+<link rel="canonical" href="https://botesdaledental.co.uk/pages/style-guide.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Botesdale Dental Practice &amp; Implant Clinic">
+<meta property="og:title" content="Style guide | Botesdale Dental design system">
+<meta property="og:description" content="Living reference for the Botesdale Dental design system — colour, type, spacing and every reusable component.">
+<meta property="og:url" content="https://botesdaledental.co.uk/pages/style-guide.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0E1116">
+
+<link rel="icon" href="../assets/images/brand/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<svg class="svg-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="smileClip" clipPathUnits="objectBoundingBox">
+      <path d="M0,0.08 Q0.5,0.4 1,0.08 L1,1 L0,1 Z"/>
+    </clipPath>
+  </defs>
+</svg>
+
+<header class="nav" data-nav-root>
+  <div class="nav__inner">
+    <a class="brand" href="../index.html">Botesdale Dental<span class="brand__dot" aria-hidden="true"></span></a>
+    <nav class="nav__links" aria-label="Primary">
+      <a class="nav__link" href="../pages/about-us.html"><span>About us</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      <div class="nav__dd"><a class="nav__link" href="../pages/treatments.html"><span>Treatments</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><div class="nav__panel"><a href="../pages/general-dentistry.html">General dentistry</a><a href="../pages/cosmetic-dentistry.html">Cosmetic dentistry</a><a href="../pages/preventative-dentistry.html">Preventative dentistry</a><a href="../pages/missing-teeth.html">Missing teeth</a></div></div>
+      <div class="nav__dd"><a class="nav__link" href="../pages/implant-clinic.html"><span>Implant clinic</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><div class="nav__panel"><a href="../pages/implant-clinic.html">Implant clinic</a><a href="../pages/implant-referrals.html">Implant referrals</a></div></div>
+      <a class="nav__link" href="../pages/referrals.html"><span>Referrals</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      <a class="nav__link" href="../pages/fees-and-membership.html"><span>Fees</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      <a class="nav__link" href="../pages/case-studies.html"><span>Case studies</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      <a class="nav__link" href="../pages/contact-us.html"><span>Contact</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+    </nav>
+    <a class="nav__cta" href="../pages/contact-us.html"><span class="btn__label">Book a visit</span></a>
+    <button class="nav__toggle" id="menuOpen" type="button" aria-expanded="false"
+            aria-controls="mobileMenu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="menu" id="mobileMenu">
+  <button class="menu__close" id="menuClose" type="button">Close</button>
+  <a class="menu__link" href="../pages/about-us.html"><span>About us</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+  <div class="menu__group"><button class="menu__toggle" type="button" aria-expanded="false" aria-controls="menuGroup1"><span>Treatments</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu__sub" id="menuGroup1"><a href="../pages/treatments.html">Treatments overview</a><a href="../pages/general-dentistry.html">General dentistry</a><a href="../pages/cosmetic-dentistry.html">Cosmetic dentistry</a><a href="../pages/preventative-dentistry.html">Preventative dentistry</a><a href="../pages/missing-teeth.html">Missing teeth</a></div></div>
+  <div class="menu__group"><button class="menu__toggle" type="button" aria-expanded="false" aria-controls="menuGroup2"><span>Implant clinic</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu__sub" id="menuGroup2"><a href="../pages/implant-clinic.html">Implant clinic overview</a><a href="../pages/implant-clinic.html">Implant clinic</a><a href="../pages/implant-referrals.html">Implant referrals</a></div></div>
+  <a class="menu__link" href="../pages/referrals.html"><span>Referrals</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+  <a class="menu__link" href="../pages/fees-and-membership.html"><span>Fees</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+  <a class="menu__link" href="../pages/case-studies.html"><span>Case studies</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+  <a class="menu__link" href="../pages/contact-us.html"><span>Contact</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+  <a class="menu__cta" href="../pages/contact-us.html">Book a visit</a>
+  <div class="menu__contact">
+    <a href="tel:+441379897176">01379 897176</a>
+    <a href="mailto:reception@botesdaledental.co.uk">reception@botesdaledental.co.uk</a>
+  </div>
+</div>
+
+<main id="main">
+<section class="page-head page-head--short">
+  <!-- Background photograph goes here:
+       <img class="page-head__media" src="../assets/images/heroes/NAME.jpg" alt=""> -->
+  <div class="page-head__scrim"></div>
+  <span class="ph-note" aria-hidden="true">Header photograph</span>
+  <div class="page-head__inner wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span class="crumbs__sep" aria-hidden="true">/</span><span aria-current="page">Style guide</span></nav>
+    <span class="label">Design system</span>
+    <h1>Style guide</h1>
+    <p>A living reference for every token and component used across the site.</p>
+  </div>
+</section>
+<div class="wrap section"><section class="sg-section"><span class="label">01</span><h2>Colour</h2><div class="sg-swatches"><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--black)"></div><div class="sg-swatch__name">Ink</div><div class="sg-swatch__val">var(--black) &middot; #0E1116</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--black-800)"></div><div class="sg-swatch__name">Ink 800</div><div class="sg-swatch__val">var(--black-800) &middot; #1A1F26</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--paper)"></div><div class="sg-swatch__name">Paper</div><div class="sg-swatch__val">var(--paper) &middot; #F7F6F3</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--paper-3)"></div><div class="sg-swatch__name">Paper 3</div><div class="sg-swatch__val">var(--paper-3) &middot; #EFEDE8</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ink-soft)"></div><div class="sg-swatch__name">Ink soft</div><div class="sg-swatch__val">var(--ink-soft) &middot; #5B615F</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ink-mute)"></div><div class="sg-swatch__name">Ink mute</div><div class="sg-swatch__val">var(--ink-mute) &middot; #8A8F8C</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--line)"></div><div class="sg-swatch__name">Line</div><div class="sg-swatch__val">var(--line) &middot; #D9D7D0</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--accent)"></div><div class="sg-swatch__name">Accent</div><div class="sg-swatch__val">var(--accent) &middot; #17A6DE</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--accent-600)"></div><div class="sg-swatch__name">Accent 600</div><div class="sg-swatch__val">var(--accent-600) &middot; #1189BB</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ok)"></div><div class="sg-swatch__name">Success</div><div class="sg-swatch__val">var(--ok) &middot; #1D7A57</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--warn)"></div><div class="sg-swatch__name">Warning</div><div class="sg-swatch__val">var(--warn) &middot; #8A5A00</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--error)"></div><div class="sg-swatch__name">Error</div><div class="sg-swatch__val">var(--error) &middot; #A93226</div></div></div></section><section class="sg-section"><span class="label">02</span><h2>Typography</h2><p class="lead u-mb-8">Space Grotesk for headings and micro-labels, Inter for body copy. The scale is fluid — every size interpolates between a mobile and a desktop value.</p><div class="sg-type-row"><div class="sg-type-row__meta">Display<br>var(--fs-hero) &middot; 30 → 68px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--display">A calmer kind of dental care.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 1<br>var(--fs-h1) &middot; 28 → 52px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h1">Every treatment starts with a conversation.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 2<br>var(--fs-h2) &middot; 24 → 34px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h2">Four areas of care.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 3<br>var(--fs-h3) &middot; 20 → 24px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h3">What to expect at your first visit</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 4<br>var(--fs-h4) &middot; 17px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h4">Preventative care</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Lead<br>var(--fs-lead) &middot; 15 → 17px</div><div style="flex:1;min-width:min(100%,320px)"><p class="lead">Routine dental appointments are essential to maintain good oral health.</p></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Body<br>var(--fs-body) &middot; 15px</div><div style="flex:1;min-width:min(100%,320px)"><p>We take time to understand your concerns, respect your choices, and explain your options clearly.</p></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Label<br>var(--fs-label) &middot; 11px / .16em</div><div style="flex:1;min-width:min(100%,320px)"><span class="label">Preventative dentistry</span></div></div></section><section class="sg-section"><span class="label">03</span><h2>Spacing</h2><p class="lead u-mb-8">A 4px base scale. Sections use the fluid <code>--section-y</code> token rather than a fixed step.</p><div class="sg-scale"><div><div class="sg-scale__box" style="width:4px;height:4px"></div><div class="sg-scale__label">s-1 &middot; 4px</div></div><div><div class="sg-scale__box" style="width:8px;height:8px"></div><div class="sg-scale__label">s-2 &middot; 8px</div></div><div><div class="sg-scale__box" style="width:12px;height:12px"></div><div class="sg-scale__label">s-3 &middot; 12px</div></div><div><div class="sg-scale__box" style="width:16px;height:16px"></div><div class="sg-scale__label">s-4 &middot; 16px</div></div><div><div class="sg-scale__box" style="width:20px;height:20px"></div><div class="sg-scale__label">s-5 &middot; 20px</div></div><div><div class="sg-scale__box" style="width:24px;height:24px"></div><div class="sg-scale__label">s-6 &middot; 24px</div></div><div><div class="sg-scale__box" style="width:32px;height:32px"></div><div class="sg-scale__label">s-7 &middot; 32px</div></div><div><div class="sg-scale__box" style="width:44px;height:44px"></div><div class="sg-scale__label">s-8 &middot; 44px</div></div><div><div class="sg-scale__box" style="width:56px;height:56px"></div><div class="sg-scale__label">s-9 &middot; 56px</div></div><div><div class="sg-scale__box" style="width:72px;height:72px"></div><div class="sg-scale__label">s-10 &middot; 72px</div></div><div><div class="sg-scale__box" style="width:88px;height:88px"></div><div class="sg-scale__label">s-11 &middot; 88px</div></div><div><div class="sg-scale__box" style="width:112px;height:112px"></div><div class="sg-scale__label">s-12 &middot; 112px</div></div></div></section><section class="sg-section"><span class="label">04</span><h2>Buttons &amp; links</h2>
+      <div class="sg-demo">
+        <div class="btn-row u-mb-6"><a class="btn btn--solid" href="#0"><span class="btn__fill"></span><span class="btn__label">Solid button</span></a><a class="btn btn--outline" href="#0"><span class="btn__fill"></span><span class="btn__label">Outline button</span></a><a class="btn btn--solid is-disabled" href="#0"><span class="btn__fill"></span><span class="btn__label">Disabled</span></a></div>
+        <div class="btn-row u-mb-6"><a class="btn btn--solid btn--sm" href="#0"><span class="btn__fill"></span><span class="btn__label">Small solid</span></a><a class="btn btn--outline btn--sm" href="#0"><span class="btn__fill"></span><span class="btn__label">Small outline</span></a></div>
+        <div class="cluster"><a class="arc-link" href="#0"><span>Arc link</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="link-inline" href="#0">An inline text link</a></div>
+      </div>
+      <div class="sg-demo sg-demo--dark">
+        <div class="btn-row u-mb-6"><a class="btn btn--light" href="#0"><span class="btn__fill"></span><span class="btn__label">Light button</span></a></div>
+        <div class="cluster"><a class="arc-link arc-link--light" href="#0"><span>Arc link on dark</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a></div>
+      </div></section><section class="sg-section"><span class="label">05</span><h2>Badges &amp; notices</h2>
+      <div class="sg-demo">
+        <div class="cluster u-mb-8">
+          <span class="badge">Default</span>
+          <span class="badge badge--accent">Accent</span>
+          <span class="badge badge--solid">Solid</span>
+          <span class="badge pill">Pill</span>
+        </div>
+        <div class="stack--lg stack">
+          <div class="notice"><strong>Information</strong>Members of Our Plan pay a £0 emergency access fee.</div>
+          <div class="notice notice--ok"><strong>Success</strong>Your referral has been received.</div>
+          <div class="notice notice--warn"><strong>Please note</strong>Fees shown are a guide only.</div>
+          <div class="notice notice--error"><strong>Problem</strong>We could not submit that form.</div>
+        </div>
+      </div></section><section class="sg-section"><span class="label">05b</span><h2>Image placeholder</h2>
+      <p class="lead u-mb-8">Every media area on the site is a placeholder until the practice's photography arrives. Replace the whole <code>&lt;div class="ph"&gt;</code> with an <code>&lt;img&gt;</code> — the parent already owns the aspect ratio.</p>
+      <div class="cols-3">
+        <div><div class="ar-3-2"><div class="ph" role="img" aria-label="A dentist treating a patient"><span class="ph__label">A dentist treating a patient</span></div></div><p class="meta u-mt-2">3:2 — cards, case images</p></div>
+        <div><div class="ar-4-3"><div class="ph" role="img" aria-label="Inside the practice"><span class="ph__label">Inside the practice</span></div></div><p class="meta u-mt-2">4:3 — strip tiles</p></div>
+        <div><div class="ar-3-4"><div class="ph" role="img" aria-label="Portrait — Dr Martin Sulo"><span class="ph__label">Portrait — Dr Martin Sulo</span></div></div><p class="meta u-mt-2">3:4 — team portraits</p></div>
+      </div></section><section class="sg-section"><span class="label">06</span><h2>Cards &amp; strip tiles</h2><div class="cols-3"><a class="card" href="../pages/general-dentistry.html" data-reveal>
+      <div class="card__media"><div class="ph" role="img" aria-label="General dentistry"><span class="ph__label">General dentistry</span></div></div>
+      <div class="card__body">
+        <span class="label">Treatments</span>
+        <h3>General dentistry</h3>
+        <p>Your trusted local family dental practice for all kinds of general dentistry.</p>
+        <span class="arc-link"><span>Read more</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></span>
+      </div>
+    </a>
+    <a class="card" href="../pages/cosmetic-dentistry.html" data-reveal>
+      <div class="card__media"><div class="ph" role="img" aria-label="Cosmetic dentistry"><span class="ph__label">Cosmetic dentistry</span></div></div>
+      <div class="card__body">
+        <span class="label">Treatments</span>
+        <h3>Cosmetic dentistry</h3>
+        <p>Treatments that enhance, align, and whiten or tone your teeth.</p>
+        <span class="arc-link"><span>Read more</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></span>
+      </div>
+    </a>
+    <a class="card" href="../pages/preventative-dentistry.html" data-reveal>
+      <div class="card__media"><div class="ph" role="img" aria-label="Preventative dentistry"><span class="ph__label">Preventative dentistry</span></div></div>
+      <div class="card__body">
+        <span class="label">Treatments</span>
+        <h3>Preventative dentistry</h3>
+        <p>Routine appointments are essential to maintain good oral health.</p>
+        <span class="arc-link"><span>Read more</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></span>
+      </div>
+    </a></div></section><section class="sg-section"><span class="label">07</span><h2>Facts</h2>
+      <div class="sg-demo">
+        <div class="facts facts--paper">
+          <div class="fact"><div class="fact__num">10%</div><div class="fact__cap">Discount on any treatment</div></div>
+          <div class="fact"><div class="fact__num">£0</div><div class="fact__cap">Emergency access fee</div></div>
+          <div class="fact"><div class="fact__num">Same day</div><div class="fact__cap">Emergency appointment</div></div>
+        </div>
+      </div></section><section class="sg-section"><span class="label">08</span><h2>Process rows</h2>
+      <div class="p-row"><div class="p-row__num">01</div><div><h3>Consultation</h3><p>A conversation about what is bothering you, or what you would like to improve.</p></div></div>
+      <div class="p-row"><div class="p-row__num">02</div><div><h3>Assessment</h3><p>A full examination of teeth, gums, bite and soft tissues.</p></div></div>
+      <div class="p-row"><div class="p-row__num">03</div><div><h3>Options and costs</h3><p>Every reasonable option written down, with a fully costed plan.</p></div></div></section><section class="sg-section"><span class="label">09</span><h2>Spec rows &amp; price list</h2><div class="cols-2"><div><div class="specs"><div class="spec"><span class="spec__k">Phone</span><span class="spec__v"><a href="tel:+441379897176">01379 897176</a></span></div><div class="spec"><span class="spec__k">Email</span><span class="spec__v"><a href="mailto:reception@botesdaledental.co.uk">reception@botesdaledental.co.uk</a></span></div><div class="spec"><span class="spec__k">Parking</span><span class="spec__v">On site, step-free</span></div></div></div><div><div class="price-list"><div class="price-list__row"><div><strong>2 exams &amp; oral health visits</strong><div class="price-list__note">With small X-rays</div></div><div>£19.95 / month</div></div><div class="price-list__row"><div><strong>3 exams &amp; oral health visits</strong><div class="price-list__note">With small X-rays</div></div><div>£26.25 / month</div></div></div></div></div></section><section class="sg-section"><span class="label">10</span><h2>Accordion</h2><div class="accordion" data-single><div class="accordion__item">
+      <h3><button class="accordion__btn" type="button" aria-expanded="false" aria-controls="sg-panel-1">
+        <span>Does root canal treatment hurt?</span><span class="accordion__icon" aria-hidden="true"></span>
+      </button></h3>
+      <div class="accordion__panel" id="sg-panel-1">
+        <div class="accordion__panel-inner"><p>The treatment itself is carried out under local anaesthetic and should feel much like having a filling.</p></div>
+      </div>
+    </div>
+    <div class="accordion__item">
+      <h3><button class="accordion__btn" type="button" aria-expanded="false" aria-controls="sg-panel-2">
+        <span>How long do implants last?</span><span class="accordion__icon" aria-hidden="true"></span>
+      </button></h3>
+      <div class="accordion__panel" id="sg-panel-2">
+        <div class="accordion__panel-inner"><p>With good hygiene and regular maintenance many last decades.</p></div>
+      </div>
+    </div>
+    <div class="accordion__item">
+      <h3><button class="accordion__btn" type="button" aria-expanded="false" aria-controls="sg-panel-3">
+        <span>Can I join the membership plan today?</span><span class="accordion__icon" aria-hidden="true"></span>
+      </button></h3>
+      <div class="accordion__panel" id="sg-panel-3">
+        <div class="accordion__panel-inner"><p>You will need an initial assessment first so that we can be sure your mouth is dentally fit.</p></div>
+      </div>
+    </div></div></section><section class="sg-section"><span class="label">11</span><h2>Data table</h2><div class="table-scroll"><table class="table"><thead><tr><th>Name</th><th>Description</th><th>Duration</th></tr></thead><tbody><tr><td><code>_ga</code></td><td>Registers a unique ID used to generate statistical data.</td><td>1 year 1 month</td></tr><tr><td><code>PHPSESSID</code></td><td>Preserves session state across page requests.</td><td>Session</td></tr></tbody></table></div></section><section class="sg-section"><span class="label">12</span><h2>Form controls</h2><div class="sg-demo"><form class="form" id="sgForm" data-validate data-success="sgFormSuccess" novalidate>
+  <div class="form__grid">
+    <div class="field"><label for="sg-name">Your name <span class="field__req" aria-hidden="true">*</span></label><input id="sg-name" name="sg-name" type="text" required><span class="field__error" role="alert"></span></div>
+    <div class="field"><label for="sg-email">Your email <span class="field__req" aria-hidden="true">*</span></label><input id="sg-email" name="sg-email" type="email" required><span class="field__error" role="alert"></span></div>
+    <div class="field"><label for="sg-phone">Phone</label><input id="sg-phone" name="sg-phone" type="tel"><span class="field__hint">Include the area code</span><span class="field__error" role="alert"></span></div>
+    <div class="field"><label for="sg-select">What is it about?</label><select id="sg-select" name="sg-select"><option value="" disabled selected>Please choose</option><option>Registering as a new patient</option><option>Booking an appointment</option><option>Something else</option></select><span class="field__error" role="alert"></span></div>
+    <div class="field field--full"><label for="sg-message">Your message</label><textarea id="sg-message" name="sg-message" rows="4"></textarea><span class="field__error" role="alert"></span></div>
+    <fieldset class="fieldset field--full"><legend class="fieldset__legend">Areas of interest</legend><div class="choice-grid"><label class="choice"><input type="checkbox" name="sg-checks" value="General dentistry"><span>General dentistry</span></label><label class="choice"><input type="checkbox" name="sg-checks" value="Cosmetic dentistry"><span>Cosmetic dentistry</span></label><label class="choice"><input type="checkbox" name="sg-checks" value="Implants"><span>Implants</span></label></div></fieldset>
+    <div class="field field--full"><label class="choice"><input type="checkbox" id="sg-consent" required><span>I agree to be contacted.</span></label><span class="field__error" role="alert"></span></div>
+    <div class="form__actions">
+      <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send message</span></button>
+      <p class="form__note">Submit with fields empty to see the validation states.</p>
+    </div>
+  </div>
+</form>
+<div class="form__success" id="sgFormSuccess" hidden>
+  <h3>Thank you — message sent.</h3>
+  <p>A member of the practice team will be in touch shortly.</p>
+</div></div></section><section class="sg-section"><span class="label">13</span><h2>Gallery &amp; lightbox</h2><div class="gallery"><figure class="shot"><div class="ph" role="img" aria-label="Before treatment"><span class="ph__label">Before treatment</span></div><span class="shot__tag">Before</span></figure><figure class="shot"><div class="ph" role="img" aria-label="After treatment"><span class="ph__label">After treatment</span></div><span class="shot__tag">After</span></figure><figure class="shot"><div class="ph" role="img" aria-label="Detail of the finished work"><span class="ph__label">Detail of the finished work</span></div><span class="shot__tag">Detail</span></figure></div></section><section class="sg-section"><span class="label">14</span><h2>Rail &amp; pager</h2><div class="cols-2 u-mb-8"><div><aside class="rail">
+  <span class="label">Cosmetic dentistry</span>
+  <nav class="rail__list" aria-label="Cosmetic dentistry"><a href="../pages/cosmetic-dentistry.html">Cosmetic dentistry</a><a href="../pages/clear-aligner.html">Clear aligner</a><a href="../pages/veneers.html">Veneers</a><a href="../pages/crowns.html" class="is-active">Crowns</a><a href="../pages/bridges.html">Bridges</a><a href="../pages/teeth-whitening.html">Teeth whitening</a><a href="../pages/gum-reshaping.html">Gum reshaping</a></nav>
+</aside></div><div></div></div><nav class="pager" aria-label="Case studies"><a class="pager__item pager__item--prev" href="../pages/case-treating-worn-dentition.html"><span class="label">Previous</span><span class="pager__title">Treating worn dentition with composite bonding</span></a><a class="pager__item pager__item--next" href="../pages/case-new-upper-denture.html"><span class="label">Next</span><span class="pager__title">New upper denture</span></a></nav></section><section class="sg-section"><span class="label">15</span><h2>Quote carousel</h2><section class="quote">
+  <div class="wrap">
+    <div class="carousel" data-carousel data-carousel-interval="8000">
+      <div class="carousel__track"><div class="carousel__slide is-active"><blockquote>&ldquo;My experience at your practice can only be described as beyond perfect. From the initial consultation, through to the preparation and procedure was very professional and impressive. Martin Sulo is undoubtedly a top man in his profession. The whole procedure was painless and very thorough. Although my bank account has taken a hammering of late, the whole procedure has been more than worthwhile and I am now reaping the benefits.&rdquo;</blockquote><div class="quote__name">David Wattam</div></div><div class="carousel__slide"><blockquote>&ldquo;Been using the surgery for near on 20 years. Great people, honest and always helpful. Denplan works for me so cost is per month and covers everything. Very happy visiting and always leave with a smile.&rdquo;</blockquote><div class="quote__name">Darren Gundry</div></div><div class="carousel__slide"><blockquote>&ldquo;Just to say a huge thank you to Martin, Eve and all the team for your dedication, skill and utmost care. Thank you all.&rdquo;</blockquote><div class="quote__name">Val Forge</div></div></div>
+      <div class="carousel__nav">
+        <button class="carousel__btn" type="button" data-carousel-prev aria-label="Previous review">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="carousel__dots"></div>
+        <button class="carousel__btn" type="button" data-carousel-next aria-label="Next review">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section></section></div>
+<section class="cta">
+  <div class="wrap">
+    <h2>Back to the site.</h2>
+    
+    <div class="btn-row"><a class="btn btn--solid" href="../index.html"><span class="btn__fill"></span><span class="btn__label">Home</span></a><a class="btn btn--outline" href="../pages/contact-us.html"><span class="btn__fill"></span><span class="btn__label">Contact us</span></a></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+
+      <div class="footer__col">
+        <span class="label">Site</span>
+        <a class="footer__link" href="../index.html"><span>Home</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/about-us.html"><span>About us</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/fees-and-membership.html"><span>Fees and membership</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/referrals.html"><span>Referrals</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/case-studies.html"><span>Case studies</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/contact-us.html"><span>Contact us</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      </div>
+
+      <div class="footer__col">
+        <span class="label">Treatments</span>
+        <a class="footer__link" href="../pages/general-dentistry.html"><span>General dentistry</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/cosmetic-dentistry.html"><span>Cosmetic dentistry</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/preventative-dentistry.html"><span>Preventative dentistry</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/missing-teeth.html"><span>Missing teeth</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/implant-clinic.html"><span>Implant clinic</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a><a class="footer__link" href="../pages/implant-referrals.html"><span>Implant referrals</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+      </div>
+
+      <div class="footer__col">
+        <span class="label">Opening hours</span>
+        <div class="footer__hours"><span>Monday</span><span>9am–3pm</span></div><div class="footer__hours"><span>Tuesday</span><span>9am–3pm</span></div><div class="footer__hours"><span>Wednesday</span><span>9am–4pm</span></div><div class="footer__hours"><span>Thursday</span><span>9am–4pm</span></div><div class="footer__hours"><span>Friday</span><span>9am–3pm</span></div>
+      </div>
+
+      <div class="footer__col">
+        <span class="label">Get in touch</span>
+        <address class="footer__address">
+          Botesdale Dental Practice &amp; Implant Clinic<br>
+          Holly Close, The Drift<br>
+          Botesdale, Suffolk IP22 1DH
+        </address>
+        <a class="footer__strong" href="tel:+441379897176"><span>01379 897176</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+        <a class="footer__strong" href="mailto:reception@botesdaledental.co.uk"><span>reception@botesdaledental.co.uk</span><svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0,1 Q50,7 100,1" pathLength="100"/></svg></a>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/botesdaledental" aria-label="Botesdale Dental on Facebook" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M14 9h3V6h-3c-1.66 0-3 1.34-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/botesdaledental" aria-label="Botesdale Dental on Instagram" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.7"/>
+              <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer__bottom">
+      <div class="footer__legal">
+        <a href="../pages/privacy-policy.html">Privacy Policy</a>
+        <a href="../pages/cookie-policy.html">Cookie Policy</a>
+        <a href="../pages/style-guide.html">Style guide</a>
+      </div>
+      <div>&copy; <span data-year>2026</span> &middot; Botesdale Dental Practice &middot; Registered in England and Wales, company number 123456.</div>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" type="button" data-to-top aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<div class="cookie" id="cookieBanner" role="region" aria-label="Cookie notice">
+  <div class="wrap cookie__inner">
+    <p>We use a small number of essential cookies to make this site work. See our
+      <a href="../pages/cookie-policy.html">Cookie Policy</a> for details.</p>
+    <div class="cookie__actions">
+      <button class="btn btn--light btn--sm" type="button" data-cookie-choice="accepted">
+        <span class="btn__fill"></span><span class="btn__label">Accept</span></button>
+      <button class="btn btn--light btn--sm" type="button" data-cookie-choice="essential">
+        <span class="btn__fill"></span><span class="btn__label">Essential only</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged image">
+  <button class="lightbox__close" type="button">Close</button>
+  <img alt="">
+</div>
+
+<script src="../js/nav.js" defer></script>
+<script src="../js/ui.js" defer></script>
+<script src="../js/forms.js" defer></script>
+<script src="../js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,769 @@
+/* =============================================================================
+   BOTESDALE DENTAL — 03 COMPONENTS
+   Every reusable block in the system. Documented in /design.md and
+   demonstrated live at /pages/style-guide.html
+   -----------------------------------------------------------------------------
+   CONTENTS
+     01. Arc underline (motif)
+     02. Buttons
+     03. Arc link
+     03b. Image placeholder
+     04. Hero
+     05. Page head
+     06. Breadcrumb
+     07. Editorial block (ed-block)
+     08. Strip grid + strip item
+     09. Card
+     10. Statement band + facts
+     11. Process list
+     12. Team row + team card
+     13. Quote / testimonial carousel
+     14. Spec rows (definition list)
+     15. Plan cards & price list
+     16. Accordion / FAQ
+     17. Notice / callout
+     18. Badge & pill
+     19. Data table
+     20. Figure, gallery & before/after
+     21. Rail (sidebar nav) & prev/next
+     22. Forms
+     23. CTA band
+     24. Map frame
+     25. Cookie banner
+     26. Icon sizing
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------------
+   01. ARC UNDERLINE — the practice's "smile" motif.
+   A stroked SVG path that draws itself in on hover. Attach to any inline
+   element by adding <svg class="arc"> as the last child.
+   -------------------------------------------------------------------------- */
+.arc {
+  position: absolute; left: 0; bottom: -1px;
+  width: 100%; height: 8px;
+  overflow: visible; pointer-events: none;
+}
+.arc path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset var(--t) var(--ease);
+}
+.nav__link:hover .arc path,
+.nav__link.is-active .arc path,
+.menu__link:hover .arc path,
+.footer__link:hover .arc path,
+.footer__strong:hover .arc path,
+.arc-link:hover .arc path,
+.tab.is-active .arc path,
+.tab:hover .arc path { stroke-dashoffset: 0; }
+
+.tab .arc { bottom: 0; opacity: 0; transition: opacity var(--t) var(--ease); }
+.tab:hover .arc { opacity: .45; }
+.tab.is-active .arc { opacity: 1; }
+.nav__link .arc { bottom: -2px; }
+.footer__link .arc, .footer__strong .arc { height: 6px; bottom: 2px; }
+.menu__link .arc { bottom: 10px; height: 10px; }
+.menu__link .arc path { stroke-width: 2.5; }
+
+/* -----------------------------------------------------------------------------
+   02. BUTTONS
+   Square, uppercase, hairline border. On hover a "smile"-clipped fill sweeps
+   across; the label uses mix-blend-mode so it inverts against whatever is
+   behind it. Variants: --solid, --outline, --light (for dark grounds), --sm.
+   -------------------------------------------------------------------------- */
+.btn {
+  position: relative; display: inline-block; overflow: hidden;
+  padding: 15px 30px;
+  font-size: var(--fs-xs); letter-spacing: var(--ls-cta); text-transform: uppercase;
+  font-weight: var(--fw-medium);
+  border: var(--hair) solid var(--black);
+  cursor: pointer;
+  transition: transform .08s var(--ease);
+  text-align: center;
+}
+.btn:active { transform: scale(.98); }
+.btn__fill {
+  position: absolute; top: 0; bottom: 0; z-index: 0;
+  clip-path: url(#smileClip);
+  transition: right var(--t) var(--ease), left var(--t) var(--ease);
+}
+.btn__label { position: relative; z-index: 1; mix-blend-mode: difference; color: #fff; }
+
+.btn--solid { background: var(--black); }
+.btn--solid .btn__fill { background: var(--paper); left: 0; right: 100%; }
+.btn--solid:hover .btn__fill { right: 0; }
+
+.btn--outline { background: var(--paper); }
+.btn--outline .btn__fill { background: var(--black); left: 100%; right: 0; }
+.btn--outline:hover .btn__fill { left: 0; }
+
+/* For use on dark grounds */
+.btn--light { background: transparent; border-color: var(--paper); }
+.btn--light .btn__fill { background: var(--paper); left: 100%; right: 0; }
+.btn--light:hover .btn__fill { left: 0; }
+
+.btn--sm { padding: 11px 20px; font-size: var(--fs-label); }
+.btn--block { display: block; width: 100%; }
+.btn[disabled], .btn.is-disabled { opacity: .45; pointer-events: none; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s-4); }
+@media (max-width: 479px) { .btn-row .btn { flex: 1 1 100%; } }
+
+/* -----------------------------------------------------------------------------
+   03. ARC LINK — the standard "read more" affordance
+   -------------------------------------------------------------------------- */
+.arc-link {
+  position: relative; display: inline-block; width: fit-content;
+  padding-bottom: 6px;
+  font-size: .75rem; letter-spacing: var(--ls-cta); text-transform: uppercase;
+  color: var(--black);
+}
+.arc-link .arc { height: 7px; }
+.arc-link:active .arc path { stroke-width: 3; }
+.arc-link--light { color: var(--paper); }
+
+/* -----------------------------------------------------------------------------
+   03b. IMAGE PLACEHOLDER
+   Every media panel on the site is currently a placeholder. When real
+   photography arrives, replace the <div class="ph"> with an <img> — the
+   surrounding component already sets the aspect ratio and the object-fit.
+   -------------------------------------------------------------------------- */
+.ph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  background: var(--placeholder);
+}
+.ph::after {
+  content: "";
+  position: absolute;
+  inset: clamp(8px, 1.4vw, 16px);
+  border: var(--hair) solid rgba(14, 17, 22, .07);
+  pointer-events: none;
+}
+.ph__label {
+  position: relative;
+  z-index: 1;
+  max-width: 30ch;
+  padding: 0 var(--s-5);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: center;
+  line-height: 1.6;
+}
+.section--paper-3 .ph, .strip .ph { background: var(--placeholder-2); }
+.ph--dark { background: var(--black-800); }
+.ph--dark::after { border-color: var(--line-dark); }
+.ph--dark .ph__label { color: var(--paper-mute); }
+
+/* -----------------------------------------------------------------------------
+   04. HERO — full-bleed, image or gradient, copy bottom-left
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end;
+  min-height: 420px; max-height: 660px; height: 78vh;
+  margin-top: calc(-1 * var(--nav-h));
+  background: var(--grad-hero);
+}
+.hero__media {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.9) contrast(1.02);
+}
+.hero__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(14,17,22,.55) 0%, rgba(14,17,22,.15) 42%, rgba(14,17,22,.82) 100%);
+}
+.hero__inner { position: relative; width: 100%; padding-bottom: var(--s-9); color: var(--paper); }
+.hero__inner .label { color: var(--paper-mute); display: block; margin-bottom: var(--s-4); }
+.hero h1 { color: var(--paper); max-width: 18ch; }
+.hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); font-size: var(--fs-lead); }
+.hero__actions { margin-top: var(--s-7); }
+
+/* Marks the dark panels that are built to take a background photograph.
+   Delete the .ph-note element from the HTML once imagery is in place. */
+.ph-note {
+  position: absolute;
+  right: var(--pad-inline); bottom: var(--pad-inline);
+  z-index: 1;
+  padding: 6px 10px;
+  border: var(--hair) solid var(--line-dark);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: rgba(247, 246, 243, .3);
+}
+@media (max-width: 700px) { .ph-note { display: none; } }
+@media (max-width: 480px) { .hero { min-height: 380px; height: 70vh; } }
+
+/* -----------------------------------------------------------------------------
+   05. PAGE HEAD — the compact hero used on every inner page
+   -------------------------------------------------------------------------- */
+.page-head {
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end;
+  min-height: 44vh;
+  margin-top: calc(-1 * var(--nav-h));
+  background: var(--grad-hero);
+  color: var(--paper);
+}
+.page-head--short { min-height: 34vh; }
+.page-head__media {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.85) contrast(1.02);
+}
+.page-head__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(14,17,22,.62) 0%, rgba(14,17,22,.28) 40%, rgba(14,17,22,.86) 100%);
+}
+.page-head__inner {
+  position: relative;
+  padding-top: calc(var(--nav-h) + var(--s-6));
+  padding-bottom: var(--s-8);
+}
+.page-head .label { display: block; color: var(--paper-mute); margin-bottom: var(--s-4); }
+.page-head h1 { color: var(--paper); max-width: 20ch; overflow-wrap: break-word; }
+.page-head p { margin-top: var(--s-4); max-width: 46ch; color: var(--paper-soft); }
+
+/* -----------------------------------------------------------------------------
+   06. BREADCRUMB
+   -------------------------------------------------------------------------- */
+.crumbs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
+  font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--paper-mute);
+  margin-bottom: var(--s-4);
+}
+.crumbs a { color: var(--paper-mute); transition: color var(--t-fast) var(--ease); }
+.crumbs a:hover { color: var(--paper); }
+.crumbs [aria-current] { color: var(--paper); }
+.crumbs__sep { opacity: .5; }
+.crumbs--on-paper { color: var(--ink-mute); }
+.crumbs--on-paper a { color: var(--ink-mute); }
+.crumbs--on-paper a:hover, .crumbs--on-paper [aria-current] { color: var(--black); }
+
+/* -----------------------------------------------------------------------------
+   07. EDITORIAL BLOCK — the workhorse 2-up media + copy row
+   Modifiers: .ed--rev (media right), .ed--warm (warm gradient placeholder)
+   -------------------------------------------------------------------------- */
+.ed {
+  display: grid;
+  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
+  min-height: 520px;
+}
+.ed > * { min-width: 0; grid-row: 1; }
+.ed__media { grid-column: 1 / 3; }
+.ed__text  { grid-column: 3 / 4; }
+.ed--rev .ed__media { grid-column: 3 / 5; }
+.ed--rev .ed__text  { grid-column: 2 / 3; }
+
+.ed__media {
+  position: relative; display: grid; overflow: hidden;
+  min-height: 340px;
+  background: var(--placeholder);
+}
+/* Subtle tonal alternation between consecutive blocks */
+.ed--warm .ed__media, .ed--warm .ed__media .ph { background: var(--placeholder-2); }
+.ed__media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.9);
+  transition: transform var(--t-slow) var(--ease-out), filter var(--t-slow) var(--ease);
+}
+.ed:hover .ed__media img { transform: scale(1.03); filter: saturate(1.02); }
+
+/* Media bleeds to the viewport edge; the copy column starts or stops on the
+   container's own grid line, so the measure is identical at every width. */
+.ed__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: var(--pad-block);
+  padding-left: var(--ed-gap);
+}
+.ed--rev .ed__text { padding-left: 0; padding-right: var(--ed-gap); }
+.ed__text .label { display: block; margin-bottom: var(--s-4); }
+.ed__text h2 { margin-bottom: var(--s-4); max-width: 22ch; }
+.ed__text p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--s-5); }
+.ed__text .arc-link { margin-top: var(--s-2); }
+
+@media (max-width: 860px) {
+  .ed { grid-template-columns: 1fr; min-height: 0; }
+  .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 3 / 2; }
+  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; padding-inline: var(--rail-x); }
+}
+
+/* -----------------------------------------------------------------------------
+   08. STRIP GRID — hairline-separated tiles, 2–4 up
+   -------------------------------------------------------------------------- */
+.strip { padding-block: var(--section-y); }
+.strip__head { max-width: 34rem; margin-bottom: var(--s-8); }
+.strip__head .label { display: block; margin-bottom: var(--s-3); }
+
+.strip__row {
+  display: grid; gap: var(--hair);
+  grid-template-columns: repeat(var(--strip-cols, 4), minmax(0, 1fr));
+  background: var(--line);
+  border: var(--hair) solid var(--line);
+}
+.strip__row--3 { --strip-cols: 3; }
+.strip__row--2 { --strip-cols: 2; }
+@media (max-width: 900px) { .strip__row { --strip-cols: 2 !important; } }
+@media (max-width: 540px) { .strip__row { --strip-cols: 1 !important; } }
+
+.strip__item { background: var(--paper); display: block; }
+.strip__media {
+  aspect-ratio: 4 / 3; position: relative; display: grid; overflow: hidden;
+  background: var(--placeholder-2);
+  transition: background var(--t) var(--ease);
+}
+.strip__media img { width: 100%; height: 100%; object-fit: cover; }
+.strip__item:hover .strip__media { background: var(--placeholder); }
+.strip__cap { padding: var(--s-5) var(--s-5) var(--s-7); }
+.strip__cap .label { display: block; margin-bottom: var(--s-2); }
+.strip__cap h3 { font-size: 1rem; margin-bottom: var(--s-2); }
+.strip__cap p { font-size: var(--fs-xs); line-height: 1.6; color: var(--ink-soft); }
+.strip__cap .arc-link { margin-top: var(--s-4); }
+
+/* -----------------------------------------------------------------------------
+   09. CARD — standalone bordered tile (used in grids that need spacing)
+   -------------------------------------------------------------------------- */
+.card {
+  display: flex; flex-direction: column;
+  background: var(--paper);
+  border: var(--hair) solid var(--line);
+  transition: border-color var(--t-fast) var(--ease), transform var(--t) var(--ease-out);
+}
+.card:hover { border-color: var(--black); }
+a.card:hover { transform: translateY(-2px); }
+.card__media { display: grid; aspect-ratio: 3 / 2; overflow: hidden; background: var(--placeholder); }
+.card__media img { width: 100%; height: 100%; object-fit: cover; }
+.card__body { padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); flex: 1; }
+.card__body .label { display: block; }
+.card__body h3 { font-size: 1.0625rem; }
+.card__body p { font-size: var(--fs-sm); color: var(--ink-soft); }
+.card__body .arc-link { margin-top: auto; padding-top: var(--s-3); }
+.card--dark { background: var(--black); border-color: var(--line-dark); }
+.card--dark h3 { color: var(--paper); }
+.card--dark p { color: var(--paper-soft); }
+
+/* -----------------------------------------------------------------------------
+   10. STATEMENT BAND — dark full-width block with optional facts
+   -------------------------------------------------------------------------- */
+.statement { background: var(--black); color: var(--paper); padding-block: var(--s-11); }
+.statement .label { display: block; color: var(--paper-mute); }
+.statement h2 { color: var(--paper); font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.5rem); line-height: 1.2; margin: var(--s-4) 0 var(--s-5); max-width: 20ch; }
+.statement p { color: var(--paper-soft); max-width: 54ch; margin-bottom: var(--s-7); }
+.statement .arc-link { color: var(--paper); }
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: var(--s-6) var(--s-7);
+  max-width: 940px;
+}
+.fact { border-top: var(--hair) solid var(--line-dark); padding-top: var(--s-3); }
+.fact__num { font-family: var(--font-head); font-size: 1.5rem; font-weight: var(--fw-semi); color: var(--paper); }
+.fact__cap { font-size: var(--fs-xs); color: var(--paper-mute); margin-top: 4px; }
+/* Light variant for use on paper */
+.facts--paper .fact { border-top-color: var(--line); }
+.facts--paper .fact__num { color: var(--black); }
+.facts--paper .fact__cap { color: var(--ink-soft); }
+
+/* -----------------------------------------------------------------------------
+   11. PROCESS LIST — numbered hairline rows
+   -------------------------------------------------------------------------- */
+.process { padding-block: var(--section-y); border-top: var(--hair) solid var(--line); }
+.process__head { max-width: 32rem; margin-bottom: var(--s-8); }
+.process__head .label { display: block; margin-bottom: var(--s-3); }
+
+.p-row {
+  display: grid; grid-template-columns: 60px 1fr; gap: var(--s-6);
+  padding-block: var(--s-6);
+  border-bottom: var(--hair) solid var(--line);
+}
+.p-row:first-child { border-top: var(--hair) solid var(--line); }
+.p-row__num { font-family: var(--font-head); font-size: var(--fs-sm); color: var(--ink-mute); letter-spacing: .04em; }
+.p-row h3 { font-family: var(--font-head); font-size: 1.0625rem; font-weight: var(--fw-semi); margin-bottom: var(--s-2); }
+.p-row p { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 60ch; }
+@media (max-width: 520px) { .p-row { grid-template-columns: 40px 1fr; gap: var(--s-4); } }
+
+/* -----------------------------------------------------------------------------
+   12. TEAM
+   -------------------------------------------------------------------------- */
+.team { border-top: var(--hair) solid var(--line); }
+.team__row {
+  display: grid;
+  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
+  min-height: 460px;
+  border-bottom: var(--hair) solid var(--line);
+}
+.team__row > * { min-width: 0; grid-row: 1; }
+.team__media { grid-column: 1 / 3; }
+.team__text  { grid-column: 3 / 4; }
+.team__row--rev .team__media { grid-column: 3 / 5; }
+.team__row--rev .team__text  { grid-column: 2 / 3; }
+.team__media { position: relative; display: grid; overflow: hidden; background: var(--placeholder); }
+.team__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.team__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: var(--pad-block);
+  padding-left: var(--ed-gap);
+}
+.team__row--rev .team__text { padding-left: 0; padding-right: var(--ed-gap); }
+.team__text h3 { font-size: 1.625rem; margin-bottom: var(--s-2); }
+.team__text .label { display: block; margin-bottom: var(--s-5); }
+.team__text p { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 46ch; }
+.team__text p + p { margin-top: var(--s-4); }
+.team__gdc { margin-top: var(--s-5); font-size: var(--fs-xs); color: var(--ink-mute); letter-spacing: .04em; }
+@media (max-width: 860px) {
+  .team__row { grid-template-columns: 1fr; min-height: 0; }
+  .team__media, .team__row--rev .team__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 4 / 3; }
+  .team__text,  .team__row--rev .team__text  { grid-column: 1; grid-row: 2; padding-inline: var(--rail-x); padding-left: var(--rail-x); }
+}
+
+/* -----------------------------------------------------------------------------
+   13. QUOTE / TESTIMONIAL CAROUSEL
+   -------------------------------------------------------------------------- */
+.quote { padding-block: var(--s-11); }
+.quote blockquote {
+  font-family: var(--font-head);
+  font-size: clamp(1.125rem, .95rem + .9vw, 1.625rem);
+  line-height: 1.4; font-weight: var(--fw-medium);
+  color: var(--black);
+  max-width: 24em;
+}
+.quote__name { margin-top: var(--s-5); font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+
+
+.carousel { position: relative; }
+.carousel__track { position: relative; }
+.carousel__slide { display: none; }
+.carousel__slide.is-active { display: block; animation: fade var(--t-slow) var(--ease); }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.carousel__nav { display: flex; align-items: center; gap: var(--s-5); margin-top: var(--s-8); }
+.carousel__btn {
+  width: 38px; height: 38px; cursor: pointer;
+  border: var(--hair) solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--ink-soft);
+  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.carousel__btn:hover { border-color: var(--black); color: var(--black); }
+.carousel__btn svg { width: 14px; height: 14px; }
+.carousel__dots { display: flex; gap: var(--s-2); }
+.carousel__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--line); cursor: pointer; padding: 0;
+  transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.carousel__dot.is-active { background: var(--accent); transform: scale(1.25); }
+
+/* -----------------------------------------------------------------------------
+   14. SPEC ROWS — label/value hairline rows (contact details, quick facts)
+   -------------------------------------------------------------------------- */
+.specs { border-top: var(--hair) solid var(--line); }
+.spec {
+  display: flex; justify-content: space-between; gap: var(--s-5);
+  padding-block: var(--s-4);
+  border-bottom: var(--hair) solid var(--line);
+  font-size: var(--fs-sm);
+}
+.spec__k { color: var(--ink-soft); flex: none; }
+.spec__v { text-align: right; color: var(--black); }
+.spec__v a { border-bottom: var(--hair) solid var(--accent-line); }
+@media (max-width: 480px) { .spec { flex-direction: column; gap: var(--s-1); } .spec__v { text-align: left; } }
+
+/* -----------------------------------------------------------------------------
+   15. PLAN CARDS & PRICE LIST
+   -------------------------------------------------------------------------- */
+.plan {
+  border: var(--hair) solid var(--line);
+  padding: var(--s-7);
+  display: flex; flex-direction: column; gap: var(--s-4);
+  background: var(--paper);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.plan:hover { border-color: var(--black); }
+.plan--feature { background: var(--black); border-color: var(--black); color: var(--paper-soft); }
+.plan--feature h3, .plan--feature .plan__price { color: var(--paper); }
+.plan--feature .label { color: var(--paper-mute); }
+.plan__price { font-family: var(--font-head); font-size: 2.25rem; font-weight: var(--fw-semi); letter-spacing: var(--ls-tight); color: var(--black); line-height: 1; }
+.plan__price small { font-family: var(--font-body); font-size: var(--fs-sm); font-weight: var(--fw-regular); color: var(--ink-soft); letter-spacing: 0; }
+.plan__list { display: grid; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-soft); }
+.plan__list li { position: relative; padding-left: var(--s-6); }
+.plan__list li::before { content: ""; position: absolute; left: 0; top: .7em; width: 12px; height: var(--hair); background: var(--accent); }
+.plan--feature .plan__list { color: var(--paper-soft); }
+
+.price-list { border-top: var(--hair) solid var(--line); }
+.price-list__row {
+  display: grid; grid-template-columns: 1fr auto; gap: var(--s-5);
+  padding-block: var(--s-4);
+  border-bottom: var(--hair) solid var(--line);
+  font-size: var(--fs-sm);
+}
+.price-list__row strong { font-family: var(--font-head); }
+.price-list__note { font-size: var(--fs-xs); color: var(--ink-mute); margin-top: 2px; }
+
+/* -----------------------------------------------------------------------------
+   16. ACCORDION / FAQ
+   -------------------------------------------------------------------------- */
+.accordion { border-top: var(--hair) solid var(--line); }
+.accordion__item { border-bottom: var(--hair) solid var(--line); }
+.accordion__btn {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-5);
+  width: 100%; padding: var(--s-5) 0; cursor: pointer; text-align: left;
+  font-family: var(--font-head); font-size: 1.0625rem; font-weight: var(--fw-semi); color: var(--black);
+}
+.accordion__icon { position: relative; width: 14px; height: 14px; flex: none; }
+.accordion__icon::before, .accordion__icon::after {
+  content: ""; position: absolute; left: 0; top: 50%;
+  width: 14px; height: var(--hair); background: var(--black);
+  transition: transform var(--t) var(--ease);
+}
+.accordion__icon::after { transform: rotate(90deg); }
+.accordion__btn[aria-expanded="true"] .accordion__icon::after { transform: rotate(0); }
+.accordion__panel { overflow: hidden; max-height: 0; transition: max-height var(--t) var(--ease); }
+.accordion__panel-inner { padding-bottom: var(--s-5); font-size: var(--fs-sm); color: var(--ink-soft); max-width: 62ch; }
+.accordion__panel-inner > * + * { margin-top: var(--s-4); }
+
+/* -----------------------------------------------------------------------------
+   17. NOTICE / CALLOUT
+   -------------------------------------------------------------------------- */
+.notice {
+  border-left: 2px solid var(--accent);
+  background: var(--accent-tint);
+  padding: var(--s-5) var(--s-6);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+}
+.notice strong { display: block; color: var(--black); margin-bottom: var(--s-2); font-family: var(--font-head); }
+.notice--warn  { border-left-color: var(--warn);  background: var(--warn-bg); }
+.notice--ok    { border-left-color: var(--ok);    background: var(--ok-bg); }
+.notice--error { border-left-color: var(--error); background: var(--error-bg); }
+.notice--plain { border-left-color: var(--line-dark); background: transparent; border-left-width: var(--hair); }
+
+/* -----------------------------------------------------------------------------
+   18. BADGE & PILL
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
+  border: var(--hair) solid var(--line);
+  color: var(--ink-soft);
+}
+.badge--accent { border-color: var(--accent); color: var(--accent-700); }
+.badge--solid { background: var(--black); border-color: var(--black); color: var(--paper); }
+.pill { border-radius: var(--radius-pill); }
+
+/* -----------------------------------------------------------------------------
+   19. DATA TABLE
+   -------------------------------------------------------------------------- */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table { font-size: var(--fs-sm); min-width: 520px; }
+.table th, .table td { text-align: left; padding: var(--s-4) var(--s-4) var(--s-4) 0; border-bottom: var(--hair) solid var(--line); vertical-align: top; }
+.table thead th {
+  font-family: var(--font-head); font-size: var(--fs-label);
+  letter-spacing: var(--ls-label); text-transform: uppercase;
+  color: var(--ink-soft); font-weight: var(--fw-medium);
+  border-bottom-color: var(--black);
+}
+.table td { color: var(--ink-soft); }
+.table tbody tr:hover td { color: var(--black); }
+
+/* -----------------------------------------------------------------------------
+   20. FIGURE, GALLERY & BEFORE/AFTER
+   -------------------------------------------------------------------------- */
+.figure { margin: 0; }
+.figure img { width: 100%; }
+.figure figcaption { margin-top: var(--s-3); font-size: var(--fs-xs); color: var(--ink-mute); }
+
+.gallery { display: grid; gap: var(--s-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
+.shot { position: relative; display: grid; overflow: hidden; background: var(--placeholder); aspect-ratio: 3 / 2; }
+.shot img { width: 100%; height: 100%; object-fit: cover; }
+.shot__tag {
+  position: absolute; left: 0; bottom: 0;
+  padding: 6px 12px;
+  background: rgba(14, 17, 22, .78);
+  color: var(--paper);
+  font-size: var(--fs-label); letter-spacing: .12em; text-transform: uppercase;
+}
+.shot--wide { grid-column: span 2; }
+@media (max-width: 620px) { .shot--wide { grid-column: span 1; } }
+
+/* Simple lightbox */
+.lightbox {
+  position: fixed; inset: 0; z-index: var(--z-menu);
+  display: none; align-items: center; justify-content: center;
+  padding: var(--s-6);
+  background: rgba(14, 17, 22, .92);
+}
+.lightbox.is-open { display: flex; }
+.lightbox img { max-width: min(1100px, 100%); max-height: 88vh; object-fit: contain; }
+.lightbox__close {
+  position: absolute; top: var(--s-6); right: var(--s-6);
+  color: var(--paper); font-size: var(--fs-label);
+  letter-spacing: .12em; text-transform: uppercase; cursor: pointer; padding: 8px;
+}
+
+/* -----------------------------------------------------------------------------
+   21. RAIL (contextual sidebar nav) & PREV/NEXT
+   -------------------------------------------------------------------------- */
+.rail { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
+.rail .label { display: block; margin-bottom: var(--s-4); }
+.rail__list { border-top: var(--hair) solid var(--line); }
+.rail__list a {
+  display: block; padding: var(--s-3) 0;
+  border-bottom: var(--hair) solid var(--line);
+  font-size: var(--fs-sm); color: var(--ink-soft);
+  transition: color var(--t-fast) var(--ease), padding-left var(--t-fast) var(--ease);
+}
+.rail__list a:hover { color: var(--black); padding-left: 6px; }
+.rail__list a.is-active { color: var(--black); font-weight: var(--fw-medium); }
+.rail__list a.is-active::before { content: ""; display: inline-block; width: 12px; height: var(--hair); background: var(--accent); vertical-align: middle; margin-right: 8px; }
+@media (max-width: 940px) { .rail { position: static; } }
+
+.pager {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--hair);
+  background: var(--line);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line);
+}
+.pager__item { background: var(--paper); padding: var(--s-6) var(--s-5); display: block; transition: background var(--t-fast) var(--ease); }
+.pager__item:hover { background: var(--paper-2); }
+.pager__item .label { display: block; margin-bottom: var(--s-2); }
+.pager__title { display: block; font-family: var(--font-head); font-size: 1rem; font-weight: var(--fw-semi); color: var(--black); }
+.pager__item--next { text-align: right; }
+@media (max-width: 560px) { .pager { grid-template-columns: 1fr; } .pager__item--next { text-align: left; } }
+
+/* -----------------------------------------------------------------------------
+   22. FORMS
+   Underline fields, uppercase labels, inline validation messaging.
+   -------------------------------------------------------------------------- */
+.form { max-width: 760px; }
+.form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-7) var(--s-8); }
+.form__grid--single { grid-template-columns: 1fr; }
+@media (max-width: 620px) { .form__grid { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
+.field--full { grid-column: 1 / -1; }
+.field > label:not(.choice), .fieldset__legend {
+  font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.field__req { color: var(--accent-700); }
+
+.field input[type="text"], .field input[type="tel"], .field input[type="email"],
+.field input[type="date"], .field input[type="number"], .field input[type="url"],
+.field select, .field textarea {
+  width: 100%;
+  border: 0; border-bottom: var(--hair) solid var(--line);
+  background: transparent;
+  padding: 10px 2px;
+  font-size: 1rem;
+  color: var(--black);
+  border-radius: 0;
+  appearance: none; -webkit-appearance: none;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.field textarea { resize: vertical; min-height: 82px; line-height: 1.6; }
+.field select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+                    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-position: calc(100% - 10px) center, calc(100% - 4px) center;
+  background-size: 6px 6px; background-repeat: no-repeat;
+  padding-right: var(--s-7);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-bottom-color: var(--black);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-mute); }
+
+.field__hint { font-size: var(--fs-xs); color: var(--ink-mute); }
+.field__error { font-size: var(--fs-xs); color: var(--error); display: none; }
+.field.has-error input, .field.has-error select, .field.has-error textarea { border-bottom-color: var(--error); }
+.field.has-error .field__error { display: block; }
+.field.is-valid input, .field.is-valid select, .field.is-valid textarea { border-bottom-color: var(--ok); }
+
+/* Choice controls */
+.fieldset { border: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-3); }
+.fieldset__legend { padding: 0; margin-bottom: var(--s-1); }
+.choice { display: flex; align-items: flex-start; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-soft); cursor: pointer; }
+.choice input { flex: none; width: 16px; height: 16px; margin-top: 3px; accent-color: var(--accent); }
+.choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: var(--s-3); }
+
+.form__actions { grid-column: 1 / -1; margin-top: var(--s-2); }
+.form__note { font-size: var(--fs-xs); color: var(--ink-soft); margin-top: var(--s-4); max-width: 52ch; line-height: 1.6; }
+.form__success { border-left: 2px solid var(--ok); background: var(--ok-bg); padding: var(--s-6); }
+.form__success h3 { font-size: 1.25rem; margin-bottom: var(--s-2); }
+.form__success p { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 46ch; }
+
+/* Form section divider inside long forms */
+.form__section-title {
+  grid-column: 1 / -1;
+  font-family: var(--font-head); font-size: 1.0625rem; font-weight: var(--fw-semi);
+  padding-top: var(--s-5); margin-top: var(--s-2);
+  border-top: var(--hair) solid var(--line);
+}
+.form__section-title:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+
+/* -----------------------------------------------------------------------------
+   23. CTA BAND
+   -------------------------------------------------------------------------- */
+.cta {
+  border-top: var(--hair) solid var(--line);
+  padding-block: var(--s-10);
+}
+.cta h2 { margin-bottom: var(--s-5); max-width: 20ch; }
+.cta p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--s-7); }
+.cta--dark { background: var(--black); border-top-color: var(--black); }
+.cta--dark h2 { color: var(--paper); }
+.cta--dark p { color: var(--paper-soft); }
+
+/* -----------------------------------------------------------------------------
+   24. MAP FRAME
+   -------------------------------------------------------------------------- */
+.map { border: var(--hair) solid var(--line); background: var(--paper-3); }
+.map iframe { width: 100%; height: 100%; min-height: 320px; border: 0; display: block; filter: grayscale(.35); }
+
+/* -----------------------------------------------------------------------------
+   25. COOKIE BANNER
+   -------------------------------------------------------------------------- */
+.cookie {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-top);
+  background: var(--black); color: var(--paper-soft);
+  border-top: var(--hair) solid var(--line-dark);
+  transform: translateY(110%);
+  transition: transform var(--t-slow) var(--ease);
+}
+.cookie.is-open { transform: none; }
+.cookie__inner {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--s-5);
+  padding-block: var(--s-5);
+}
+.cookie p { font-size: var(--fs-sm); max-width: 60ch; }
+.cookie a { color: var(--paper); border-bottom: var(--hair) solid var(--accent-line); }
+.cookie__actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+
+/* -----------------------------------------------------------------------------
+   26. ICONS
+   -------------------------------------------------------------------------- */
+.icon { width: 1em; height: 1em; display: inline-block; vertical-align: -.125em; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.icon--16 { width: 16px; height: 16px; }
+.icon--20 { width: 20px; height: 20px; }
+.icon--24 { width: 24px; height: 24px; }

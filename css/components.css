@@ -60,6 +60,9 @@
 .menu__link:hover .arc path,
 .footer__link:hover .arc path,
 .footer__strong:hover .arc path,
+/* Set by js/ui.js on a tapped link, so the arc draws on a device that cannot
+   hover — the navigation waits for it. */
+.is-arcing .arc path,
 .tab.is-active .arc path,
 .tab:hover .arc path { stroke-dashoffset: 0; }
 

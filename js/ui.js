@@ -96,6 +96,77 @@
     select(wanted > -1 ? wanted : 0, {});
   });
 
+  /* --- 1c. Let the arc finish drawing before the page changes -------------
+     Only where the arc is still the affordance: nav items, the mobile menu
+     and footer links. Deliberately conservative — a delayed navigation is a
+     slower navigation, so it is skipped entirely unless it buys something:
+
+       • on a hovering pointer the arc has already drawn by the time the click
+         lands, so there is nothing to wait for and no delay is added. In
+         practice this means the wait only happens on touch and keyboard,
+         where it doubles as feedback that the tap registered;
+       • never on a modified or middle click, which the browser is about to
+         turn into a new tab;
+       • never off-site, never tel:/mailto:, never a link to the current page;
+       • never under prefers-reduced-motion;
+       • and never for longer than CAP — a transitionend that does not arrive
+         must not strand someone on the page they tried to leave.
+
+     The click is only cancelled once every one of those has passed, so if any
+     of this fails the link is still an ordinary link. */
+  var ARC_DRAW = cssMs('--t', 300);
+  var ARC_CAP = 400;
+
+  function cssMs(prop, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+    if (!v) return fallback;
+    var n = parseFloat(v);
+    if (isNaN(n)) return fallback;
+    return /ms$/.test(v) ? n : n * 1000;   /* the tokens are in s, not ms */
+  }
+
+  /* How much of the arc is still undrawn, in milliseconds. */
+  function arcRemaining(path) {
+    var s = getComputedStyle(path);
+    var offset = parseFloat(s.strokeDashoffset);
+    var length = parseFloat(s.strokeDasharray) || 100;
+    if (isNaN(offset) || offset <= 0.5) return 0;   /* already drawn */
+    return ARC_DRAW * (Math.min(offset, length) / length);
+  }
+
+  document.addEventListener('click', function (e) {
+    if (reduceMotion || e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    var link = e.target.closest('a.nav__link, a.menu__link, a.footer__link');
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+    if (link.origin !== location.origin) return;                    /* off-site, tel:, mailto: */
+    if (link.href.split('#')[0] === location.href.split('#')[0]) return;  /* this page */
+
+    var path = link.querySelector('.arc path');
+    if (!path) return;
+
+    var wait = arcRemaining(path);
+    if (wait <= 0) return;
+
+    e.preventDefault();
+    link.classList.add('is-arcing');
+
+    var url = link.href, done = false;
+    function go() {
+      if (done) return;
+      done = true;
+      path.removeEventListener('transitionend', onEnd);
+      window.location.href = url;
+    }
+    function onEnd(ev) {
+      if (ev.propertyName && ev.propertyName !== 'stroke-dashoffset') return;
+      go();
+    }
+    path.addEventListener('transitionend', onEnd);
+    setTimeout(go, Math.min(wait + 40, ARC_CAP));
+  });
+
   /* --- 2. Accordions ------------------------------------------------------ */
   Array.prototype.forEach.call(document.querySelectorAll('.accordion__btn'), function (btn) {
     var panel = document.getElementById(btn.getAttribute('aria-controls'));

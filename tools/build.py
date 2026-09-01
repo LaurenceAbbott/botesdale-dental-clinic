@@ -76,7 +76,7 @@ def btn(label, href, variant='solid', extra=''):
 
 def arc_link(label, href, light=False):
     cls = 'arc-link arc-link--light' if light else 'arc-link'
-    return '<a class="%s" href="%s"><span>%s</span>%s</a>' % (cls, href, esc(label), ARC)
+    return '<a class="%s" href="%s">%s</a>' % (cls, href, esc(label))
 
 
 # =============================================================================

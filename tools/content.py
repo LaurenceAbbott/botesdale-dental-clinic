@@ -166,7 +166,7 @@ def c_btn(label, href, variant='solid'):
 
 def c_arc_link(label, href, light=False):
     cls = 'arc-link arc-link--light' if light else 'arc-link'
-    return '<a class="%s" href="%s"><span>%s</span>%s</a>' % (cls, href, _e(label), ARC)
+    return '<a class="%s" href="%s">%s</a>' % (cls, href, _e(label))
 
 
 def c_ph(label='', cls=''):
@@ -255,7 +255,7 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3):
           <span class="label">{label}</span>
           <h3>{title}</h3>
           <p>{text}</p>
-          <span class="arc-link"><span>Read more</span>{arc}</span>
+          <span class="arc-link">Read more</span>
         </div>
       </a>'''.format(href=href, d=min(i, 3), ph=c_ph(it.get('alt') or it['title']),
                      label=_e(it.get('label', '')), title=_e(it['title']),
@@ -285,7 +285,7 @@ def c_cards(H, depth, items, cols=3):
         <span class="label">{label}</span>
         <h3>{title}</h3>
         <p>{text}</p>
-        <span class="arc-link"><span>Read more</span>{arc}</span>
+        <span class="arc-link">Read more</span>
       </div>
     </a>'''.format(href=href, ph=c_ph(it.get('alt') or it['title']),
                    label=_e(it.get('label', '')), title=_e(it['title']),
@@ -2658,7 +2658,7 @@ def r_styleguide(depth, H):
         b5='<a class="btn btn--outline btn--sm" href="#0"><span class="btn__fill"></span>'
            '<span class="btn__label">Small outline</span></a>',
         b6=c_btn('Light button', '#0', 'light'),
-        a1=c_arc_link('Arc link', '#0'), a2=c_arc_link('Arc link on dark', '#0', light=True))))
+        a1=c_arc_link('Text link', '#0'), a2=c_arc_link('Text link on dark', '#0', light=True))))
 
     # Badges, notices
     body.append(_sg('Badges & notices', '05', '''

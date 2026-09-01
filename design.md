@@ -12,7 +12,7 @@ The reference for this system is precision-engineering brand design — Porsche 
 1. **One rail.** Every piece of text on the site — inside a centred container or inside a full-bleed section — starts or stops on the same vertical line. Media is the only thing allowed to cross it. See §2.3.
 2. **Lines, not boxes.** Structure is expressed with 1px hairlines and alignment. Shadows are almost never used; corners are square (`--radius: 0`). **Form controls are the deliberate exception** — an input is a thing you put something into, and it has to look like one, so fields are bordered boxes (§4.24). The border is the same hairline and the corners are still square, so they sit inside the system rather than beside it.
 3. **Two grounds.** A warm off-white (`--paper`) and a near-black (`--black`). Every section belongs to one of them. Dark sections are used deliberately, for emphasis, roughly one per screenful of scrolling.
-4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings and validation. It is never used as a background for large areas.
+4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings, validation, text links (§4.2) and the fill of the one primary button a page is allowed (§4.1). It is never used as a background for large areas — a button is the largest thing it fills.
 5. **Editorial rhythm.** Full-bleed media/copy splits, generous vertical space, and a short uppercase micro-label above almost every heading. Copy is left-aligned throughout — including quotes and closing calls to action.
 6. **Restrained motion.** 200–480ms, ease-out, and only on hover, reveal and open/close. Everything respects `prefers-reduced-motion`.
 
@@ -51,8 +51,8 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--paper-soft` | `rgba(247,246,243,.70)` | Body copy on black |
 | `--paper-mute` | `rgba(247,246,243,.45)` | Micro-labels on black |
 | `--accent` | `#17A6DE` | Arc motif, markers, focus, validation |
-| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | Hover / small text on light. `--accent-700` is the primary button fill and the colour of a text link |
-| `--accent-800` / `--accent-900` | `#08506E` / `#063C53` | Primary button hover and press |
+| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
+| `--accent-800` | `#08506E` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
 > **Note on the brand blue.** The written brief specifies `#009ee3`. The approved design system uses `#17A6DE`, which sits better against the warm paper ground. To switch, change `--accent` (and optionally `--accent-600/700`) in `css/base.css` — nothing else needs touching.
@@ -162,13 +162,24 @@ Each entry lists the file it lives in, the markup, and the modifiers available. 
 
 **One primary per page.** `--solid` is the primary and a page gets one: the single thing you most want the visitor to do. Where a page carries a form, the form's submit is that primary and the closing CTA is demoted — `c_cta(..., demote=True)` renders its leading button as an outline. Where a page carries two forms, the secondary one is built with `f_form(..., variant='outline')`, which also carries through to the wizard's *Continue* via `data-step-variant`, so a stepped form never shows a primary the page has not allotted it. The style guide is the one exception: it is a component reference and has to show every variant at once.
 
-| Modifier | Ground | Fill | Hover | Press |
+| Modifier | Ground | Rest | Hover | Press |
 |---|---|---|---|---|
-| `--solid` | paper or dark | `--accent-700`, white label — 5.7:1 | `--accent-800` | `--accent-900` |
+| `--solid` | paper or dark | `--accent` + ink label — 6.8:1 | `--accent-600` — 4.8:1 | `--accent-600`, border `--accent-800` |
 | `--outline` | paper | none, ink border | inverts to ink | — |
 | `--light` | dark only | none, paper border | inverts to paper | — |
 
-The primary is `--accent-700` rather than `--accent` because white on `--accent` is **2.78:1**, which fails AA at the 13px button size; `--accent-700` gives 5.7:1. If the brighter brand blue is wanted here, the label has to go to `--black` (6.8:1 on `--accent`) — white on `#17A6DE` is not an option.
+**Why the label is ink and not white.** White on `--accent` is **2.78:1** — it fails AA badly, and at 13px there is no large-text exemption to fall back on. Ink on `--accent` is 6.8:1.
+
+**Why press darkens the border, not the fill.** The ink label is what limits the range. It needs a fill of at least L 0.2 to clear 4.5:1, and the steps go:
+
+| Fill | Ink label | White label |
+|---|---|---|
+| `--accent` `#17A6DE` | **6.80:1** | 2.78:1 |
+| `--accent-600` `#1189BB` | **4.79:1** | 3.95:1 |
+| `--accent-700` `#0B6E97` | 3.32:1 | **5.69:1** |
+| `--accent-800` `#08506E` | 2.15:1 | **8.81:1** |
+
+So an ink label has exactly one darker step available. Hover takes it, and press darkens the border instead — pressed still reads as pressed, and the label never drops under contrast. Going darker than `--accent-600` would mean flipping the label to white mid-interaction, which is worse than a border change.
 
 Also `--sm`, `--block`, `.is-disabled`. Wrap groups in `.btn-row`.
 

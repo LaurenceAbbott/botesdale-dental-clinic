@@ -99,16 +99,20 @@
 .btn:active { transform: scale(.98); }
 .btn__label { position: relative; }
 
-/* Primary — one per page. Accent, going darker on hover and darker again when
-   pressed. It is --accent-700 and not --accent: white on --accent is 2.78:1,
-   which fails AA at this size, where --accent-700 gives 5.7:1. */
+/* Primary — one per page. The brand accent, with an INK label: white on
+   --accent is 2.78:1 and fails AA at this size, where ink gives 6.8:1.
+   That choice sets how far the button can darken. An ink label needs a fill
+   of at least L 0.2, which --accent-600 clears at 4.8:1 and --accent-700 does
+   not (3.3:1) — so there is exactly one darker step available. Hover takes
+   it; press darkens the border instead of the fill, which reads as pressed
+   without dragging the label under contrast. */
 .btn--solid {
-  background: var(--accent-700);
-  border-color: var(--accent-700);
-  color: var(--paper-2);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--black);
 }
-.btn--solid:hover { background: var(--accent-800); border-color: var(--accent-800); }
-.btn--solid:active { background: var(--accent-900); border-color: var(--accent-900); }
+.btn--solid:hover { background: var(--accent-600); border-color: var(--accent-600); }
+.btn--solid:active { background: var(--accent-600); border-color: var(--accent-800); }
 
 .btn--outline { background: transparent; color: var(--black); }
 .btn--outline:hover { background: var(--black); color: var(--paper); }

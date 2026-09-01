@@ -206,6 +206,8 @@ Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 
+**The sheet has no rules between its items.** It used to: every `.menu__link` carried a `border-bottom`, but the link is `width: fit-content`, so each rule stopped at the end of its own text while `.menu__group` ran the full width — a ragged mix of stub and full-width lines down the sheet. They were separating items that 26px type and 18px of padding already separate. Sub-items are indented by `--s-5` instead, which does the hierarchy the rules were failing to. This is the exception that proves §1.2: a hairline earns its place by doing work no other means does. Down a list of large type in open space, it does none.
+
 ### 4.4 Image placeholder — `.ph`
 
 Every media area on the site is currently a placeholder rather than a photograph.

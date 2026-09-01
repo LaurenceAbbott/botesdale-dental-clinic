@@ -211,17 +211,20 @@ body.is-locked { overflow: hidden; }
   color: var(--black); cursor: pointer; padding: 8px;
 }
 
+/* No rules between items. They used to carry a border-bottom, but .menu__link
+   is width:fit-content so each one stopped at the end of its own text while
+   .menu__group ran the full width — a ragged mix of stub and full-width lines
+   down the sheet, separating items that large type and open space already
+   separate perfectly well. */
 .menu__link {
   position: relative; display: block; width: fit-content;
   font-family: var(--font-head); font-size: clamp(1.375rem, 1.1rem + 1.4vw, 1.625rem);
   font-weight: var(--fw-semi);
-  padding: 16px 0;
-  border-bottom: var(--hair) solid var(--line);
+  padding: 18px 0;
 }
-.menu__group { border-bottom: var(--hair) solid var(--line); }
 .menu__toggle {
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
-  width: 100%; padding: 16px 0; text-align: left; cursor: pointer;
+  width: 100%; padding: 18px 0; text-align: left; cursor: pointer;
   font-family: var(--font-head); font-size: clamp(1.375rem, 1.1rem + 1.4vw, 1.625rem);
   font-weight: var(--fw-semi); color: var(--black);
 }
@@ -230,7 +233,7 @@ body.is-locked { overflow: hidden; }
 .menu__sub { max-height: 0; overflow: hidden; transition: max-height var(--t) var(--ease); }
 .menu__sub.is-open { max-height: 460px; }
 .menu__sub a {
-  display: block; padding: 10px 0 10px 4px;
+  display: block; padding: 10px 0 10px var(--s-5);
   font-size: 1rem; color: var(--ink-soft);
   transition: color var(--t-fast) var(--ease);
 }

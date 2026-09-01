@@ -1454,6 +1454,35 @@ def f_repeat(base, singular, fields, min_items=1, max_items=12, add_label=None):
            _e(add_label or ('Add another ' + singular.lower())), max_items))
 
 
+def f_chooser(cid, panels):
+    """Tab switcher for a page holding one form per audience.
+
+    `panels` is a list of (key, tab title, tab subtitle, heading, body). The tab
+    row ships hidden and every panel ships visible, so with JavaScript off the
+    page is exactly what it was before — two headed forms, one after the other.
+    js/ui.js unhides the tabs and takes over from there.
+    """
+    tabs = ''.join(
+        '<button class="chooser__tab" type="button" role="tab" id="%s-tab-%s" '
+        'aria-controls="%s-panel-%s" aria-selected="%s" data-chooser-key="%s" tabindex="%s">'
+        '<span class="chooser__tab-title">%s</span>'
+        '<span class="chooser__tab-sub">%s</span></button>'
+        % (cid, key, cid, key, 'true' if i == 0 else 'false', key, '0' if i == 0 else '-1',
+           _e(title), _e(sub))
+        for i, (key, title, sub, _h, _b) in enumerate(panels))
+
+    bodies = '\n'.join(
+        '<div class="chooser__panel" id="%s-panel-%s" role="tabpanel" '
+        'aria-labelledby="%s-tab-%s" tabindex="0">\n'
+        '  <h2 class="chooser__heading u-mb-6">%s</h2>\n  %s\n</div>'
+        % (cid, key, cid, key, _e(heading), body)
+        for key, _t, _s, heading, body in panels)
+
+    return ('<div class="chooser" data-chooser>\n'
+            '  <div class="chooser__tabs" role="tablist" aria-label="Who is referring?" hidden>%s</div>\n'
+            '%s\n</div>' % (tabs, bodies))
+
+
 def f_form(form_id, fields, submit='Send', note='', success_title='Thank you — message sent.',
            success_text='A member of the practice team will be in touch shortly.',
            steps=False):
@@ -1976,29 +2005,28 @@ def r_implant_referrals(depth, H):
         ]),
     ]
 
-    out.append(c_section('''<div class="form-stack">
-      <div class="form-block">
-        <h2 class="u-mb-6">Patient self referral</h2>
-        <p class="lead u-mb-8">Not registered with us? You can refer yourself directly. Complete the form and we will contact you to arrange an assessment.</p>
-        {f1}
-      </div>
-      <div class="form-block">
-        <h2 class="u-mb-6">Dental professionals referral</h2>
-        <p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are assessed and treated here, with updates shared back to the referring practice throughout.</p>
-        {f2}
-      </div>
-    </div>'''.format(
-        f1=f_form('patientSelfReferral', patient_fields, 'Send referral', steps=True,
+    out.append(c_section(f_chooser('implant', [
+        ('patient', 'I am a patient', 'Refer yourself for an implant assessment',
+         'Patient self referral',
+         '<p class="lead u-mb-8">Not registered with us? You can refer yourself directly. '
+         'Complete the form and we will contact you to arrange an assessment.</p>'
+         + f_form('patientSelfReferral', patient_fields, 'Send referral', steps=True,
                   note='We will contact you to arrange an assessment appointment. Please do not '
                        'include confidential clinical detail you would rather send by post.',
                   success_title='Referral received.',
-                  success_text='Thank you — we will be in touch to arrange your assessment.'),
-        f2=f_form('professionalReferral', pro_fields, 'Send referral', steps=True,
+                  success_text='Thank you — we will be in touch to arrange your assessment.')),
+        ('professional', 'I am a dental professional', 'Refer a patient to the implant clinic',
+         'Dental professionals referral',
+         '<p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are '
+         'assessed and treated here, with updates shared back to the referring practice '
+         'throughout.</p>'
+         + f_form('professionalReferral', pro_fields, 'Send referral', steps=True,
                   note='Radiographs and clinical images can be emailed separately to '
                        'reception@botesdaledental.co.uk.',
                   success_title='Referral received.',
                   success_text='Thank you. We will confirm receipt and contact the patient '
-                               'directly to arrange an assessment.'))))
+                               'directly to arrange an assessment.')),
+    ])))
 
     out.append(c_process(H, depth, 'Shared care', 'How a referral works', [
         ('Referral received', 'We acknowledge every referral and confirm what we have been '
@@ -2107,7 +2135,7 @@ def r_referrals(depth, H):
         ], intro='List everyone at the referring practice who will refer patients for '
                  'radiographic examinations and/or report on dental images. Add as many as you '
                  'need. Evidence of suitable training must be provided for each of them.'),
-        f_step('Agreement', [
+        f_step('Confirm and sign', [
             '<div class="field"><label class="choice">'
             '<input type="checkbox" id="sla-agree" name="sla-agree" required>'
             '<span>We agree: (1) To use the referral criteria above; (2) That evidence of adequate '
@@ -2115,24 +2143,29 @@ def r_referrals(depth, H):
             'IRMER17 roles; (3) That adequate information will accompany each referred patient to '
             'allow the justification process to proceed.</span></label>'
             '<span class="field__error" role="alert"></span></div>',
-            f_field('sla-signame', 'Name', required=True),
+            f_field('sla-signame', 'Your name', required=True,
+                    hint='Signing on behalf of the practice.'),
             f_field('sla-date', 'Date', 'date', required=True),
-        ]),
+        ], intro='Someone able to sign for the practice should complete this step.'),
     ]
 
     out.append(c_section('''<div class="notice u-mb-8">
-      <strong>Please complete both forms</strong>
-      You only need to complete the Service Level Agreement form once. If you have previously submitted a referral and this included the Service Level Agreement, you do not need to complete it again.
+      <strong>These forms are for dental practices, not patients</strong>
+      If you are a patient looking for a scan, your own dentist refers you to us — please ask them. To enquire about implant treatment for yourself, use the <a class="link-inline" href="implant-referrals.html#patient">implant self-referral form</a>.
     </div>
     <div class="form-stack">
       <div class="form-block">
-        <h2 class="u-mb-6">Referral form</h2>
+        <h2 class="u-mb-6">Send a referral</h2>
+        <p class="lead u-mb-8 u-measure">Use this for every patient you refer to us for a CBCT scan or an OPG radiograph.</p>
         {f1}
       </div>
       <div class="form-block">
-        <h2 class="u-mb-6">Service level agreement</h2>
+        <h2 class="u-mb-4">Register your practice</h2>
+        <p class="label u-mb-6">One-off · first referral only</p>
         <div class="u-mb-8 u-measure">
-          <span class="label">Receiving practice</span>
+          <p class="lead">Before we can accept referrals from your practice, we need this once. It records who at your practice is entitled to refer patients for X-rays and to report on the images, which the radiation regulations (IR(ME)R 2017) require us both to hold on file. It is also known as the <strong>service level agreement</strong>.</p>
+          <p class="u-mt-4">Complete it alongside your first referral. After that, send referrals on their own — you will not see this again unless the people at your practice change.</p>
+          <h3 class="u-mt-8 u-mb-4">Who you are referring to</h3>
           {specs}
           <h3 class="u-mt-8 u-mb-4">Referral criteria</h3>
           <p class="muted">The document specified here will be used by both parties as the basis for the referral of patients and the justification/authorisation of dental radiographic examinations.</p>
@@ -2146,10 +2179,12 @@ def r_referrals(depth, H):
                   success_title='Referral received.',
                   success_text='Thank you. We will contact the patient to arrange their scan and '
                                'confirm with your practice.'),
-        f2=f_form('slaForm', sla_fields, 'Submit agreement', steps=True,
-                  success_title='Agreement received.',
-                  success_text='Thank you — we will confirm and keep this on file for future '
-                               'referrals.'),
+        f2=f_form('slaForm', sla_fields, 'Register practice', steps=True,
+                  note='You only need to do this once. We will confirm by email when your '
+                       'practice is registered.',
+                  success_title='Practice registered.',
+                  success_text='Thank you — we will confirm by email and keep this on file. '
+                               'Future referrals can be sent on their own.'),
         specs=c_specs([
             ('Practice', 'Botesdale Dental Practice &amp; Implant Clinic'),
             ('Address', 'The Drift, Botesdale, Suffolk IP22 1DH'),
@@ -2752,6 +2787,16 @@ def r_styleguide(depth, H):
         note='Turn JavaScript off and this becomes one long form with every step '
              'visible and a working submit button.')
         + '</div>'))
+
+    # Chooser
+    body.append(_sg('Chooser (tab switcher)', '12c', f_chooser('sg', [
+        ('sg-one', 'I am a patient', 'What a patient would fill in', 'Patient panel',
+         '<p class="muted">One panel per audience. Turn JavaScript off and the tab row '
+         'disappears, leaving both panels visible with their own headings.</p>'),
+        ('sg-two', 'I am a professional', 'What a colleague would fill in', 'Professional panel',
+         '<p class="muted">Arrow keys move between tabs; the selected tab is written to the '
+         'URL hash so links can open a particular panel.</p>'),
+    ])))
 
     # Gallery
     body.append(_sg('Gallery & lightbox', '13', c_gallery(H, depth, [

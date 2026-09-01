@@ -18,12 +18,15 @@ The reference for this system is precision-engineering brand design — Porsche 
 
 ### The arc
 
-The practice's signature motif is a shallow arc — a smile. It appears in two places:
+The practice's signature motif is a shallow arc — a smile. It appears in three places:
 
 * **`.arc`** — an inline SVG stroke that draws itself in under links, nav items and tabs on hover.
 * **`#smileClip`** — an SVG `clipPath` that gives button hover-fills a curved leading edge.
+* **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
 
-Both are defined once per page (`<svg class="svg-defs">`) and referenced everywhere. If you remove the `svg-defs` block, buttons lose their curved fill.
+All are defined once per page (`<svg class="svg-defs">`) and referenced everywhere. If you remove the `svg-defs` block, buttons lose their curved fill and the hero panels go back to a straight bottom edge.
+
+The arc is **cut into** the panel rather than drawn on top of it, so whatever is behind shows through the curve — which is the page ground, since the panel still occupies its full height in layout. That means the section following a hero has to be on `--paper` (or have no background of its own). Every page currently satisfies this; if you ever put a `--paper-3` band directly under a page head, the sliver revealed by the arc will be the wrong colour.
 
 ---
 
@@ -113,7 +116,9 @@ Two things to know if you extend this:
 
 A 4px base scale: `--s-1` (4px) through `--s-12` (112px). Section padding uses the fluid `--section-y` / `--section-y-tight` tokens rather than a fixed step, so vertical rhythm scales with the viewport.
 
-Layout tokens: `--wrap` (1200px), `--wrap-wide` (1440px), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px).
+Layout tokens: `--wrap` (1200px), `--wrap-wide` (1440px), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px), `--control-h` (48px).
+
+`--control-h` is the height of every single-line form control. It is fixed rather than left to each input's intrinsic sizing because date and time inputs size themselves from their own internal rendering and will not match a text input — Chromium makes them a couple of pixels taller, Safari collapses an empty one well below the rest. Pinning both to one token is the only thing that holds on both engines, and it keeps every field above the 44px tap-target minimum.
 
 ### 2.5 Motion
 
@@ -204,6 +209,10 @@ The hero and page heads are dark panels rather than placeholders; each carries a
 ```
 
 `margin-top: calc(-1 * var(--nav-h))` pulls it under the transparent header. The scrim is a three-stop gradient that keeps text legible whatever the photograph does.
+
+The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The path lifts the two bottom corners to `0.955` of the panel height and holds full height at the centre, so the curve only ever eats into the corners — and `.hero__inner` / `.page-head__inner` carry one extra step of bottom padding because the copy sits in a corner the arc lifts.
+
+**If you are grading the photograph:** the arc reads because the panel is at its darkest exactly where the curve is. A gradient that fades the image *out* toward the bottom will wash the curve away against the paper; the scrim already runs the other way (transparent at the top, `.82` black at the bottom), which is what makes the edge crisp. Fade in from the top, not out at the bottom — and if your image carries its own gradient, turn the scrim down rather than stacking the two.
 
 ### 4.6 Page head — `components.css`
 

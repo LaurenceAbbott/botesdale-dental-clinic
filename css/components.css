@@ -172,12 +172,17 @@
 /* -----------------------------------------------------------------------------
    04. HERO — full-bleed, image or gradient, copy bottom-left
    -------------------------------------------------------------------------- */
+/* The bottom edge carries the practice's arc — the same smile as #smileClip
+   and the .arc underline, cut into the panel rather than drawn on it, so the
+   page ground shows through the curve. Defined once per page in .svg-defs;
+   remove that block and these panels simply go back to a straight edge. */
 .hero {
   position: relative; overflow: hidden;
   display: flex; align-items: flex-end;
   min-height: 420px; max-height: 660px; height: 78vh;
   margin-top: calc(-1 * var(--nav-h));
   background: var(--grad-hero);
+  clip-path: url(#heroArc);
 }
 .hero__media {
   position: absolute; inset: 0;
@@ -188,7 +193,9 @@
   position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(14,17,22,.55) 0%, rgba(14,17,22,.15) 42%, rgba(14,17,22,.82) 100%);
 }
-.hero__inner { position: relative; width: 100%; padding-bottom: var(--s-9); color: var(--paper); }
+/* One step deeper than it would otherwise need: the arc lifts the bottom
+   corners, and the copy sits in the corner it lifts. */
+.hero__inner { position: relative; width: 100%; padding-bottom: var(--s-10); color: var(--paper); }
 .hero__inner .label { color: var(--paper-mute); display: block; margin-bottom: var(--s-4); }
 .hero h1 { color: var(--paper); max-width: 18ch; }
 .hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); font-size: var(--fs-lead); }
@@ -220,6 +227,7 @@
   margin-top: calc(-1 * var(--nav-h));
   background: var(--grad-hero);
   color: var(--paper);
+  clip-path: url(#heroArc);
 }
 .page-head--short { min-height: 34vh; }
 .page-head__media {
@@ -234,7 +242,7 @@
 .page-head__inner {
   position: relative;
   padding-top: calc(var(--nav-h) + var(--s-6));
-  padding-bottom: var(--s-8);
+  padding-bottom: var(--s-9);   /* clears the arc — see .hero__inner */
 }
 .page-head .label { display: block; color: var(--paper-mute); margin-bottom: var(--s-4); }
 .page-head h1 { color: var(--paper); max-width: 20ch; overflow-wrap: break-word; }
@@ -684,10 +692,21 @@ a.card:hover { transform: translateY(-2px); }
   background: var(--paper-2);
   padding: 12px 14px;
   font-size: 1rem;
+  line-height: 1.4;
   color: var(--black);
   border-radius: 0;
   appearance: none; -webkit-appearance: none;
   transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  min-height: var(--control-h);
+}
+/* Date and time inputs size themselves from their own internal rendering, so
+   they do not match a text input on either engine — Chromium makes them a
+   couple of pixels taller, Safari collapses an empty one to well under the
+   rest. Pinning the height to the same token is the only thing that holds on
+   both; flex-centring keeps the value on the same baseline as its neighbours. */
+.field input[type="date"], .field input[type="time"] {
+  height: var(--control-h);
+  display: flex; align-items: center;
 }
 .field textarea { resize: vertical; min-height: 96px; line-height: 1.6; }
 .field select {

@@ -33,6 +33,13 @@
     <clipPath id="smileClip" clipPathUnits="objectBoundingBox">
       <path d="M0,0.08 Q0.5,0.4 1,0.08 L1,1 L0,1 Z"/>
     </clipPath>
+    <!-- The same smile, on the bottom edge of the dark hero panels. The control
+         point sits past 1 so the curve reaches exactly full height at the
+         centre and lifts to 0.955 at the sides — the panel keeps its depth
+         where the copy sits and the arc only ever cuts into the corners. -->
+    <clipPath id="heroArc" clipPathUnits="objectBoundingBox">
+      <path d="M0,0 L1,0 L1,0.955 Q0.5,1.045 0,0.955 Z"/>
+    </clipPath>
   </defs>
 </svg>
 
@@ -157,12 +164,8 @@
         <h2 class="u-mb-4">Register your practice</h2>
         <p class="label u-mb-6">One-off · first referral only</p>
         <div class="u-mb-8 u-measure">
-          <p class="lead">Before we can accept referrals from your practice, we need this once. It records who at your practice is entitled to refer patients for X-rays and to report on the images, which the radiation regulations (IR(ME)R 2017) require us both to hold on file. It is also known as the <strong>service level agreement</strong>.</p>
-          <p class="u-mt-4">Complete it alongside your first referral. After that, send referrals on their own — you will not see this again unless the people at your practice change.</p>
-          <h3 class="u-mt-8 u-mb-4">Who you are referring to</h3>
-          <div class="specs"><div class="spec"><span class="spec__k">Practice</span><span class="spec__v">Botesdale Dental Practice &amp; Implant Clinic</span></div><div class="spec"><span class="spec__k">Address</span><span class="spec__v">The Drift, Botesdale, Suffolk IP22 1DH</span></div><div class="spec"><span class="spec__k">Phone</span><span class="spec__v"><a href="tel:+441379897176">01379 897176</a></span></div><div class="spec"><span class="spec__k">Email</span><span class="spec__v"><a href="mailto:reception@botesdaledental.co.uk">reception@botesdaledental.co.uk</a></span></div><div class="spec"><span class="spec__k">Clinical lead</span><span class="spec__v">Dr Martin Sulo</span></div></div>
-          <h3 class="u-mt-8 u-mb-4">Referral criteria</h3>
-          <p class="muted">The document specified here will be used by both parties as the basis for the referral of patients and the justification/authorisation of dental radiographic examinations.</p>
+          <p class="lead">Before we can accept referrals from your practice, we need to record who there is entitled to refer patients for X-rays and to report on the images. The radiation regulations (IR(ME)R 2017) require us both to keep that on file. You may know it as the <strong>service level agreement</strong>.</p>
+          <p class="u-mt-4"><strong>Fill in the form below</strong> the first time you refer a patient to us. It takes a couple of minutes, and you will not need to do it again unless the people at your practice change.</p>
         </div>
         <form class="form" id="slaForm" data-validate data-steps data-success="slaFormSuccess" novalidate>
   <div class="form__step" data-step data-step-title="Referring practice">
@@ -212,7 +215,8 @@
   <div class="form__step" data-step data-step-title="Confirm and sign">
     <div class="form__section-title">Confirm and sign</div><p class="form__step-intro field__hint">Someone able to sign for the practice should complete this step.</p>
     <div class="form__grid">
-      <div class="field"><label class="choice"><input type="checkbox" id="sla-agree" name="sla-agree" required><span>We agree: (1) To use the referral criteria above; (2) That evidence of adequate training has been provided for each of the people named above appropriate to their IRMER17 roles; (3) That adequate information will accompany each referred patient to allow the justification process to proceed.</span></label><span class="field__error" role="alert"></span></div>
+      <div class="notice notice--plain"><strong>Referral criteria</strong>This document will be used by both parties as the basis for the referral of patients and the justification/authorisation of dental radiographic examinations.</div>
+      <div class="field"><label class="choice"><input type="checkbox" id="sla-agree" name="sla-agree" required><span>We agree: (1) To use the referral criteria set out above; (2) That evidence of adequate training has been provided for each of the people named in this form, appropriate to their IR(ME)R 2017 roles; (3) That adequate information will accompany each referred patient to allow the justification process to proceed.</span></label><span class="field__error" role="alert"></span></div>
       <div class="field"><label for="sla-signame">Your name <span class="field__req" aria-hidden="true">*</span></label><input id="sla-signame" name="sla-signame" type="text" required><span class="field__hint">Signing on behalf of the practice.</span><span class="field__error" role="alert"></span></div>
       <div class="field"><label for="sla-date">Date <span class="field__req" aria-hidden="true">*</span></label><input id="sla-date" name="sla-date" type="date" required><span class="field__error" role="alert"></span></div>
     </div>
@@ -226,6 +230,10 @@
   <h3>Practice registered.</h3>
   <p>Thank you — we will confirm by email and keep this on file. Future referrals can be sent on their own.</p>
 </div>
+        <div class="u-mt-8 u-measure">
+          <h3 class="u-mb-4">Who you are referring to</h3>
+          <div class="specs"><div class="spec"><span class="spec__k">Practice</span><span class="spec__v">Botesdale Dental Practice &amp; Implant Clinic</span></div><div class="spec"><span class="spec__k">Address</span><span class="spec__v">The Drift, Botesdale, Suffolk IP22 1DH</span></div><div class="spec"><span class="spec__k">Phone</span><span class="spec__v"><a href="tel:+441379897176">01379 897176</a></span></div><div class="spec"><span class="spec__k">Email</span><span class="spec__v"><a href="mailto:reception@botesdaledental.co.uk">reception@botesdaledental.co.uk</a></span></div><div class="spec"><span class="spec__k">Clinical lead</span><span class="spec__v">Dr Martin Sulo</span></div></div>
+        </div>
       </div>
     </div></div></section>
 <section class="cta">

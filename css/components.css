@@ -60,7 +60,6 @@
 .menu__link:hover .arc path,
 .footer__link:hover .arc path,
 .footer__strong:hover .arc path,
-.arc-link:hover .arc path,
 .tab.is-active .arc path,
 .tab:hover .arc path { stroke-dashoffset: 0; }
 
@@ -118,16 +117,29 @@
 
 /* -----------------------------------------------------------------------------
    03. ARC LINK — the standard "read more" affordance
+   Named for the motif it used to carry: the arc was drawn in on hover, which
+   meant that on a touch screen it never appeared at all and the link read as
+   a line of grey uppercase text with nothing to say it was a link. It is now
+   an ordinary underlined link in the accent, legible without interaction.
+   The class name stays so the 48 existing usages need no change.
    -------------------------------------------------------------------------- */
 .arc-link {
-  position: relative; display: inline-block; width: fit-content;
-  padding-bottom: 6px;
-  font-size: .75rem; letter-spacing: var(--ls-cta); text-transform: uppercase;
-  color: var(--black);
+  display: inline-block; width: fit-content;
+  padding-block: 2px;
+  font-size: var(--fs-sm);
+  /* --accent-700 rather than --accent: 5.3:1 on paper against the accent's
+     2.2:1, which is the difference between passing AA at this size and not. */
+  color: var(--accent-700);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color var(--t-fast) var(--ease), text-decoration-thickness var(--t-fast) var(--ease);
 }
-.arc-link .arc { height: 7px; }
-.arc-link:active .arc path { stroke-width: 3; }
-.arc-link--light { color: var(--paper); }
+/* Hover darkens to ink. --accent-600 would be the obvious pick but it is
+   lighter than --accent-700, so hovering would drop the link to 3.6:1. */
+.arc-link:hover { color: var(--black); text-decoration-thickness: 2px; }
+.arc-link--light { color: var(--accent); }
+.arc-link--light:hover { color: var(--paper); }
 
 /* -----------------------------------------------------------------------------
    03b. IMAGE PLACEHOLDER
@@ -375,7 +387,12 @@ a.card:hover { transform: translateY(-2px); }
 .statement .label { display: block; color: var(--paper-mute); }
 .statement h2 { color: var(--paper); font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.5rem); line-height: 1.2; margin: var(--s-4) 0 var(--s-5); max-width: 20ch; }
 .statement p { color: var(--paper-soft); max-width: 54ch; margin-bottom: var(--s-7); }
-.statement .arc-link { color: var(--paper); }
+/* Dark bands get the same accent link as everywhere else, not white — a link
+   should be the one colour wherever it lands. Kept as a selector rather than
+   deleted because it has to out-specify plain .arc-link, and --accent reads
+   6.8:1 on --black. */
+.statement .arc-link { color: var(--accent); }
+.statement .arc-link:hover { color: var(--paper); }
 
 .facts {
   display: grid;

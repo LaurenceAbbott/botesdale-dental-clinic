@@ -20,7 +20,7 @@ The reference for this system is precision-engineering brand design — Porsche 
 
 The practice's signature motif is a shallow arc — a smile. It appears in three places:
 
-* **`.arc`** — an inline SVG stroke that draws itself in under links, nav items and tabs on hover.
+* **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3.
 * **`#smileClip`** — an SVG `clipPath` that gives button hover-fills a curved leading edge.
 * **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
 
@@ -168,15 +168,20 @@ Wrap groups in `.btn-row`.
 
 ### 4.2 Arc link — `components.css`
 
+The standard "read more" affordance.
+
 ```html
-<a class="arc-link" href="#">
-  <span>Read more</span>
-  <svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,1 Q50,7 100,1" pathLength="100"/></svg>
-</a>
+<a class="arc-link" href="#">Read more</a>
 ```
 
-The standard "read more" affordance. `--light` variant for dark sections.
+**It no longer carries an arc.** The name is kept because 40-odd usages reference it, but the motif has gone: the arc was drawn in on hover, and hover does not exist on a touch screen, so on a phone the link was a line of grey uppercase text with nothing at all to say it was a link. It is now an ordinary link — accent coloured, underlined, sentence case — legible as one without any interaction.
+
+* On paper it uses `--accent-700`, not `--accent`: 5.3:1 against 2.2:1, which is the difference between passing AA at this size and failing it. Hover goes to `--black` — `--accent-600` is *lighter* than `--accent-700`, so the obvious hover token would drop the link to 3.6:1.
+* `--light` for dark grounds uses `--accent` at 6.8:1, hovering to `--paper`.
+* `.statement .arc-link` has to restate the colour because it out-specifies the modifier.
+* Two usages are `<span class="arc-link">` inside a card that is itself a link — affordance text rather than a nested link. They take the same styling.
+
+The general rule this follows: **hover may enhance an affordance, never carry it.** The arc is still right on nav and footer links, which read as navigation from their position; it was wrong as the only cue on a standalone call to action.
 
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
 

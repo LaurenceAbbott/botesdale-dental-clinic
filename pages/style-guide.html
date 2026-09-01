@@ -182,13 +182,67 @@
     <div class="field field--full"><label for="sg-message">Your message</label><textarea id="sg-message" name="sg-message" rows="4"></textarea><span class="field__error" role="alert"></span></div>
     <fieldset class="fieldset field--full"><legend class="fieldset__legend">Areas of interest</legend><div class="choice-grid"><label class="choice"><input type="checkbox" name="sg-checks" value="General dentistry"><span>General dentistry</span></label><label class="choice"><input type="checkbox" name="sg-checks" value="Cosmetic dentistry"><span>Cosmetic dentistry</span></label><label class="choice"><input type="checkbox" name="sg-checks" value="Implants"><span>Implants</span></label></div></fieldset>
     <div class="field field--full"><label class="choice"><input type="checkbox" id="sg-consent" required><span>I agree to be contacted.</span></label><span class="field__error" role="alert"></span></div>
-    <div class="form__actions">
-      <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send message</span></button>
-      <p class="form__note">Submit with fields empty to see the validation states.</p>
-    </div>
+  </div>
+  <div class="form__actions">
+    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send message</span></button>
+    <p class="form__note">Submit with fields empty to see the validation states.</p>
   </div>
 </form>
 <div class="form__success" id="sgFormSuccess" hidden>
+  <h3>Thank you — message sent.</h3>
+  <p>A member of the practice team will be in touch shortly.</p>
+</div></div></section><section class="sg-section"><span class="label">12b</span><h2>Multi-step form &amp; repeat group</h2><div class="sg-demo"><form class="form" id="sgSteps" data-validate data-steps data-success="sgStepsSuccess" novalidate>
+  <div class="form__step" data-step data-step-title="Your details">
+    <div class="form__section-title">Your details</div>
+    <div class="form__grid">
+      <div class="field"><label for="sg-s-name">Name <span class="field__req" aria-hidden="true">*</span></label><input id="sg-s-name" name="sg-s-name" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="sg-s-email">Email <span class="field__req" aria-hidden="true">*</span></label><input id="sg-s-email" name="sg-s-email" type="email" required><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__step" data-step data-step-title="Your team">
+    <div class="form__section-title">Your team</div><p class="form__step-intro field__hint">A repeat group. Add and remove people — the fields are renamed sg-person[0][…], sg-person[1][…] and so on as you go.</p>
+    <div class="form__grid">
+      <div class="repeat" data-repeat data-repeat-name="sg-person" data-repeat-singular="Person" data-repeat-min="1" data-repeat-max="4">
+      <div class="repeat__list" data-repeat-list>
+      <div class="repeat__item" data-repeat-item>
+        <div class="repeat__head">
+          <span class="repeat__num">Person <span data-repeat-num>01</span></span>
+          <button class="repeat__remove" type="button" data-repeat-remove>Remove</button>
+        </div>
+        <div class="form__grid">
+          <div class="field"><label for="sg-person-0-name">Name <span class="field__req" aria-hidden="true">*</span></label><input id="sg-person-0-name" name="sg-person[0][name]" type="text" required><span class="field__error" role="alert"></span></div>
+          <div class="field"><label for="sg-person-0-role">Role <span class="field__req" aria-hidden="true">*</span></label><select id="sg-person-0-role" name="sg-person[0][role]" required><option value="" disabled selected>Please choose</option><option>Referrer</option><option>Operating (reporting)</option><option>Both</option></select><span class="field__error" role="alert"></span></div>
+        </div>
+      </div>
+      </div>
+      <template data-repeat-template><div class="repeat__item" data-repeat-item>
+        <div class="repeat__head">
+          <span class="repeat__num">Person <span data-repeat-num>__n__</span></span>
+          <button class="repeat__remove" type="button" data-repeat-remove>Remove</button>
+        </div>
+        <div class="form__grid">
+          <div class="field"><label for="sg-person-__i__-name">Name <span class="field__req" aria-hidden="true">*</span></label><input id="sg-person-__i__-name" name="sg-person[__i__][name]" type="text" required><span class="field__error" role="alert"></span></div>
+          <div class="field"><label for="sg-person-__i__-role">Role <span class="field__req" aria-hidden="true">*</span></label><select id="sg-person-__i__-role" name="sg-person[__i__][role]" required><option value="" disabled selected>Please choose</option><option>Referrer</option><option>Operating (reporting)</option><option>Both</option></select><span class="field__error" role="alert"></span></div>
+        </div>
+      </div></template>
+      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add><span class="btn__fill"></span><span class="btn__label">Add another person</span></button>
+      <p class="repeat__full" data-repeat-full hidden>That is the maximum of 4. Please contact the practice if you need to add more.</p>
+      <p class="visually-hidden" role="status" data-repeat-status></p>
+    </div>
+    </div>
+  </div>
+  <div class="form__step" data-step data-step-title="Confirm">
+    <div class="form__section-title">Confirm</div>
+    <div class="form__grid">
+      <div class="field"><label for="sg-s-notes">Anything else?</label><textarea id="sg-s-notes" name="sg-s-notes" rows="3"></textarea><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__actions">
+    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Submit</span></button>
+    <p class="form__note">Turn JavaScript off and this becomes one long form with every step visible and a working submit button.</p>
+  </div>
+</form>
+<div class="form__success" id="sgStepsSuccess" hidden>
   <h3>Thank you — message sent.</h3>
   <p>A member of the practice team will be in touch shortly.</p>
 </div></div></section><section class="sg-section"><span class="label">13</span><h2>Gallery &amp; lightbox</h2><div class="gallery"><figure class="shot"><div class="ph" role="img" aria-label="Before treatment"><span class="ph__label">Before treatment</span></div><span class="shot__tag">Before</span></figure><figure class="shot"><div class="ph" role="img" aria-label="After treatment"><span class="ph__label">After treatment</span></div><span class="shot__tag">After</span></figure><figure class="shot"><div class="ph" role="img" aria-label="Detail of the finished work"><span class="ph__label">Detail of the finished work</span></div><span class="shot__tag">Detail</span></figure></div></section><section class="sg-section"><span class="label">14</span><h2>Rail &amp; pager</h2><div class="cols-2 u-mb-8"><div><aside class="rail">

@@ -111,6 +111,24 @@ Four forms ship with full client-side validation and no back end:
 | `referrals.html` | CBCT & OPG referral, and the IRMER Service Level Agreement |
 | `implant-referrals.html` | Patient self-referral, and dental professional referral |
 
+The two referral pages are **multi-step**: their forms are split into panels
+with a stepper across the top and Back / Continue below, and each panel is
+validated before you can move on. The Service Level Agreement's list of
+entitled people is a **repeat group** — "Add another person", with no fixed
+ceiling of three — and it submits as an array:
+
+```
+sla-referrer[0][name]   sla-referrer[0][gdc]   sla-referrer[0][role]
+sla-referrer[1][name]   …
+```
+
+Indices are always `0..n-1` with no gaps, whatever order people are added and
+removed in. Whatever you wire the forms up to needs to expect that shape.
+
+None of it depends on JavaScript to be usable: with JS off, every step is
+visible, there is no stepper, the submit button sits at the end, and the
+repeat group renders one person. Test that path before launch.
+
 All the wiring is documented at the top of `js/forms.js`. In short:
 
 * **Formspree** — set `action="https://formspree.io/f/XXXX" method="post"` on the

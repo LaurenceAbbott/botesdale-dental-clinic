@@ -136,7 +136,8 @@ The layout is fluid first; these are the only hard breakpoints in the system.
 | `≤ 940px` | `.with-rail` and `.contact-grid` stack |
 | `≤ 900px` | `.cols-3` → 2 columns; strip → 2 columns; gallery → 2 columns; footer → 2 columns |
 | `≤ 860px` | `.ed` and `.team__row` leave the bleed grid and stack |
-| `≤ 620px` | `.cols-*` → 1 column; form grid → 1 column |
+| `≤ 720px` | Stepper labels give way to the step count and the panel's own heading |
+| `≤ 620px` | `.cols-*` → 1 column |
 | `≤ 540px` | Strip → 1 column |
 | `≤ 479px` | Buttons in a `.btn-row` go full width |
 
@@ -312,6 +313,51 @@ Underlined fields, uppercase micro-labels, and a `.field__error` element that fi
 ```
 
 Add `data-validate` and `data-success="<id>"` to the `<form>`. Validation runs on submit, and on blur once a field has been touched. States: `.has-error`, `.is-valid`. Choice controls use `.choice` / `.choice-grid`; long forms are divided with `.form__section-title`.
+
+**One column, always.** `.form__grid` is a single column at every width. A form is a sequence to be worked through top to bottom; a second column asks the eye to pick a path and makes the order ambiguous — worse still when a field's label sits beside an unrelated one. `.field--full` and `.form__grid--single` remain as harmless aliases. Two forms on one page stack in a `.form-stack`, separated by a rule, rather than sitting side by side.
+
+### 4.24a Multi-step form — `[data-steps]`, `.stepper`, `.form__step`
+
+Long forms are split into panels. Each panel is a `[data-step]` with a `data-step-title`; `js/forms.js` builds the stepper and the Back / Continue row, shows one panel at a time, and validates the current panel before letting you advance.
+
+```html
+<form class="form" data-validate data-steps data-success="xSuccess" novalidate>
+  <div class="form__step" data-step data-step-title="Patient details">
+    <div class="form__section-title">Patient details</div>
+    <div class="form__grid">…</div>
+  </div>
+  …
+  <div class="form__actions">…submit…</div>
+</form>
+```
+
+Everything the wizard needs is generated, so **the markup degrades cleanly**: with JavaScript off, every panel is visible, there is no stepper, and the submit button sits at the end of one long form. Nothing is behind a step that a non-JS visitor cannot reach.
+
+* Only steps already reached are clickable in the stepper; jumping ahead would skip validation in between.
+* Submitting validates every step, not just the visible one, and reveals the step holding the first error.
+* Enter advances instead of submitting, except on the last step (and never when a button has focus).
+* The step title is shown once: by the stepper's labelled list on desktop, by the panel's own `.form__section-title` below 720px where that list is hidden.
+
+Use it when a form runs past roughly fifteen fields. Below that the steps cost more than they save.
+
+### 4.24b Repeat group — `[data-repeat]`
+
+A variable-length list of identical field sets — "add another entitled person". The first item is in the markup and the rest are cloned from a `<template>`, so a non-JS visitor still gets one usable item.
+
+```html
+<div class="repeat" data-repeat data-repeat-name="sla-referrer"
+     data-repeat-singular="Person" data-repeat-min="1" data-repeat-max="12">
+  <div class="repeat__list" data-repeat-list>
+    <div class="repeat__item" data-repeat-item>…</div>
+  </div>
+  <template data-repeat-template>…the same item, with __i__ / __n__ …</template>
+  <button data-repeat-add>…</button>
+</div>
+```
+
+Controls are named `base[i][suffix]` with ids `base-i-suffix`, so a back end receives a clean array rather than `referrer1`, `referrer2`, `referrer3`. On every add and remove the script renumbers `id`, `name`, `for` and `aria-*` so the indices stay `0..n-1` with no gaps, and refreshes each item's visible number. Remove disappears at `min`; Add disappears at `max`. Both actions move focus somewhere sensible and are announced through a visually hidden live region.
+
+In the generator, build one with `f_repeat()` — it takes a function returning the fields for one item and uses it for both the first item and the template, so the two cannot drift apart.
 
 ### 4.25 CTA band — `.cta`
 

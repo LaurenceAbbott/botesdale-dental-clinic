@@ -85,31 +85,40 @@
     <p>Self-referrals from patients and referrals from dental professionals.</p>
   </div>
 </section>
-<section class="section"><div class="wrap"><div class="cols-2 grid--loose">
-      <div>
+<section class="section"><div class="wrap"><div class="form-stack">
+      <div class="form-block">
         <h2 class="u-mb-6">Patient self referral</h2>
         <p class="lead u-mb-8">Not registered with us? You can refer yourself directly. Complete the form and we will contact you to arrange an assessment.</p>
-        <form class="form" id="patientSelfReferral" data-validate data-success="patientSelfReferralSuccess" novalidate>
-  <div class="form__grid">
-    <div class="form__section-title">Patient details</div>
-    <div class="field"><label for="psr-name">Full name <span class="field__req" aria-hidden="true">*</span></label><input id="psr-name" name="psr-name" type="text" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-dob">Date of birth</label><input id="psr-dob" name="psr-dob" type="date"><span class="field__error" role="alert"></span></div>
-    <div class="field field--full"><label for="psr-address">Address</label><textarea id="psr-address" name="psr-address" rows="3"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-postcode">Postcode</label><input id="psr-postcode" name="psr-postcode" type="text"><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-phone">Phone <span class="field__req" aria-hidden="true">*</span></label><input id="psr-phone" name="psr-phone" type="tel" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-email">Email <span class="field__req" aria-hidden="true">*</span></label><input id="psr-email" name="psr-email" type="email" required><span class="field__error" role="alert"></span></div>
-    <div class="form__section-title">Medical history</div>
-    <div class="field field--full"><label for="psr-medical">Please provide any relevant medical history (including medications)</label><textarea id="psr-medical" name="psr-medical" rows="4"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="form__section-title">Dental history</div>
-    <div class="field field--full"><label for="psr-dental">Please describe any recent dental issues, treatments, or concerns</label><textarea id="psr-dental" name="psr-dental" rows="4"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="form__section-title">Reason for considering dental implants</div>
-    <div class="field field--full"><label for="psr-reason">What would you like to improve or restore with dental implants?</label><textarea id="psr-reason" name="psr-reason" rows="4"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-when">How soon are you hoping to start?</label><select id="psr-when" name="psr-when"><option value="" disabled selected>Please choose</option><option>As soon as possible</option><option>Within 3 months</option><option>Within 6 months</option><option>Just exploring options</option></select><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="psr-contact">Preferred contact method</label><select id="psr-contact" name="psr-contact"><option value="" disabled selected>Please choose</option><option>Phone</option><option>Email</option><option>Either</option></select><span class="field__error" role="alert"></span></div>
-    <div class="form__actions">
-      <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send referral</span></button>
-      <p class="form__note">We will contact you to arrange an assessment appointment. Please do not include confidential clinical detail you would rather send by post.</p>
+        <form class="form" id="patientSelfReferral" data-validate data-steps data-success="patientSelfReferralSuccess" novalidate>
+  <div class="form__step" data-step data-step-title="Your details">
+    <div class="form__section-title">Your details</div>
+    <div class="form__grid">
+      <div class="field"><label for="psr-name">Full name <span class="field__req" aria-hidden="true">*</span></label><input id="psr-name" name="psr-name" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-dob">Date of birth</label><input id="psr-dob" name="psr-dob" type="date"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-address">Address</label><textarea id="psr-address" name="psr-address" rows="3"></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-postcode">Postcode</label><input id="psr-postcode" name="psr-postcode" type="text"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-phone">Phone <span class="field__req" aria-hidden="true">*</span></label><input id="psr-phone" name="psr-phone" type="tel" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-email">Email <span class="field__req" aria-hidden="true">*</span></label><input id="psr-email" name="psr-email" type="email" required><span class="field__error" role="alert"></span></div>
     </div>
+  </div>
+  <div class="form__step" data-step data-step-title="Your health">
+    <div class="form__section-title">Your health</div><p class="form__step-intro field__hint">Both of these are optional here — we will go through your history properly at your assessment. Anything you can tell us now helps us prepare.</p>
+    <div class="form__grid">
+      <div class="field"><label for="psr-medical">Please provide any relevant medical history (including medications)</label><textarea id="psr-medical" name="psr-medical" rows="4"></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-dental">Please describe any recent dental issues, treatments, or concerns</label><textarea id="psr-dental" name="psr-dental" rows="4"></textarea><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__step" data-step data-step-title="What you are looking for">
+    <div class="form__section-title">What you are looking for</div>
+    <div class="form__grid">
+      <div class="field"><label for="psr-reason">What would you like to improve or restore with dental implants?</label><textarea id="psr-reason" name="psr-reason" rows="4"></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-when">How soon are you hoping to start?</label><select id="psr-when" name="psr-when"><option value="" disabled selected>Please choose</option><option>As soon as possible</option><option>Within 3 months</option><option>Within 6 months</option><option>Just exploring options</option></select><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="psr-contact">Preferred contact method</label><select id="psr-contact" name="psr-contact"><option value="" disabled selected>Please choose</option><option>Phone</option><option>Email</option><option>Either</option></select><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__actions">
+    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send referral</span></button>
+    <p class="form__note">We will contact you to arrange an assessment appointment. Please do not include confidential clinical detail you would rather send by post.</p>
   </div>
 </form>
 <div class="form__success" id="patientSelfReferralSuccess" hidden>
@@ -117,35 +126,45 @@
   <p>Thank you — we will be in touch to arrange your assessment.</p>
 </div>
       </div>
-      <div>
+      <div class="form-block">
         <h2 class="u-mb-6">Dental professionals referral</h2>
         <p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are assessed and treated here, with updates shared back to the referring practice throughout.</p>
-        <form class="form" id="professionalReferral" data-validate data-success="professionalReferralSuccess" novalidate>
-  <div class="form__grid">
-    <div class="form__section-title">Referring dentist / professional details</div>
-    <div class="field"><label for="dpr-name">Name <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-name" name="dpr-name" type="text" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-practice">Practice / organisation <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-practice" name="dpr-practice" type="text" required><span class="field__error" role="alert"></span></div>
-    <div class="field field--full"><label for="dpr-address">Address</label><textarea id="dpr-address" name="dpr-address" rows="3"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-postcode">Postcode</label><input id="dpr-postcode" name="dpr-postcode" type="text"><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-phone">Phone <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-phone" name="dpr-phone" type="tel" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-email">Email <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-email" name="dpr-email" type="email" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-gdc">GDC / professional number <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-gdc" name="dpr-gdc" type="text" required><span class="field__error" role="alert"></span></div>
-    <div class="form__section-title">Patient details</div>
-    <div class="field"><label for="dpr-pname">Full name <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-pname" name="dpr-pname" type="text" required><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-pdob">Date of birth</label><input id="dpr-pdob" name="dpr-pdob" type="date"><span class="field__error" role="alert"></span></div>
-    <div class="field field--full"><label for="dpr-paddress">Address</label><textarea id="dpr-paddress" name="dpr-paddress" rows="3"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-ppostcode">Postcode</label><input id="dpr-ppostcode" name="dpr-ppostcode" type="text"><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-pphone">Phone</label><input id="dpr-pphone" name="dpr-pphone" type="tel"><span class="field__error" role="alert"></span></div>
-    <div class="field"><label for="dpr-pemail">Email</label><input id="dpr-pemail" name="dpr-pemail" type="email"><span class="field__error" role="alert"></span></div>
-    <div class="form__section-title">Referral details</div>
-    <div class="field field--full"><label for="dpr-reason">Reason for referral <span class="field__req" aria-hidden="true">*</span></label><textarea id="dpr-reason" name="dpr-reason" rows="4" required></textarea><span class="field__error" role="alert"></span></div>
-    <div class="field field--full"><label for="dpr-history">Relevant medical and dental history</label><textarea id="dpr-history" name="dpr-history" rows="4"></textarea><span class="field__error" role="alert"></span></div>
-    <fieldset class="fieldset field--full"><legend class="fieldset__legend">Referral scope</legend><div class="choice-grid"><label class="choice"><input type="checkbox" name="dpr-scope" value="Assessment only"><span>Assessment only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Assessment and treatment"><span>Assessment and treatment</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Surgical placement only"><span>Surgical placement only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Restorative only"><span>Restorative only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Second opinion"><span>Second opinion</span></label></div></fieldset>
-    <div class="field field--full"><label for="dpr-notes">Any other notes</label><textarea id="dpr-notes" name="dpr-notes" rows="3"></textarea><span class="field__error" role="alert"></span></div>
-    <div class="form__actions">
-      <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send referral</span></button>
-      <p class="form__note">Radiographs and clinical images can be emailed separately to reception@botesdaledental.co.uk.</p>
+        <form class="form" id="professionalReferral" data-validate data-steps data-success="professionalReferralSuccess" novalidate>
+  <div class="form__step" data-step data-step-title="Your details">
+    <div class="form__section-title">Your details</div>
+    <div class="form__grid">
+      <div class="field"><label for="dpr-name">Name <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-name" name="dpr-name" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-practice">Practice / organisation <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-practice" name="dpr-practice" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-gdc">GDC / professional number <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-gdc" name="dpr-gdc" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-address">Address</label><textarea id="dpr-address" name="dpr-address" rows="3"></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-postcode">Postcode</label><input id="dpr-postcode" name="dpr-postcode" type="text"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-phone">Phone <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-phone" name="dpr-phone" type="tel" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-email">Email <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-email" name="dpr-email" type="email" required><span class="field__error" role="alert"></span></div>
     </div>
+  </div>
+  <div class="form__step" data-step data-step-title="Patient details">
+    <div class="form__section-title">Patient details</div>
+    <div class="form__grid">
+      <div class="field"><label for="dpr-pname">Full name <span class="field__req" aria-hidden="true">*</span></label><input id="dpr-pname" name="dpr-pname" type="text" required><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-pdob">Date of birth</label><input id="dpr-pdob" name="dpr-pdob" type="date"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-paddress">Address</label><textarea id="dpr-paddress" name="dpr-paddress" rows="3"></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-ppostcode">Postcode</label><input id="dpr-ppostcode" name="dpr-ppostcode" type="text"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-pphone">Phone</label><input id="dpr-pphone" name="dpr-pphone" type="tel"><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-pemail">Email</label><input id="dpr-pemail" name="dpr-pemail" type="email"><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__step" data-step data-step-title="Referral details">
+    <div class="form__section-title">Referral details</div>
+    <div class="form__grid">
+      <div class="field"><label for="dpr-reason">Reason for referral <span class="field__req" aria-hidden="true">*</span></label><textarea id="dpr-reason" name="dpr-reason" rows="4" required></textarea><span class="field__error" role="alert"></span></div>
+      <div class="field"><label for="dpr-history">Relevant medical and dental history</label><textarea id="dpr-history" name="dpr-history" rows="4"></textarea><span class="field__error" role="alert"></span></div>
+      <fieldset class="fieldset field--full"><legend class="fieldset__legend">Referral scope</legend><div class="choice-grid"><label class="choice"><input type="checkbox" name="dpr-scope" value="Assessment only"><span>Assessment only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Assessment and treatment"><span>Assessment and treatment</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Surgical placement only"><span>Surgical placement only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Restorative only"><span>Restorative only</span></label><label class="choice"><input type="checkbox" name="dpr-scope" value="Second opinion"><span>Second opinion</span></label></div></fieldset>
+      <div class="field"><label for="dpr-notes">Any other notes</label><textarea id="dpr-notes" name="dpr-notes" rows="3"></textarea><span class="field__error" role="alert"></span></div>
+    </div>
+  </div>
+  <div class="form__actions">
+    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send referral</span></button>
+    <p class="form__note">Radiographs and clinical images can be emailed separately to reception@botesdaledental.co.uk.</p>
   </div>
 </form>
 <div class="form__success" id="professionalReferralSuccess" hidden>

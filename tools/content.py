@@ -1372,20 +1372,23 @@ TESTIMONIALS = [
 # FORM BUILDERS
 # =============================================================================
 def f_field(fid, label, kind='text', required=False, full=False, hint='', options=None,
-            placeholder='', rows=4):
+            placeholder='', rows=4, name=None):
+    """`name` defaults to the id. Pass it separately only for repeat-group
+    fields, where the id is base-i-suffix but the name is base[i][suffix]."""
     req = ' required' if required else ''
     star = ' <span class="field__req" aria-hidden="true">*</span>' if required else ''
     cls = 'field field--full' if full else 'field'
     ph = ' placeholder="%s"' % _e(placeholder) if placeholder else ''
+    nm = name if name is not None else fid
 
     if kind == 'textarea':
-        control = '<textarea id="%s" name="%s" rows="%d"%s%s></textarea>' % (fid, fid, rows, req, ph)
+        control = '<textarea id="%s" name="%s" rows="%d"%s%s></textarea>' % (fid, nm, rows, req, ph)
     elif kind == 'select':
         opts = ['<option value="" disabled selected>Please choose</option>']
         opts += ['<option>%s</option>' % _e(o) for o in (options or [])]
-        control = '<select id="%s" name="%s"%s>%s</select>' % (fid, fid, req, ''.join(opts))
+        control = '<select id="%s" name="%s"%s>%s</select>' % (fid, nm, req, ''.join(opts))
     else:
-        control = '<input id="%s" name="%s" type="%s"%s%s>' % (fid, fid, kind, req, ph)
+        control = '<input id="%s" name="%s" type="%s"%s%s>' % (fid, nm, kind, req, ph)
 
     hint_html = '<span class="field__hint">%s</span>' % _e(hint) if hint else ''
     return ('<div class="%s"><label for="%s">%s%s</label>%s%s'
@@ -1401,22 +1404,80 @@ def f_checks(name, legend, options, kind='checkbox'):
             '<div class="choice-grid">%s</div></fieldset>' % (_e(legend), items))
 
 
+def f_step(title, fields, intro=''):
+    """One panel of a multi-step form.
+
+    Rendered as a plain <div>, so with JavaScript off every step is simply
+    visible and the form reads as one long page. js/forms.js turns the set into
+    a wizard — see the header of that file.
+    """
+    lead = '<p class="form__step-intro field__hint">%s</p>' % intro if intro else ''
+    return ('<div class="form__step" data-step data-step-title="%s">\n'
+            '    <div class="form__section-title">%s</div>%s\n'
+            '    <div class="form__grid">\n      %s\n    </div>\n  </div>'
+            % (_e(title), _e(title), lead, '\n      '.join(fields)))
+
+
+def f_repeat(base, singular, fields, min_items=1, max_items=12, add_label=None):
+    """A variable-length list of identical field sets — an "array" group.
+
+    `fields` is a callable taking an index token and returning the field HTML
+    for one item. Both the first (index 0) item and the <template> used for
+    every later one are built from it, so the two can never drift apart.
+
+    Controls are named  base[i][suffix]  and given ids  base-i-suffix, which
+    js/forms.js renumbers on add and remove so the indices stay 0..n-1.
+    """
+    def item(index, number):
+        return (
+            '<div class="repeat__item" data-repeat-item>\n'
+            '        <div class="repeat__head">\n'
+            '          <span class="repeat__num">%s <span data-repeat-num>%s</span></span>\n'
+            '          <button class="repeat__remove" type="button" data-repeat-remove>Remove</button>\n'
+            '        </div>\n'
+            '        <div class="form__grid">\n          %s\n        </div>\n'
+            '      </div>' % (_e(singular), number, '\n          '.join(fields(index))))
+
+    return (
+        '<div class="repeat" data-repeat data-repeat-name="%s" data-repeat-singular="%s" '
+        'data-repeat-min="%d" data-repeat-max="%d">\n'
+        '      <div class="repeat__list" data-repeat-list>\n      %s\n      </div>\n'
+        '      <template data-repeat-template>%s</template>\n'
+        '      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add>'
+        '<span class="btn__fill"></span><span class="btn__label">%s</span></button>\n'
+        '      <p class="repeat__full" data-repeat-full hidden>That is the maximum of %d. '
+        'Please contact the practice if you need to add more.</p>\n'
+        '      <p class="visually-hidden" role="status" data-repeat-status></p>\n'
+        '    </div>'
+        % (base, _e(singular), min_items, max_items,
+           item('0', '01'), item('__i__', '__n__'),
+           _e(add_label or ('Add another ' + singular.lower())), max_items))
+
+
 def f_form(form_id, fields, submit='Send', note='', success_title='Thank you — message sent.',
-           success_text='A member of the practice team will be in touch shortly.'):
+           success_text='A member of the practice team will be in touch shortly.',
+           steps=False):
+    """`fields` is either a flat list of field HTML, or — when steps=True — a
+    list of f_step() panels."""
     sid = form_id + 'Success'
-    return '''<form class="form" id="{fid}" data-validate data-success="{sid}" novalidate>
-  <div class="form__grid">
-    {fields}
-    <div class="form__actions">
-      <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">{submit}</span></button>
-      {note}
-    </div>
+    if steps:
+        body = '\n  '.join(fields)
+        attrs = ' data-steps'
+    else:
+        body = '<div class="form__grid">\n    %s\n  </div>' % '\n    '.join(fields)
+        attrs = ''
+
+    return '''<form class="form" id="{fid}" data-validate{attrs} data-success="{sid}" novalidate>
+  {body}
+  <div class="form__actions">
+    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">{submit}</span></button>
+    {note}
   </div>
 </form>
 <div class="form__success" id="{sid}" hidden>
   <h3>{stitle}</h3>
   <p>{stext}</p>
-</div>'''.format(fid=form_id, sid=sid, fields='\n    '.join(fields), submit=_e(submit),
+</div>'''.format(fid=form_id, sid=sid, body=body, attrs=attrs, submit=_e(submit),
                  note=('<p class="form__note">%s</p>' % note) if note else '',
                  stitle=_e(success_title), stext=_e(success_text))
 
@@ -1861,72 +1922,78 @@ def r_implant_referrals(depth, H):
         c_crumbs(H, depth, ['implant'], 'Implant referrals'))]
 
     patient_fields = [
-        '<div class="form__section-title">Patient details</div>',
-        f_field('psr-name', 'Full name', required=True),
-        f_field('psr-dob', 'Date of birth', 'date'),
-        f_field('psr-address', 'Address', 'textarea', full=True, rows=3),
-        f_field('psr-postcode', 'Postcode'),
-        f_field('psr-phone', 'Phone', 'tel', required=True),
-        f_field('psr-email', 'Email', 'email', required=True),
-        '<div class="form__section-title">Medical history</div>',
-        f_field('psr-medical', 'Please provide any relevant medical history (including medications)',
-                'textarea', full=True, rows=4),
-        '<div class="form__section-title">Dental history</div>',
-        f_field('psr-dental', 'Please describe any recent dental issues, treatments, or concerns',
-                'textarea', full=True, rows=4),
-        '<div class="form__section-title">Reason for considering dental implants</div>',
-        f_field('psr-reason', 'What would you like to improve or restore with dental implants?',
-                'textarea', full=True, rows=4),
-        f_field('psr-when', 'How soon are you hoping to start?', 'select',
-                options=['As soon as possible', 'Within 3 months', 'Within 6 months',
-                         'Just exploring options']),
-        f_field('psr-contact', 'Preferred contact method', 'select',
-                options=['Phone', 'Email', 'Either']),
+        f_step('Your details', [
+            f_field('psr-name', 'Full name', required=True),
+            f_field('psr-dob', 'Date of birth', 'date'),
+            f_field('psr-address', 'Address', 'textarea', rows=3),
+            f_field('psr-postcode', 'Postcode'),
+            f_field('psr-phone', 'Phone', 'tel', required=True),
+            f_field('psr-email', 'Email', 'email', required=True),
+        ]),
+        f_step('Your health', [
+            f_field('psr-medical', 'Please provide any relevant medical history (including medications)',
+                    'textarea', rows=4),
+            f_field('psr-dental', 'Please describe any recent dental issues, treatments, or concerns',
+                    'textarea', rows=4),
+        ], intro='Both of these are optional here — we will go through your history properly at '
+                 'your assessment. Anything you can tell us now helps us prepare.'),
+        f_step('What you are looking for', [
+            f_field('psr-reason', 'What would you like to improve or restore with dental implants?',
+                    'textarea', rows=4),
+            f_field('psr-when', 'How soon are you hoping to start?', 'select',
+                    options=['As soon as possible', 'Within 3 months', 'Within 6 months',
+                             'Just exploring options']),
+            f_field('psr-contact', 'Preferred contact method', 'select',
+                    options=['Phone', 'Email', 'Either']),
+        ]),
     ]
 
     pro_fields = [
-        '<div class="form__section-title">Referring dentist / professional details</div>',
-        f_field('dpr-name', 'Name', required=True),
-        f_field('dpr-practice', 'Practice / organisation', required=True),
-        f_field('dpr-address', 'Address', 'textarea', full=True, rows=3),
-        f_field('dpr-postcode', 'Postcode'),
-        f_field('dpr-phone', 'Phone', 'tel', required=True),
-        f_field('dpr-email', 'Email', 'email', required=True),
-        f_field('dpr-gdc', 'GDC / professional number', required=True),
-        '<div class="form__section-title">Patient details</div>',
-        f_field('dpr-pname', 'Full name', required=True),
-        f_field('dpr-pdob', 'Date of birth', 'date'),
-        f_field('dpr-paddress', 'Address', 'textarea', full=True, rows=3),
-        f_field('dpr-ppostcode', 'Postcode'),
-        f_field('dpr-pphone', 'Phone', 'tel'),
-        f_field('dpr-pemail', 'Email', 'email'),
-        '<div class="form__section-title">Referral details</div>',
-        f_field('dpr-reason', 'Reason for referral', 'textarea', full=True, rows=4, required=True),
-        f_field('dpr-history', 'Relevant medical and dental history', 'textarea', full=True, rows=4),
-        f_checks('dpr-scope', 'Referral scope',
-                 ['Assessment only', 'Assessment and treatment', 'Surgical placement only',
-                  'Restorative only', 'Second opinion']),
-        f_field('dpr-notes', 'Any other notes', 'textarea', full=True, rows=3),
+        f_step('Your details', [
+            f_field('dpr-name', 'Name', required=True),
+            f_field('dpr-practice', 'Practice / organisation', required=True),
+            f_field('dpr-gdc', 'GDC / professional number', required=True),
+            f_field('dpr-address', 'Address', 'textarea', rows=3),
+            f_field('dpr-postcode', 'Postcode'),
+            f_field('dpr-phone', 'Phone', 'tel', required=True),
+            f_field('dpr-email', 'Email', 'email', required=True),
+        ]),
+        f_step('Patient details', [
+            f_field('dpr-pname', 'Full name', required=True),
+            f_field('dpr-pdob', 'Date of birth', 'date'),
+            f_field('dpr-paddress', 'Address', 'textarea', rows=3),
+            f_field('dpr-ppostcode', 'Postcode'),
+            f_field('dpr-pphone', 'Phone', 'tel'),
+            f_field('dpr-pemail', 'Email', 'email'),
+        ]),
+        f_step('Referral details', [
+            f_field('dpr-reason', 'Reason for referral', 'textarea', rows=4, required=True),
+            f_field('dpr-history', 'Relevant medical and dental history', 'textarea', rows=4),
+            f_checks('dpr-scope', 'Referral scope',
+                     ['Assessment only', 'Assessment and treatment', 'Surgical placement only',
+                      'Restorative only', 'Second opinion']),
+            f_field('dpr-notes', 'Any other notes', 'textarea', rows=3),
+        ]),
     ]
 
-    out.append(c_section('''<div class="cols-2 grid--loose">
-      <div>
+    out.append(c_section('''<div class="form-stack">
+      <div class="form-block">
         <h2 class="u-mb-6">Patient self referral</h2>
         <p class="lead u-mb-8">Not registered with us? You can refer yourself directly. Complete the form and we will contact you to arrange an assessment.</p>
         {f1}
       </div>
-      <div>
+      <div class="form-block">
         <h2 class="u-mb-6">Dental professionals referral</h2>
         <p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are assessed and treated here, with updates shared back to the referring practice throughout.</p>
         {f2}
       </div>
     </div>'''.format(
-        f1=f_form('patientSelfReferral', patient_fields, 'Send referral',
+        f1=f_form('patientSelfReferral', patient_fields, 'Send referral', steps=True,
                   note='We will contact you to arrange an assessment appointment. Please do not '
                        'include confidential clinical detail you would rather send by post.',
                   success_title='Referral received.',
                   success_text='Thank you — we will be in touch to arrange your assessment.'),
-        f2=f_form('professionalReferral', pro_fields, 'Send referral',
+        f2=f_form('professionalReferral', pro_fields, 'Send referral', steps=True,
                   note='Radiographs and clinical images can be emailed separately to '
                        'reception@botesdaledental.co.uk.',
                   success_title='Referral received.',
@@ -1975,88 +2042,96 @@ def r_referrals(depth, H):
         image='images/cards/cbct-imaging.jpg', alt='CBCT imaging at the practice'))
 
     ref_fields = [
-        '<div class="form__section-title">Referring dentist details</div>',
-        f_field('ref-name', 'Name', required=True),
-        f_field('ref-gdc', 'GDC number', required=True),
-        f_field('ref-practice', 'Practice name', required=True),
-        f_field('ref-address', 'Practice address', 'textarea', full=True, rows=3),
-        f_field('ref-email', 'Email', 'email', required=True),
-        f_field('ref-phone', 'Phone', 'tel', required=True),
-        '<div class="form__section-title">Patient details</div>',
-        f_field('ref-pname', 'Full name', required=True),
-        f_field('ref-pdob', 'Date of birth', 'date', required=True),
-        f_field('ref-paddress', 'Address', 'textarea', full=True, rows=3),
-        f_field('ref-pphone', 'Phone', 'tel', required=True),
-        f_field('ref-pemail', 'Email (optional)', 'email'),
-        '<div class="form__section-title">Clinical information</div>',
-        f_field('ref-reason', 'Reason for CBCT referral', 'textarea', full=True, rows=3, required=True),
-        f_field('ref-history', 'Relevant medical history', 'textarea', full=True, rows=3),
-        f_checks('ref-area', 'Area of interest (tick all that apply)',
-                 ['Upper right quadrant', 'Upper left quadrant', 'Lower right quadrant',
-                  'Lower left quadrant', 'Maxilla', 'Mandible', 'TMJ', 'Other']),
-        f_field('ref-other', 'If ‘other’, please give details', 'textarea', full=True, rows=2),
-        '<div class="form__section-title">Imaging requirements</div>',
-        f_field('ref-fov', 'Scan type requested', 'select', required=True,
-                options=['Small field of view (FOV)', 'Medium field of view (FOV)',
-                         'Large field of view (FOV)', 'OPG radiograph']),
-        f_field('ref-res', 'Resolution', 'select',
-                options=['Standard resolution', 'High resolution (where clinically justified)']),
-        f_field('ref-notes', 'Specific notes / instructions', 'textarea', full=True, rows=3),
-        '<div class="form__section-title">Reporting requirements</div>',
-        f_field('ref-report', 'Radiology report', 'select', required=True,
-                options=['Full radiology report required (additional fee required)',
-                         'Report by referring clinician']),
-        f_field('ref-concerns', 'If a report is required, please specify any particular concerns '
-                                'or regions of interest', 'textarea', full=True, rows=3),
+        f_step('Referring dentist', [
+            f_field('ref-name', 'Name', required=True),
+            f_field('ref-gdc', 'GDC number', required=True),
+            f_field('ref-practice', 'Practice name', required=True),
+            f_field('ref-address', 'Practice address', 'textarea', rows=3),
+            f_field('ref-email', 'Email', 'email', required=True),
+            f_field('ref-phone', 'Phone', 'tel', required=True),
+        ]),
+        f_step('Patient details', [
+            f_field('ref-pname', 'Full name', required=True),
+            f_field('ref-pdob', 'Date of birth', 'date', required=True),
+            f_field('ref-paddress', 'Address', 'textarea', rows=3),
+            f_field('ref-pphone', 'Phone', 'tel', required=True),
+            f_field('ref-pemail', 'Email (optional)', 'email'),
+        ]),
+        f_step('Clinical information', [
+            f_field('ref-reason', 'Reason for CBCT referral', 'textarea', rows=3, required=True),
+            f_field('ref-history', 'Relevant medical history', 'textarea', rows=3),
+            f_checks('ref-area', 'Area of interest (tick all that apply)',
+                     ['Upper right quadrant', 'Upper left quadrant', 'Lower right quadrant',
+                      'Lower left quadrant', 'Maxilla', 'Mandible', 'TMJ', 'Other']),
+            f_field('ref-other', 'If ‘other’, please give details', 'textarea', rows=2),
+        ]),
+        f_step('Imaging and reporting', [
+            f_field('ref-fov', 'Scan type requested', 'select', required=True,
+                    options=['Small field of view (FOV)', 'Medium field of view (FOV)',
+                             'Large field of view (FOV)', 'OPG radiograph']),
+            f_field('ref-res', 'Resolution', 'select',
+                    options=['Standard resolution', 'High resolution (where clinically justified)']),
+            f_field('ref-notes', 'Specific notes / instructions', 'textarea', rows=3),
+            f_field('ref-report', 'Radiology report', 'select', required=True,
+                    options=['Full radiology report required (additional fee required)',
+                             'Report by referring clinician']),
+            f_field('ref-concerns', 'If a report is required, please specify any particular '
+                                    'concerns or regions of interest', 'textarea', rows=3),
+        ]),
     ]
 
+    def sla_referrer(i):
+        """One entitled person. Called for item 0 and for the clone template,
+        so the two are identical by construction."""
+        return [
+            f_field('sla-referrer-%s-name' % i, 'Name', required=True,
+                    name='sla-referrer[%s][name]' % i),
+            f_field('sla-referrer-%s-gdc' % i, 'GDC/GMC registration number', required=True,
+                    name='sla-referrer[%s][gdc]' % i),
+            f_field('sla-referrer-%s-role' % i, 'IRMER 2017 role', 'select', required=True,
+                    name='sla-referrer[%s][role]' % i,
+                    options=['Referrer', 'Operating (reporting)', 'Both']),
+        ]
+
     sla_fields = [
-        '<div class="form__section-title">Referring practice</div>',
-        f_field('sla-practice', 'Practice name', required=True),
-        f_field('sla-address', 'Practice address', 'textarea', full=True, rows=3),
-        f_field('sla-phone', 'Phone', 'tel', required=True),
-        f_field('sla-email', 'Email', 'email', required=True),
-        f_field('sla-employer', 'Name of employer', required=True),
-        '<div class="form__section-title">Entitlement of people</div>',
-        '<p class="field field--full field__hint">Enter below the details of all people at the '
-        'referring practice who will refer patients for radiographic examinations and/or report '
-        'on dental images. Evidence of suitable training must be provided.</p>',
-        f_field('sla-r1-name', 'Referrer 1 — name', required=True),
-        f_field('sla-r1-gdc', 'Referrer 1 — GDC/GMC registration number', required=True),
-        f_field('sla-r1-role', 'Referrer 1 — IRMER 2017 role', 'select', required=True,
-                options=['Referrer', 'Operating (reporting)', 'Both']),
-        f_field('sla-r2-name', 'Referrer 2 — name'),
-        f_field('sla-r2-gdc', 'Referrer 2 — GDC/GMC registration number'),
-        f_field('sla-r2-role', 'Referrer 2 — IRMER 2017 role', 'select',
-                options=['Referrer', 'Operating (reporting)', 'Both']),
-        f_field('sla-r3-name', 'Referrer 3 — name'),
-        f_field('sla-r3-gdc', 'Referrer 3 — GDC/GMC registration number'),
-        f_field('sla-r3-role', 'Referrer 3 — IRMER 2017 role', 'select',
-                options=['Referrer', 'Operating (reporting)', 'Both']),
-        '<div class="form__section-title">Agreement</div>',
-        '<div class="field field--full"><label class="choice">'
-        '<input type="checkbox" id="sla-agree" name="sla-agree" required>'
-        '<span>We agree: (1) To use the referral criteria above; (2) That evidence of adequate '
-        'training has been provided for each of the people named above appropriate to their '
-        'IRMER17 roles; (3) That adequate information will accompany each referred patient to '
-        'allow the justification process to proceed.</span></label>'
-        '<span class="field__error" role="alert"></span></div>',
-        f_field('sla-signame', 'Name', required=True),
-        f_field('sla-date', 'Date', 'date', required=True),
+        f_step('Referring practice', [
+            f_field('sla-practice', 'Practice name', required=True),
+            f_field('sla-address', 'Practice address', 'textarea', rows=3),
+            f_field('sla-phone', 'Phone', 'tel', required=True),
+            f_field('sla-email', 'Email', 'email', required=True),
+            f_field('sla-employer', 'Name of employer', required=True),
+        ]),
+        f_step('Entitled people', [
+            f_repeat('sla-referrer', 'Person', sla_referrer, min_items=1, max_items=12,
+                     add_label='Add another person'),
+        ], intro='List everyone at the referring practice who will refer patients for '
+                 'radiographic examinations and/or report on dental images. Add as many as you '
+                 'need. Evidence of suitable training must be provided for each of them.'),
+        f_step('Agreement', [
+            '<div class="field"><label class="choice">'
+            '<input type="checkbox" id="sla-agree" name="sla-agree" required>'
+            '<span>We agree: (1) To use the referral criteria above; (2) That evidence of adequate '
+            'training has been provided for each of the people named above appropriate to their '
+            'IRMER17 roles; (3) That adequate information will accompany each referred patient to '
+            'allow the justification process to proceed.</span></label>'
+            '<span class="field__error" role="alert"></span></div>',
+            f_field('sla-signame', 'Name', required=True),
+            f_field('sla-date', 'Date', 'date', required=True),
+        ]),
     ]
 
     out.append(c_section('''<div class="notice u-mb-8">
       <strong>Please complete both forms</strong>
       You only need to complete the Service Level Agreement form once. If you have previously submitted a referral and this included the Service Level Agreement, you do not need to complete it again.
     </div>
-    <div class="cols-2 grid--loose">
-      <div>
+    <div class="form-stack">
+      <div class="form-block">
         <h2 class="u-mb-6">Referral form</h2>
         {f1}
       </div>
-      <div>
+      <div class="form-block">
         <h2 class="u-mb-6">Service level agreement</h2>
-        <div class="u-mb-8">
+        <div class="u-mb-8 u-measure">
           <span class="label">Receiving practice</span>
           {specs}
           <h3 class="u-mt-8 u-mb-4">Referral criteria</h3>
@@ -2065,13 +2140,13 @@ def r_referrals(depth, H):
         {f2}
       </div>
     </div>'''.format(
-        f1=f_form('cbctReferral', ref_fields, 'Send referral',
+        f1=f_form('cbctReferral', ref_fields, 'Send referral', steps=True,
                   note='Please do not email patient-identifiable images to a personal address. '
                        'Contact the practice if you need a secure transfer.',
                   success_title='Referral received.',
                   success_text='Thank you. We will contact the patient to arrange their scan and '
                                'confirm with your practice.'),
-        f2=f_form('slaForm', sla_fields, 'Submit agreement',
+        f2=f_form('slaForm', sla_fields, 'Submit agreement', steps=True,
                   success_title='Agreement received.',
                   success_text='Thank you — we will confirm and keep this on file for future '
                                'referrals.'),
@@ -2647,6 +2722,35 @@ def r_styleguide(depth, H):
          '<input type="checkbox" id="sg-consent" required><span>I agree to be contacted.</span>'
          '</label><span class="field__error" role="alert"></span></div>'],
         'Send message', note='Submit with fields empty to see the validation states.')
+        + '</div>'))
+
+    # Multi-step form + repeat group
+    def _sg_person(i):
+        return [
+            f_field('sg-person-%s-name' % i, 'Name', required=True,
+                    name='sg-person[%s][name]' % i),
+            f_field('sg-person-%s-role' % i, 'Role', 'select', required=True,
+                    name='sg-person[%s][role]' % i,
+                    options=['Referrer', 'Operating (reporting)', 'Both']),
+        ]
+
+    body.append(_sg('Multi-step form & repeat group', '12b', '<div class="sg-demo">' + f_form(
+        'sgSteps',
+        [f_step('Your details', [
+            f_field('sg-s-name', 'Name', required=True),
+            f_field('sg-s-email', 'Email', 'email', required=True),
+         ]),
+         f_step('Your team', [
+            f_repeat('sg-person', 'Person', _sg_person, min_items=1, max_items=4,
+                     add_label='Add another person'),
+         ], intro='A repeat group. Add and remove people — the fields are renamed '
+                  'sg-person[0][…], sg-person[1][…] and so on as you go.'),
+         f_step('Confirm', [
+            f_field('sg-s-notes', 'Anything else?', 'textarea', rows=3),
+         ])],
+        'Submit', steps=True,
+        note='Turn JavaScript off and this becomes one long form with every step '
+             'visible and a working submit button.')
         + '</div>'))
 
     # Gallery

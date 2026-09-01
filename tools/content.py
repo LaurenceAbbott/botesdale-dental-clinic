@@ -160,8 +160,8 @@ ARC = ('<svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hid
 
 
 def c_btn(label, href, variant='solid'):
-    return ('<a class="btn btn--%s" href="%s"><span class="btn__fill"></span>'
-            '<span class="btn__label">%s</span></a>' % (variant, href, _e(label)))
+    return ('<a class="btn btn--%s" href="%s"><span class="btn__label">%s</span></a>'
+            % (variant, href, _e(label)))
 
 
 def c_arc_link(label, href, light=False):
@@ -397,9 +397,12 @@ def c_specs(rows):
 
 
 def c_cta(H, depth, heading, para='', primary=('Book an appointment', 'contact'),
-          secondary=None, dark=False):
+          secondary=None, dark=False, demote=False):
+    """demote=True renders the leading button as an outline instead of a solid.
+    Use it where the page's real primary action is a form further up: only one
+    primary per page, and a closing CTA must not compete with the form."""
     buttons = [c_btn(primary[0], H.rel(primary[1], depth),
-                     'light' if dark else 'solid')]
+                     'light' if dark else ('outline' if demote else 'solid'))]
     if secondary:
         buttons.append(c_btn(secondary[0], H.rel(secondary[1], depth),
                              'light' if dark else 'outline'))
@@ -1444,7 +1447,7 @@ def f_repeat(base, singular, fields, min_items=1, max_items=12, add_label=None):
         '      <div class="repeat__list" data-repeat-list>\n      %s\n      </div>\n'
         '      <template data-repeat-template>%s</template>\n'
         '      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add>'
-        '<span class="btn__fill"></span><span class="btn__label">%s</span></button>\n'
+        '<span class="btn__label">%s</span></button>\n'
         '      <p class="repeat__full" data-repeat-full hidden>That is the maximum of %d. '
         'Please contact the practice if you need to add more.</p>\n'
         '      <p class="visually-hidden" role="status" data-repeat-status></p>\n'
@@ -1485,13 +1488,13 @@ def f_chooser(cid, panels):
 
 def f_form(form_id, fields, submit='Send', note='', success_title='Thank you — message sent.',
            success_text='A member of the practice team will be in touch shortly.',
-           steps=False):
+           steps=False, variant='solid'):
     """`fields` is either a flat list of field HTML, or — when steps=True — a
     list of f_step() panels."""
     sid = form_id + 'Success'
     if steps:
         body = '\n  '.join(fields)
-        attrs = ' data-steps'
+        attrs = ' data-steps' + ('' if variant == 'solid' else ' data-step-variant="%s"' % variant)
     else:
         body = '<div class="form__grid">\n    %s\n  </div>' % '\n    '.join(fields)
         attrs = ''
@@ -1499,7 +1502,7 @@ def f_form(form_id, fields, submit='Send', note='', success_title='Thank you —
     return '''<form class="form" id="{fid}" data-validate{attrs} data-success="{sid}" novalidate>
   {body}
   <div class="form__actions">
-    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">{submit}</span></button>
+    <button class="btn btn--{variant}" type="submit"><span class="btn__label">{submit}</span></button>
     {note}
   </div>
 </form>
@@ -1508,7 +1511,7 @@ def f_form(form_id, fields, submit='Send', note='', success_title='Thank you —
   <p>{stext}</p>
 </div>'''.format(fid=form_id, sid=sid, body=body, attrs=attrs, submit=_e(submit),
                  note=('<p class="form__note">%s</p>' % note) if note else '',
-                 stitle=_e(success_title), stext=_e(success_text))
+                 variant=variant, stitle=_e(success_title), stext=_e(success_text))
 
 
 # =============================================================================
@@ -1600,7 +1603,11 @@ def r_home(depth, H):
         'Family dentistry, cosmetic treatment and advanced implant work — all under one roof, '
         'in a purpose-built practice in the heart of the village.',
         'images/heroes/home.jpg',
-        actions=c_btn('Book a visit', H.rel('contact', depth), 'light')
+        # Booking is the site's primary action and this is where it belongs,
+        # so it is the home page's one primary. Both were --light before,
+        # which made the main call to action look exactly like the aside
+        # next to it and left the page with no primary at all.
+        actions=c_btn('Book a visit', H.rel('contact', depth), 'solid')
                 + c_btn('Fees and membership', H.rel('fees', depth), 'light')))
 
     tabs = [('care', 'Care'), ('team', 'Team'), ('plan', 'Plan'), ('visit', 'Visit')]
@@ -2043,7 +2050,7 @@ def r_implant_referrals(depth, H):
     out.append(c_cta(H, depth, 'Questions about a referral?',
                      'Call the practice on %s and ask for Dr Martin Sulo.' % SITE['phone'],
                      primary=('Contact us', 'contact'),
-                     secondary=('CBCT & OPG referrals', 'referrals')))
+                     secondary=('CBCT & OPG referrals', 'referrals'), demote=True))
     return '\n'.join(out)
 
 
@@ -2185,7 +2192,7 @@ def r_referrals(depth, H):
                   success_title='Referral received.',
                   success_text='Thank you. We will contact the patient to arrange their scan and '
                                'confirm with your practice.'),
-        f2=f_form('slaForm', sla_fields, 'Register practice', steps=True,
+        f2=f_form('slaForm', sla_fields, 'Register practice', steps=True, variant='outline',
                   note='You only need to do this once. We will confirm by email when your '
                        'practice is registered.',
                   success_title='Practice registered.',
@@ -2201,7 +2208,7 @@ def r_referrals(depth, H):
     out.append(c_cta(H, depth, 'Referring for implants instead?',
                      'We accept implant referrals from patients and dental professionals alike.',
                      primary=('Implant referrals', 'implant-referrals'),
-                     secondary=('Contact the practice', 'contact')))
+                     secondary=('Contact the practice', 'contact'), demote=True))
     return '\n'.join(out)
 
 
@@ -2650,12 +2657,12 @@ def r_styleguide(depth, H):
         <div class="btn-row u-mb-6">{b6}</div>
         <div class="cluster">{a2}</div>
       </div>'''.format(
-        b1=c_btn('Solid button', '#0', 'solid'), b2=c_btn('Outline button', '#0', 'outline'),
-        b3='<a class="btn btn--solid is-disabled" href="#0"><span class="btn__fill"></span>'
+        b1=c_btn('Primary button', '#0', 'solid'), b2=c_btn('Outline button', '#0', 'outline'),
+        b3='<a class="btn btn--solid is-disabled" href="#0">'
            '<span class="btn__label">Disabled</span></a>',
-        b4='<a class="btn btn--solid btn--sm" href="#0"><span class="btn__fill"></span>'
-           '<span class="btn__label">Small solid</span></a>',
-        b5='<a class="btn btn--outline btn--sm" href="#0"><span class="btn__fill"></span>'
+        b4='<a class="btn btn--solid btn--sm" href="#0">'
+           '<span class="btn__label">Small primary</span></a>',
+        b5='<a class="btn btn--outline btn--sm" href="#0">'
            '<span class="btn__label">Small outline</span></a>',
         b6=c_btn('Light button', '#0', 'light'),
         a1=c_arc_link('Text link', '#0'), a2=c_arc_link('Text link on dark', '#0', light=True))))

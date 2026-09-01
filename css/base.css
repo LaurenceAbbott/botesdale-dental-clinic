@@ -41,6 +41,11 @@
   --accent:       #17A6DE;
   --accent-600:   #1189BB;
   --accent-700:   #0B6E97;
+  /* Darker steps for the primary button. --accent itself cannot carry white
+     text at button size (2.78:1), so the primary sits on --accent-700 at
+     5.7:1 and steps down from there on hover and press. */
+  --accent-800:   #08506E;
+  --accent-900:   #063C53;
   --accent-tint:  rgba(23, 166, 222, .12);
   --accent-line:  rgba(23, 166, 222, .35);
 

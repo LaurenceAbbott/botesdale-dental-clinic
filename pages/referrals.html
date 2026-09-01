@@ -30,9 +30,6 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <svg class="svg-defs" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="smileClip" clipPathUnits="objectBoundingBox">
-      <path d="M0,0.08 Q0.5,0.4 1,0.08 L1,1 L0,1 Z"/>
-    </clipPath>
     <!-- The same smile, on the bottom edge of the dark hero panels. The control
          point sits past 1 so the curve reaches exactly full height at the
          centre and lifts to 0.955 at the sides — the panel keeps its depth
@@ -151,7 +148,7 @@
     </div>
   </div>
   <div class="form__actions">
-    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send referral</span></button>
+    <button class="btn btn--solid" type="submit"><span class="btn__label">Send referral</span></button>
     <p class="form__note">Please do not email patient-identifiable images to a personal address. Contact the practice if you need a secure transfer.</p>
   </div>
 </form>
@@ -167,7 +164,7 @@
           <p class="lead">Before we can accept referrals from your practice, we need to record who there is entitled to refer patients for X-rays and to report on the images. The radiation regulations (IR(ME)R 2017) require us both to keep that on file. You may know it as the <strong>service level agreement</strong>.</p>
           <p class="u-mt-4"><strong>Fill in the form below</strong> the first time you refer a patient to us. It takes a couple of minutes, and you will not need to do it again unless the people at your practice change.</p>
         </div>
-        <form class="form" id="slaForm" data-validate data-steps data-success="slaFormSuccess" novalidate>
+        <form class="form" id="slaForm" data-validate data-steps data-step-variant="outline" data-success="slaFormSuccess" novalidate>
   <div class="form__step" data-step data-step-title="Referring practice">
     <div class="form__section-title">Referring practice</div>
     <div class="form__grid">
@@ -206,7 +203,7 @@
           <div class="field"><label for="sla-referrer-__i__-role">IRMER 2017 role <span class="field__req" aria-hidden="true">*</span></label><select id="sla-referrer-__i__-role" name="sla-referrer[__i__][role]" required><option value="" disabled selected>Please choose</option><option>Referrer</option><option>Operating (reporting)</option><option>Both</option></select><span class="field__error" role="alert"></span></div>
         </div>
       </div></template>
-      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add><span class="btn__fill"></span><span class="btn__label">Add another person</span></button>
+      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add><span class="btn__label">Add another person</span></button>
       <p class="repeat__full" data-repeat-full hidden>That is the maximum of 12. Please contact the practice if you need to add more.</p>
       <p class="visually-hidden" role="status" data-repeat-status></p>
     </div>
@@ -222,7 +219,7 @@
     </div>
   </div>
   <div class="form__actions">
-    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Register practice</span></button>
+    <button class="btn btn--outline" type="submit"><span class="btn__label">Register practice</span></button>
     <p class="form__note">You only need to do this once. We will confirm by email when your practice is registered.</p>
   </div>
 </form>
@@ -240,7 +237,7 @@
   <div class="wrap">
     <h2>Referring for implants instead?</h2>
     <p>We accept implant referrals from patients and dental professionals alike.</p>
-    <div class="btn-row"><a class="btn btn--solid" href="../pages/implant-referrals.html"><span class="btn__fill"></span><span class="btn__label">Implant referrals</span></a><a class="btn btn--outline" href="../pages/contact-us.html"><span class="btn__fill"></span><span class="btn__label">Contact the practice</span></a></div>
+    <div class="btn-row"><a class="btn btn--outline" href="../pages/implant-referrals.html"><span class="btn__label">Implant referrals</span></a><a class="btn btn--outline" href="../pages/contact-us.html"><span class="btn__label">Contact the practice</span></a></div>
   </div>
 </section>
 </main>
@@ -310,9 +307,9 @@
       <a href="../pages/cookie-policy.html">Cookie Policy</a> for details.</p>
     <div class="cookie__actions">
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="accepted">
-        <span class="btn__fill"></span><span class="btn__label">Accept</span></button>
+        <span class="btn__label">Accept</span></button>
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="essential">
-        <span class="btn__fill"></span><span class="btn__label">Essential only</span></button>
+        <span class="btn__label">Essential only</span></button>
     </div>
   </div>
 </div>

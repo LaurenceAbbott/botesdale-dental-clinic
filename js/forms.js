@@ -265,12 +265,18 @@
     var submitBtn = actions.querySelector('[type="submit"]');
     var note = actions.querySelector('.form__note');
 
+    /* Continue is the primary action of the step, so it matches whatever the
+       form's submit is. On a page carrying two forms only one of them is the
+       page's primary; the other is marked outline and its Continue follows,
+       so the page never shows two primaries at once. */
+    var stepVariant = form.dataset.stepVariant || 'solid';
+
     var navFrame = document.createElement('div');
     navFrame.innerHTML =
       '<button class="btn btn--outline btn--sm" type="button" data-step-back>' +
-      '<span class="btn__fill"></span><span class="btn__label">Back</span></button>' +
-      '<button class="btn btn--solid" type="button" data-step-next>' +
-      '<span class="btn__fill"></span><span class="btn__label">Continue</span></button>';
+      '<span class="btn__label">Back</span></button>' +
+      '<button class="btn btn--' + stepVariant + '" type="button" data-step-next>' +
+      '<span class="btn__label">Continue</span></button>';
 
     var backBtn = navFrame.firstChild;
     var nextBtn = navFrame.lastChild;

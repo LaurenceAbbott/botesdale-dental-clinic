@@ -30,9 +30,6 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <svg class="svg-defs" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="smileClip" clipPathUnits="objectBoundingBox">
-      <path d="M0,0.08 Q0.5,0.4 1,0.08 L1,1 L0,1 Z"/>
-    </clipPath>
     <!-- The same smile, on the bottom edge of the dark hero panels. The control
          point sits past 1 so the curve reaches exactly full height at the
          centre and lifts to 0.955 at the sides — the panel keeps its depth
@@ -94,12 +91,12 @@
 </section>
 <div class="wrap section"><section class="sg-section"><span class="label">01</span><h2>Colour</h2><div class="sg-swatches"><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--black)"></div><div class="sg-swatch__name">Ink</div><div class="sg-swatch__val">var(--black) &middot; #0E1116</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--black-800)"></div><div class="sg-swatch__name">Ink 800</div><div class="sg-swatch__val">var(--black-800) &middot; #1A1F26</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--paper)"></div><div class="sg-swatch__name">Paper</div><div class="sg-swatch__val">var(--paper) &middot; #F7F6F3</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--paper-3)"></div><div class="sg-swatch__name">Paper 3</div><div class="sg-swatch__val">var(--paper-3) &middot; #EFEDE8</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ink-soft)"></div><div class="sg-swatch__name">Ink soft</div><div class="sg-swatch__val">var(--ink-soft) &middot; #5B615F</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ink-mute)"></div><div class="sg-swatch__name">Ink mute</div><div class="sg-swatch__val">var(--ink-mute) &middot; #8A8F8C</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--line)"></div><div class="sg-swatch__name">Line</div><div class="sg-swatch__val">var(--line) &middot; #D9D7D0</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--accent)"></div><div class="sg-swatch__name">Accent</div><div class="sg-swatch__val">var(--accent) &middot; #17A6DE</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--accent-600)"></div><div class="sg-swatch__name">Accent 600</div><div class="sg-swatch__val">var(--accent-600) &middot; #1189BB</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--ok)"></div><div class="sg-swatch__name">Success</div><div class="sg-swatch__val">var(--ok) &middot; #1D7A57</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--warn)"></div><div class="sg-swatch__name">Warning</div><div class="sg-swatch__val">var(--warn) &middot; #8A5A00</div></div><div class="sg-swatch"><div class="sg-swatch__chip" style="background:var(--error)"></div><div class="sg-swatch__name">Error</div><div class="sg-swatch__val">var(--error) &middot; #A93226</div></div></div></section><section class="sg-section"><span class="label">02</span><h2>Typography</h2><p class="lead u-mb-8">Space Grotesk for headings and micro-labels, Inter for body copy. The scale is fluid — every size interpolates between a mobile and a desktop value.</p><div class="sg-type-row"><div class="sg-type-row__meta">Display<br>var(--fs-hero) &middot; 30 → 68px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--display">A calmer kind of dental care.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 1<br>var(--fs-h1) &middot; 28 → 52px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h1">Every treatment starts with a conversation.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 2<br>var(--fs-h2) &middot; 24 → 34px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h2">Four areas of care.</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 3<br>var(--fs-h3) &middot; 20 → 24px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h3">What to expect at your first visit</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Heading 4<br>var(--fs-h4) &middot; 17px</div><div style="flex:1;min-width:min(100%,320px)"><div class="sg-sample sg-sample--h4">Preventative care</div></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Lead<br>var(--fs-lead) &middot; 15 → 17px</div><div style="flex:1;min-width:min(100%,320px)"><p class="lead">Routine dental appointments are essential to maintain good oral health.</p></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Body<br>var(--fs-body) &middot; 15px</div><div style="flex:1;min-width:min(100%,320px)"><p>We take time to understand your concerns, respect your choices, and explain your options clearly.</p></div></div><div class="sg-type-row"><div class="sg-type-row__meta">Label<br>var(--fs-label) &middot; 11px / .16em</div><div style="flex:1;min-width:min(100%,320px)"><span class="label">Preventative dentistry</span></div></div></section><section class="sg-section"><span class="label">03</span><h2>Spacing</h2><p class="lead u-mb-8">A 4px base scale. Sections use the fluid <code>--section-y</code> token rather than a fixed step.</p><div class="sg-scale"><div><div class="sg-scale__box" style="width:4px;height:4px"></div><div class="sg-scale__label">s-1 &middot; 4px</div></div><div><div class="sg-scale__box" style="width:8px;height:8px"></div><div class="sg-scale__label">s-2 &middot; 8px</div></div><div><div class="sg-scale__box" style="width:12px;height:12px"></div><div class="sg-scale__label">s-3 &middot; 12px</div></div><div><div class="sg-scale__box" style="width:16px;height:16px"></div><div class="sg-scale__label">s-4 &middot; 16px</div></div><div><div class="sg-scale__box" style="width:20px;height:20px"></div><div class="sg-scale__label">s-5 &middot; 20px</div></div><div><div class="sg-scale__box" style="width:24px;height:24px"></div><div class="sg-scale__label">s-6 &middot; 24px</div></div><div><div class="sg-scale__box" style="width:32px;height:32px"></div><div class="sg-scale__label">s-7 &middot; 32px</div></div><div><div class="sg-scale__box" style="width:44px;height:44px"></div><div class="sg-scale__label">s-8 &middot; 44px</div></div><div><div class="sg-scale__box" style="width:56px;height:56px"></div><div class="sg-scale__label">s-9 &middot; 56px</div></div><div><div class="sg-scale__box" style="width:72px;height:72px"></div><div class="sg-scale__label">s-10 &middot; 72px</div></div><div><div class="sg-scale__box" style="width:88px;height:88px"></div><div class="sg-scale__label">s-11 &middot; 88px</div></div><div><div class="sg-scale__box" style="width:112px;height:112px"></div><div class="sg-scale__label">s-12 &middot; 112px</div></div></div></section><section class="sg-section"><span class="label">04</span><h2>Buttons &amp; links</h2>
       <div class="sg-demo">
-        <div class="btn-row u-mb-6"><a class="btn btn--solid" href="#0"><span class="btn__fill"></span><span class="btn__label">Solid button</span></a><a class="btn btn--outline" href="#0"><span class="btn__fill"></span><span class="btn__label">Outline button</span></a><a class="btn btn--solid is-disabled" href="#0"><span class="btn__fill"></span><span class="btn__label">Disabled</span></a></div>
-        <div class="btn-row u-mb-6"><a class="btn btn--solid btn--sm" href="#0"><span class="btn__fill"></span><span class="btn__label">Small solid</span></a><a class="btn btn--outline btn--sm" href="#0"><span class="btn__fill"></span><span class="btn__label">Small outline</span></a></div>
+        <div class="btn-row u-mb-6"><a class="btn btn--solid" href="#0"><span class="btn__label">Primary button</span></a><a class="btn btn--outline" href="#0"><span class="btn__label">Outline button</span></a><a class="btn btn--solid is-disabled" href="#0"><span class="btn__label">Disabled</span></a></div>
+        <div class="btn-row u-mb-6"><a class="btn btn--solid btn--sm" href="#0"><span class="btn__label">Small primary</span></a><a class="btn btn--outline btn--sm" href="#0"><span class="btn__label">Small outline</span></a></div>
         <div class="cluster"><a class="arc-link" href="#0">Text link</a><a class="link-inline" href="#0">An inline text link</a></div>
       </div>
       <div class="sg-demo sg-demo--dark">
-        <div class="btn-row u-mb-6"><a class="btn btn--light" href="#0"><span class="btn__fill"></span><span class="btn__label">Light button</span></a></div>
+        <div class="btn-row u-mb-6"><a class="btn btn--light" href="#0"><span class="btn__label">Light button</span></a></div>
         <div class="cluster"><a class="arc-link arc-link--light" href="#0">Text link on dark</a></div>
       </div></section><section class="sg-section"><span class="label">05</span><h2>Badges &amp; notices</h2>
       <div class="sg-demo">
@@ -191,7 +188,7 @@
     <div class="field field--full"><label class="choice"><input type="checkbox" id="sg-consent" required><span>I agree to be contacted.</span></label><span class="field__error" role="alert"></span></div>
   </div>
   <div class="form__actions">
-    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Send message</span></button>
+    <button class="btn btn--solid" type="submit"><span class="btn__label">Send message</span></button>
     <p class="form__note">Submit with fields empty to see the validation states.</p>
   </div>
 </form>
@@ -232,7 +229,7 @@
           <div class="field"><label for="sg-person-__i__-role">Role <span class="field__req" aria-hidden="true">*</span></label><select id="sg-person-__i__-role" name="sg-person[__i__][role]" required><option value="" disabled selected>Please choose</option><option>Referrer</option><option>Operating (reporting)</option><option>Both</option></select><span class="field__error" role="alert"></span></div>
         </div>
       </div></template>
-      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add><span class="btn__fill"></span><span class="btn__label">Add another person</span></button>
+      <button class="btn btn--outline btn--sm repeat__add" type="button" data-repeat-add><span class="btn__label">Add another person</span></button>
       <p class="repeat__full" data-repeat-full hidden>That is the maximum of 4. Please contact the practice if you need to add more.</p>
       <p class="visually-hidden" role="status" data-repeat-status></p>
     </div>
@@ -245,7 +242,7 @@
     </div>
   </div>
   <div class="form__actions">
-    <button class="btn btn--solid" type="submit"><span class="btn__fill"></span><span class="btn__label">Submit</span></button>
+    <button class="btn btn--solid" type="submit"><span class="btn__label">Submit</span></button>
     <p class="form__note">Turn JavaScript off and this becomes one long form with every step visible and a working submit button.</p>
   </div>
 </form>
@@ -285,7 +282,7 @@
   <div class="wrap">
     <h2>Back to the site.</h2>
     
-    <div class="btn-row"><a class="btn btn--solid" href="../index.html"><span class="btn__fill"></span><span class="btn__label">Home</span></a><a class="btn btn--outline" href="../pages/contact-us.html"><span class="btn__fill"></span><span class="btn__label">Contact us</span></a></div>
+    <div class="btn-row"><a class="btn btn--solid" href="../index.html"><span class="btn__label">Home</span></a><a class="btn btn--outline" href="../pages/contact-us.html"><span class="btn__label">Contact us</span></a></div>
   </div>
 </section>
 </main>
@@ -355,9 +352,9 @@
       <a href="../pages/cookie-policy.html">Cookie Policy</a> for details.</p>
     <div class="cookie__actions">
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="accepted">
-        <span class="btn__fill"></span><span class="btn__label">Accept</span></button>
+        <span class="btn__label">Accept</span></button>
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="essential">
-        <span class="btn__fill"></span><span class="btn__label">Essential only</span></button>
+        <span class="btn__label">Essential only</span></button>
     </div>
   </div>
 </div>

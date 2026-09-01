@@ -18,13 +18,12 @@ The reference for this system is precision-engineering brand design — Porsche 
 
 ### The arc
 
-The practice's signature motif is a shallow arc — a smile. It appears in three places:
+The practice's signature motif is a shallow arc — a smile. It appears in two places:
 
 * **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3. On a device that cannot hover, tapping one of these links draws the arc and the navigation waits for it; see §4.3a.
-* **`#smileClip`** — an SVG `clipPath` that gives button hover-fills a curved leading edge.
 * **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
 
-All are defined once per page (`<svg class="svg-defs">`) and referenced everywhere. If you remove the `svg-defs` block, buttons lose their curved fill and the hero panels go back to a straight bottom edge.
+Both are defined once per page (`<svg class="svg-defs">`). If you remove the `svg-defs` block, the hero panels go back to a straight bottom edge. It once also held `#smileClip`, which clipped a sweeping fill across buttons on hover; that is gone (§4.1).
 
 The arc is **cut into** the panel rather than drawn on top of it, so whatever is behind shows through the curve — which is the page ground, since the panel still occupies its full height in layout. That means the section following a hero has to be on `--paper` (or have no background of its own). Every page currently satisfies this; if you ever put a `--paper-3` band directly under a page head, the sliver revealed by the arc will be the wrong colour.
 
@@ -52,7 +51,8 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--paper-soft` | `rgba(247,246,243,.70)` | Body copy on black |
 | `--paper-mute` | `rgba(247,246,243,.45)` | Micro-labels on black |
 | `--accent` | `#17A6DE` | Arc motif, markers, focus, validation |
-| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | Hover / small text on light |
+| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | Hover / small text on light. `--accent-700` is the primary button fill and the colour of a text link |
+| `--accent-800` / `--accent-900` | `#08506E` / `#063C53` | Primary button hover and press |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
 > **Note on the brand blue.** The written brief specifies `#009ee3`. The approved design system uses `#17A6DE`, which sits better against the warm paper ground. To switch, change `--accent` (and optionally `--accent-600/700`) in `css/base.css` — nothing else needs touching.
@@ -155,16 +155,22 @@ Each entry lists the file it lives in, the markup, and the modifiers available. 
 ### 4.1 Button — `components.css`
 
 ```html
-<a class="btn btn--solid" href="#">
-  <span class="btn__fill"></span>
-  <span class="btn__label">Book a visit</span>
-</a>
+<a class="btn btn--solid" href="#"><span class="btn__label">Book a visit</span></a>
 ```
 
-The `__fill` span sweeps across on hover, clipped by `#smileClip`. The `__label` uses `mix-blend-mode: difference` so it inverts against whatever is behind it — which is why both spans are required.
+**There is no sweep.** A fill clipped to the arc used to slide across on hover. It was driven entirely by `:hover`, so on a touch screen it never ran — and iOS keeps `:hover` after a tap, which left the arc frozen part-way across the button. Buttons change colour now. `#smileClip` had no other user and has gone from the shared defs.
 
-**Modifiers:** `--solid` (dark), `--outline` (paper), `--light` (for dark grounds), `--sm`, `--block`, `.is-disabled`.
-Wrap groups in `.btn-row`.
+**One primary per page.** `--solid` is the primary and a page gets one: the single thing you most want the visitor to do. Where a page carries a form, the form's submit is that primary and the closing CTA is demoted — `c_cta(..., demote=True)` renders its leading button as an outline. Where a page carries two forms, the secondary one is built with `f_form(..., variant='outline')`, which also carries through to the wizard's *Continue* via `data-step-variant`, so a stepped form never shows a primary the page has not allotted it. The style guide is the one exception: it is a component reference and has to show every variant at once.
+
+| Modifier | Ground | Fill | Hover | Press |
+|---|---|---|---|---|
+| `--solid` | paper or dark | `--accent-700`, white label — 5.7:1 | `--accent-800` | `--accent-900` |
+| `--outline` | paper | none, ink border | inverts to ink | — |
+| `--light` | dark only | none, paper border | inverts to paper | — |
+
+The primary is `--accent-700` rather than `--accent` because white on `--accent` is **2.78:1**, which fails AA at the 13px button size; `--accent-700` gives 5.7:1. If the brighter brand blue is wanted here, the label has to go to `--black` (6.8:1 on `--accent`) — white on `#17A6DE` is not an option.
+
+Also `--sm`, `--block`, `.is-disabled`. Wrap groups in `.btn-row`.
 
 ### 4.2 Arc link — `components.css`
 

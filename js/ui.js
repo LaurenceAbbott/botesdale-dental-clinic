@@ -1,6 +1,7 @@
 /* =============================================================================
    ui.js — interactive components
    • sticky tab nav with scroll-spy
+   • chooser (tab switcher — one panel per audience)
    • accordions
    • testimonial carousel (auto-advancing, pauses on hover/focus)
    • reveal-on-scroll
@@ -43,6 +44,57 @@
       spied.forEach(function (s) { spy.observe(s); });
     }
   }
+
+  /* --- 1b. Chooser (tab switcher) -----------------------------------------
+     Shows one panel at a time where a page carries one form per audience.
+     The markup ships with the tab row hidden and every panel visible, so with
+     JavaScript off both forms are still there — this only ever hides things
+     once it can also offer a way to get them back. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-chooser]'), function (root) {
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+    var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+    if (tabs.length < 2 || panels.indexOf(null) !== -1) return;
+
+    var tabRow = root.querySelector('[role="tablist"]');
+    if (tabRow) tabRow.hidden = false;
+    root.classList.add('is-enhanced');
+
+    function select(i, opts) {
+      opts = opts || {};
+      tabs.forEach(function (tab, n) {
+        var on = n === i;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        /* Roving tabindex: one stop for the group, arrows move within it. */
+        tab.tabIndex = on ? 0 : -1;
+        panels[n].hidden = !on;
+      });
+      if (opts.focus) tabs[i].focus();
+      /* Only a real choice touches the URL — writing on load would throw away
+         whatever anchor the visitor actually arrived at. */
+      if (opts.hash && history.replaceState) {
+        history.replaceState(null, '', '#' + tabs[i].dataset.chooserKey);
+      }
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(i, { hash: true }); });
+      tab.addEventListener('keydown', function (e) {
+        var to = e.key === 'ArrowRight' ? i + 1
+               : e.key === 'ArrowLeft' ? i - 1
+               : e.key === 'Home' ? 0
+               : e.key === 'End' ? tabs.length - 1 : -1;
+        if (to === -1) return;
+        e.preventDefault();
+        select((to + tabs.length) % tabs.length, { focus: true, hash: true });
+      });
+    });
+
+    /* #patient / #professional in the URL opens that tab directly, so the
+       links pointing here can send people to the right form. */
+    var wanted = tabs.map(function (t) { return t.dataset.chooserKey; })
+                     .indexOf(location.hash.replace('#', ''));
+    select(wanted > -1 ? wanted : 0, {});
+  });
 
   /* --- 2. Accordions ------------------------------------------------------ */
   Array.prototype.forEach.call(document.querySelectorAll('.accordion__btn'), function (btn) {

@@ -258,18 +258,24 @@
     var barEl = nav.querySelector('[data-step-bar]');
     var stepBtns = toArray(nav.querySelectorAll('[data-step-to]'));
 
-    /* --- step navigation ------------------------------------------------ */
-    var stepNav = document.createElement('div');
-    stepNav.className = 'form__nav';
-    stepNav.innerHTML =
+    /* --- step navigation -------------------------------------------------
+       Back, Continue and Submit share the one action row: only one of
+       Continue / Submit is ever shown, so the form never grows a second
+       button row (and a second rule above it) on the last step. */
+    var submitBtn = actions.querySelector('[type="submit"]');
+    var note = actions.querySelector('.form__note');
+
+    var navFrame = document.createElement('div');
+    navFrame.innerHTML =
       '<button class="btn btn--outline btn--sm" type="button" data-step-back>' +
       '<span class="btn__fill"></span><span class="btn__label">Back</span></button>' +
       '<button class="btn btn--solid" type="button" data-step-next>' +
       '<span class="btn__fill"></span><span class="btn__label">Continue</span></button>';
-    actions.parentNode.insertBefore(stepNav, actions);
 
-    var backBtn = stepNav.querySelector('[data-step-back]');
-    var nextBtn = stepNav.querySelector('[data-step-next]');
+    var backBtn = navFrame.firstChild;
+    var nextBtn = navFrame.lastChild;
+    actions.insertBefore(backBtn, submitBtn);
+    actions.insertBefore(nextBtn, submitBtn);
 
     var live = document.createElement('p');
     live.className = 'visually-hidden';
@@ -309,7 +315,8 @@
 
       backBtn.hidden = current === 0;
       nextBtn.hidden = current === last;
-      actions.hidden = current !== last;
+      if (submitBtn) submitBtn.hidden = current !== last;
+      if (note) note.hidden = current !== last;
 
       /* Restart the entrance animation — unhiding an element that is already
          in the DOM will not replay it on its own. */

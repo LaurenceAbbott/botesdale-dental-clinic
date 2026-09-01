@@ -85,11 +85,11 @@
     <p>Self-referrals from patients and referrals from dental professionals.</p>
   </div>
 </section>
-<section class="section"><div class="wrap"><div class="form-stack">
-      <div class="form-block">
-        <h2 class="u-mb-6">Patient self referral</h2>
-        <p class="lead u-mb-8">Not registered with us? You can refer yourself directly. Complete the form and we will contact you to arrange an assessment.</p>
-        <form class="form" id="patientSelfReferral" data-validate data-steps data-success="patientSelfReferralSuccess" novalidate>
+<section class="section"><div class="wrap"><div class="chooser" data-chooser>
+  <div class="chooser__tabs" role="tablist" aria-label="Who is referring?" hidden><button class="chooser__tab" type="button" role="tab" id="implant-tab-patient" aria-controls="implant-panel-patient" aria-selected="true" data-chooser-key="patient" tabindex="0"><span class="chooser__tab-title">I am a patient</span><span class="chooser__tab-sub">Refer yourself for an implant assessment</span></button><button class="chooser__tab" type="button" role="tab" id="implant-tab-professional" aria-controls="implant-panel-professional" aria-selected="false" data-chooser-key="professional" tabindex="-1"><span class="chooser__tab-title">I am a dental professional</span><span class="chooser__tab-sub">Refer a patient to the implant clinic</span></button></div>
+<div class="chooser__panel" id="implant-panel-patient" role="tabpanel" aria-labelledby="implant-tab-patient" tabindex="0">
+  <h2 class="chooser__heading u-mb-6">Patient self referral</h2>
+  <p class="lead u-mb-8">Not registered with us? You can refer yourself directly. Complete the form and we will contact you to arrange an assessment.</p><form class="form" id="patientSelfReferral" data-validate data-steps data-success="patientSelfReferralSuccess" novalidate>
   <div class="form__step" data-step data-step-title="Your details">
     <div class="form__section-title">Your details</div>
     <div class="form__grid">
@@ -125,11 +125,10 @@
   <h3>Referral received.</h3>
   <p>Thank you — we will be in touch to arrange your assessment.</p>
 </div>
-      </div>
-      <div class="form-block">
-        <h2 class="u-mb-6">Dental professionals referral</h2>
-        <p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are assessed and treated here, with updates shared back to the referring practice throughout.</p>
-        <form class="form" id="professionalReferral" data-validate data-steps data-success="professionalReferralSuccess" novalidate>
+</div>
+<div class="chooser__panel" id="implant-panel-professional" role="tabpanel" aria-labelledby="implant-tab-professional" tabindex="0">
+  <h2 class="chooser__heading u-mb-6">Dental professionals referral</h2>
+  <p class="lead u-mb-8">We welcome implant referrals from colleagues. Patients are assessed and treated here, with updates shared back to the referring practice throughout.</p><form class="form" id="professionalReferral" data-validate data-steps data-success="professionalReferralSuccess" novalidate>
   <div class="form__step" data-step data-step-title="Your details">
     <div class="form__section-title">Your details</div>
     <div class="form__grid">
@@ -171,8 +170,8 @@
   <h3>Referral received.</h3>
   <p>Thank you. We will confirm receipt and contact the patient directly to arrange an assessment.</p>
 </div>
-      </div>
-    </div></div></section>
+</div>
+</div></div></section>
 <section class="process">
   <div class="wrap">
     <div class="process__head">

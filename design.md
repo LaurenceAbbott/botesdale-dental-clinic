@@ -10,7 +10,7 @@ Reference implementation: **`pages/style-guide.html`** (open it in a browser —
 The reference for this system is precision-engineering brand design — Porsche in particular. That translates into five working rules:
 
 1. **One rail.** Every piece of text on the site — inside a centred container or inside a full-bleed section — starts or stops on the same vertical line. Media is the only thing allowed to cross it. See §2.3.
-2. **Lines, not boxes.** Structure is expressed with 1px hairlines and alignment. Shadows are almost never used; corners are square (`--radius: 0`).
+2. **Lines, not boxes.** Structure is expressed with 1px hairlines and alignment. Shadows are almost never used; corners are square (`--radius: 0`). **Form controls are the deliberate exception** — an input is a thing you put something into, and it has to look like one, so fields are bordered boxes (§4.24). The border is the same hairline and the corners are still square, so they sit inside the system rather than beside it.
 3. **Two grounds.** A warm off-white (`--paper`) and a near-black (`--black`). Every section belongs to one of them. Dark sections are used deliberately, for emphasis, roughly one per screenful of scrolling.
 4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings and validation. It is never used as a background for large areas.
 5. **Editorial rhythm.** Full-bleed media/copy splits, generous vertical space, and a short uppercase micro-label above almost every heading. Copy is left-aligned throughout — including quotes and closing calls to action.
@@ -302,7 +302,11 @@ Previous / next split used between case studies.
 
 ### 4.24 Forms — `.form`, `.field` + `js/forms.js`
 
-Underlined fields, uppercase micro-labels, and a `.field__error` element that fills in on validation failure.
+Bordered fields on `--paper-2`, uppercase micro-labels above, and a `.field__error` element that fills in on validation failure.
+
+Fields are boxes, not underlines. An underline leaves the start and the end of the input implicit, and a column of them reads as a stack of rules with text floating between — you cannot tell at a glance where a field begins, or that it is a field at all. Boxes also mean the form carries **one** horizontal rule (above the action row) instead of one per field, so the remaining lines actually mean something. Hover darkens the border; focus turns it accent with a 3px `--accent-tint` ring; `.has-error` and `.is-valid` recolour the whole border rather than one edge.
+
+Spacing is uniform: `--s-6` between fields, `--s-2` between a label and its control, `--s-6` above a `.form__section-title`. Nothing in a form should need a bespoke margin.
 
 ```html
 <div class="field">
@@ -358,6 +362,31 @@ A variable-length list of identical field sets — "add another entitled person"
 Controls are named `base[i][suffix]` with ids `base-i-suffix`, so a back end receives a clean array rather than `referrer1`, `referrer2`, `referrer3`. On every add and remove the script renumbers `id`, `name`, `for` and `aria-*` so the indices stay `0..n-1` with no gaps, and refreshes each item's visible number. Remove disappears at `min`; Add disappears at `max`. Both actions move focus somewhere sensible and are announced through a visually hidden live region.
 
 In the generator, build one with `f_repeat()` — it takes a function returning the fields for one item and uses it for both the first item and the template, so the two cannot drift apart.
+
+### 4.24c Chooser — `[data-chooser]`, `.chooser`
+
+A tab switcher for a page that carries one form per audience, where nobody needs to see both. Used on `implant-referrals.html` to separate the patient self-referral from the dental professional referral.
+
+```html
+<div class="chooser" data-chooser>
+  <div class="chooser__tabs" role="tablist" aria-label="Who is referring?" hidden>
+    <button class="chooser__tab" role="tab" data-chooser-key="patient"
+            id="implant-tab-patient" aria-controls="implant-panel-patient"
+            aria-selected="true" tabindex="0">…</button>
+    …
+  </div>
+  <div class="chooser__panel" id="implant-panel-patient" role="tabpanel"
+       aria-labelledby="implant-tab-patient" tabindex="0">…</div>
+</div>
+```
+
+The tab row ships **hidden** and every panel ships **visible**; `js/ui.js` unhides the tabs and takes over. So with JavaScript off the page is two headed forms one after another — the component never hides anything until it can also offer a way back.
+
+* Standard tablist keyboard behaviour: arrows move, Home / End jump, roving `tabindex` keeps the group to one tab stop.
+* The selected key is written to the URL hash, and `#patient` / `#professional` on arrival opens that tab — so links can point at the right form.
+* Enhanced, each panel's own `<h2>` is visually hidden (it would repeat the tab), but stays in the accessibility tree and the document outline.
+
+The tabs are **boxed**, not underlined, on purpose: an underlined tab row directly above the stepper's underlined progress bar reads as one confused set of lines. A chooser is a choice, not a position.
 
 ### 4.25 CTA band — `.cta`
 

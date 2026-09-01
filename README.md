@@ -113,7 +113,18 @@ Four forms ship with full client-side validation and no back end:
 
 The two referral pages are **multi-step**: their forms are split into panels
 with a stepper across the top and Back / Continue below, and each panel is
-validated before you can move on. The Service Level Agreement's list of
+validated before you can move on.
+
+`implant-referrals.html` puts its two forms behind a **chooser** — the visitor
+picks "I am a patient" or "I am a dental professional" and sees only that
+form. `implant-referrals.html#patient` and `#professional` link straight to
+one of them.
+
+`referrals.html` is for dental practices only, and holds two different things:
+the referral itself, and a one-off registration for the practice. That second
+form is the IR(ME)R service level agreement, but it is not labelled that way
+first — "Register your practice" with an explanation, because "service level
+agreement" tells a referring dentist nothing about what it is for. Its list of
 entitled people is a **repeat group** — "Add another person", with no fixed
 ceiling of three — and it submits as an array:
 

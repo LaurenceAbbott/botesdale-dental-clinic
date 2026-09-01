@@ -684,10 +684,21 @@ a.card:hover { transform: translateY(-2px); }
   background: var(--paper-2);
   padding: 12px 14px;
   font-size: 1rem;
+  line-height: 1.4;
   color: var(--black);
   border-radius: 0;
   appearance: none; -webkit-appearance: none;
   transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  min-height: var(--control-h);
+}
+/* Date and time inputs size themselves from their own internal rendering, so
+   they do not match a text input on either engine — Chromium makes them a
+   couple of pixels taller, Safari collapses an empty one to well under the
+   rest. Pinning the height to the same token is the only thing that holds on
+   both; flex-centring keeps the value on the same baseline as its neighbours. */
+.field input[type="date"], .field input[type="time"] {
+  height: var(--control-h);
+  display: flex; align-items: center;
 }
 .field textarea { resize: vertical; min-height: 96px; line-height: 1.6; }
 .field select {

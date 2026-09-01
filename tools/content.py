@@ -2136,12 +2136,18 @@ def r_referrals(depth, H):
                  'radiographic examinations and/or report on dental images. Add as many as you '
                  'need. Evidence of suitable training must be provided for each of them.'),
         f_step('Confirm and sign', [
+            # The criteria have to sit here, next to the box that agrees to them.
+            # They used to be above the form, which the wizard put on a different
+            # screen — leaving the checkbox pointing at something not on the page.
+            '<div class="notice notice--plain"><strong>Referral criteria</strong>'
+            'This document will be used by both parties as the basis for the referral of patients '
+            'and the justification/authorisation of dental radiographic examinations.</div>',
             '<div class="field"><label class="choice">'
             '<input type="checkbox" id="sla-agree" name="sla-agree" required>'
-            '<span>We agree: (1) To use the referral criteria above; (2) That evidence of adequate '
-            'training has been provided for each of the people named above appropriate to their '
-            'IRMER17 roles; (3) That adequate information will accompany each referred patient to '
-            'allow the justification process to proceed.</span></label>'
+            '<span>We agree: (1) To use the referral criteria set out above; (2) That evidence of '
+            'adequate training has been provided for each of the people named in this form, '
+            'appropriate to their IR(ME)R 2017 roles; (3) That adequate information will accompany '
+            'each referred patient to allow the justification process to proceed.</span></label>'
             '<span class="field__error" role="alert"></span></div>',
             f_field('sla-signame', 'Your name', required=True,
                     hint='Signing on behalf of the practice.'),
@@ -2163,14 +2169,14 @@ def r_referrals(depth, H):
         <h2 class="u-mb-4">Register your practice</h2>
         <p class="label u-mb-6">One-off · first referral only</p>
         <div class="u-mb-8 u-measure">
-          <p class="lead">Before we can accept referrals from your practice, we need this once. It records who at your practice is entitled to refer patients for X-rays and to report on the images, which the radiation regulations (IR(ME)R 2017) require us both to hold on file. It is also known as the <strong>service level agreement</strong>.</p>
-          <p class="u-mt-4">Complete it alongside your first referral. After that, send referrals on their own — you will not see this again unless the people at your practice change.</p>
-          <h3 class="u-mt-8 u-mb-4">Who you are referring to</h3>
-          {specs}
-          <h3 class="u-mt-8 u-mb-4">Referral criteria</h3>
-          <p class="muted">The document specified here will be used by both parties as the basis for the referral of patients and the justification/authorisation of dental radiographic examinations.</p>
+          <p class="lead">Before we can accept referrals from your practice, we need to record who there is entitled to refer patients for X-rays and to report on the images. The radiation regulations (IR(ME)R 2017) require us both to keep that on file. You may know it as the <strong>service level agreement</strong>.</p>
+          <p class="u-mt-4"><strong>Fill in the form below</strong> the first time you refer a patient to us. It takes a couple of minutes, and you will not need to do it again unless the people at your practice change.</p>
         </div>
         {f2}
+        <div class="u-mt-8 u-measure">
+          <h3 class="u-mb-4">Who you are referring to</h3>
+          {specs}
+        </div>
       </div>
     </div>'''.format(
         f1=f_form('cbctReferral', ref_fields, 'Send referral', steps=True,

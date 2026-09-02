@@ -795,15 +795,21 @@ a.card:hover { transform: translateY(-2px); }
   border-top: var(--hair) solid var(--line);
   border-bottom: var(--hair) solid var(--line);
 }
-.pager__item { background: var(--paper); padding: var(--s-6) var(--s-5); display: block; transition: background var(--t-fast) var(--ease); }
+/* Two links share the row evenly at every width and their titles wrap inside
+   their own half — stacking them full width on a phone made a two-step
+   sequence read as two separate blocks. Centred, so a short title does not
+   sit adrift at the edge of its half. */
+.pager__item {
+  background: var(--paper); padding: var(--s-6) var(--s-5);
+  display: block; text-align: center;
+  transition: background var(--t-fast) var(--ease);
+}
 .pager__item:hover { background: var(--paper-2); }
 .pager__item .label { display: block; margin-bottom: var(--s-2); }
 .pager__title { display: block; font-family: var(--font-head); font-size: 1rem; font-weight: var(--fw-semi); color: var(--black); }
-.pager__item--next { text-align: right; }
-/* First or last in a sequence: one link only, which must still sit on its own
-   side rather than falling into the left-hand cell. */
-.pager__item--next:only-child { grid-column: 2; }
-@media (max-width: 560px) { .pager { grid-template-columns: 1fr; } .pager__item--next { text-align: left; } }
+/* First or last in a sequence: one link, so it takes the whole row rather
+   than leaving half the band as bare background. */
+.pager__item:only-child { grid-column: 1 / -1; }
 
 /* -----------------------------------------------------------------------------
    22. FORMS

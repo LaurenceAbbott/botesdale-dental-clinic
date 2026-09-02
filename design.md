@@ -255,6 +255,8 @@ So an ink label has exactly one darker step available. Hover takes it, and press
 
 Also `--sm`, `--block`, `.is-disabled`. Wrap groups in `.btn-row`.
 
+**One primary per page, on any ground.** `c_cta()` renders the primary as `.btn--solid` whether the band is light or dark. It previously rendered as `.btn--light` on a dark band — the same treatment as the secondary — which left those pages with two equal-weight outline buttons and no primary at all. The accent fill with an ink label measures 6.3:1 on `--black`, so it carries the emphasis on dark as well as on paper. `demote=True` still drops the primary to an outline; that is for pages whose real primary action is a form further up, where a solid button in the closing band would compete with it.
+
 **Full width on a phone.** Below 620px every `.btn` spans its column and `.btn-row` stacks. A 180px button floating in a 390px viewport reads as unfinished and is a worse tap target. `.btn--sm` is excluded — those are in-form utilities (Back, "add another") that belong inline.
 
 ### 4.2 Arc link — `components.css`
@@ -459,9 +461,9 @@ Two links at the foot of a page: the previous and next page in its section, buil
 
 **This replaced the rail.** A sticky column of sibling links competed with the copy for the whole scroll and cost the content a 260px column on every treatment and case-study page. The pager says the same thing once, at the point it becomes useful — when the reader has finished. It sits after the content and before the closing CTA band.
 
-First and last in a sequence render a single link. `.pager__item--next:only-child` forces it into the right-hand cell so it still reads as "next" rather than falling into the left.
+Two links share the row evenly at every width, titles wrapping inside their own half and centred — stacking them full width on a phone made a two-step sequence read as two unrelated blocks. A single link (first or last in a sequence) takes the whole row via `.pager__item:only-child`, rather than sitting in one half with the other left as bare background.
 
-Hub and overview pages take no pager: they are the top of a section, not a step in it.
+**Only where there is a real sequence.** Hub and overview pages take none — they are the top of a section, not a step in it — and neither do the implant pages: clinic, referrals and missing teeth are related but not ordered, so a "next" between them would be invented rather than navigational.
 
 ### 4.24 Forms — `.form`, `.field` + `js/forms.js`
 

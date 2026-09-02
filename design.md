@@ -56,7 +56,11 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--accent-800` | `#08506E` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
-> **Note on the brand blue.** The written brief specifies `#009ee3`. The approved design system uses `#17A6DE`, which sits better against the warm paper ground. To switch, change `--accent` (and optionally `--accent-600/700`) in `css/base.css` — nothing else needs touching.
+> **Note on the brand blue — now evidenced.** The written brief specified `#009EE3`; the design system chose `#17A6DE` for the warm paper ground. The supplied logo files settle it: they paint their accent in **`#009EE3`**, so that is the practice's real blue, and the site accent currently differs from the mark in its own header.
+>
+> The two blacks in those files match the palette exactly — the icon is `#22292F` and the wordmark `#1A1A18` — so the ink is right and only the blue is open.
+>
+> Switching is a single-token change in `css/base.css` and safe for the primary button: an ink label on `#009EE3` measures 5.8:1 (against 6.3:1 today), clearing AA. It is *not* usable as small text on paper at 2.8:1 — but neither is the current accent at 2.6:1, which is exactly why `--accent-700` exists for links, so nothing else moves. The derived `--accent-600/700/800` steps would want re-deriving from the new hue.
 
 **Dark grounds** for the hero and page heads: `--grad-hero`, plus `--grad-cool`, `--grad-warm`, `--grad-slate` if a gradient panel is ever needed. Media panels awaiting photography use `--placeholder` (see §4.4).
 
@@ -249,6 +253,10 @@ In practice the wait only happens on touch and keyboard, where it doubles as fee
 Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover` does.
 
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
+
+**The brand mark.** `assets/images/brand/` holds the supplied artwork: `-logo-` (wordmark plus icon, 648×77) and `-icon-` (the mark alone, 63×77), each in a black and a white cut, plus the favicon derived from the icon.
+
+The mark is **three colours** — icon in `--black-2`, wordmark in `--black`, arc and dot in the brand blue — so it cannot be recoloured with `currentColor` or a CSS mask without flattening the blue to one tone. The header therefore ships both cuts as `<img>` and swaps them on `.is-scrolled` / `.nav--solid`; both are cached after the first page. The `<a>` carries the accessible name and both images take an empty `alt`, so the name is announced once rather than twice.
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 

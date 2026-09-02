@@ -108,22 +108,22 @@
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-6);
 }
 
-.brand {
-  display: inline-flex; align-items: baseline; gap: 1px;
-  font-family: var(--font-head);
-  font-size: .9375rem; font-weight: var(--fw-semi);
-  letter-spacing: .04em; text-transform: uppercase;
-  color: var(--paper);
-  transition: color var(--t-fast) var(--ease);
-  white-space: nowrap;
+/* The real supplied mark. It is three colours — the icon in --black-2, the
+   wordmark in --black, the arc and dot in the brand blue — so it cannot be
+   recoloured with currentColor or a mask without flattening the blue. Two
+   files, swapped on the header state, keep the artwork exactly as supplied;
+   both are cached after the first page. */
+.brand { display: inline-flex; align-items: center; flex: 0 0 auto; }
+.brand__mark {
+  display: block;
+  height: 26px; width: auto;
+  transition: opacity var(--t-fast) var(--ease);
 }
-.nav.is-scrolled .brand, .nav--solid .brand { color: var(--black); }
-.brand__dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--accent); margin-left: 4px;
-  transform: translateY(-7px);
-}
-@media (max-width: 400px) { .brand { font-size: .8125rem; } }
+.brand__mark--dark { display: none; }
+.nav.is-scrolled .brand__mark--light, .nav--solid .brand__mark--light { display: none; }
+.nav.is-scrolled .brand__mark--dark,  .nav--solid .brand__mark--dark  { display: block; }
+@media (max-width: 1120px) { .brand__mark { height: 24px; } }
+@media (max-width: 420px)  { .brand__mark { height: 20px; } }
 
 /* Desktop links */
 .nav__links {

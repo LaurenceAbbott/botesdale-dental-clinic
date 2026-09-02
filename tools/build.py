@@ -120,7 +120,10 @@ def build_header(active, depth):
 
     return '''<header class="nav" data-nav-root>
   <div class="nav__inner">
-    <a class="brand" href="{home}">Botesdale Dental<span class="brand__dot" aria-hidden="true"></span></a>
+    <a class="brand" href="{home}" aria-label="Botesdale Dental \u2014 home">
+      <img class="brand__mark brand__mark--light" src="{logo_light}" alt="" width="648" height="77" decoding="async">
+      <img class="brand__mark brand__mark--dark" src="{logo_dark}" alt="" width="648" height="77" decoding="async">
+    </a>
     <nav class="nav__links" aria-label="Primary">
       {links}
     </nav>
@@ -142,6 +145,8 @@ def build_header(active, depth):
   </div>
 </div>'''.format(
         home=rel('home', depth),
+        logo_light=asset('images/brand/botesdale-dental-logo-white.svg', depth),
+        logo_dark=asset('images/brand/botesdale-dental-logo-black.svg', depth),
         contact=rel('contact', depth),
         links='\n      '.join(links),
         sheet='\n  '.join(sheet),

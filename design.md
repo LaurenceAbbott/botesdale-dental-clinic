@@ -90,27 +90,35 @@ Tracking tightens as size increases (`--ls-tight: -.02em` on `h1` and `.display`
 
 `--wrap` (1440px) is the maximum width of any line of text on the site. A centred `.wrap` puts its content at `(100vw − 1440) / 2 + --pad-inline` from the viewport edge; that line is **the rail**, and everything textual aligns to it.
 
-Full-bleed components — the editorial block and the team row — cannot use `.wrap`, because their media has to run out to the viewport edge. They use a four-column *bleed grid* instead, built from two tokens:
+**Nothing bleeds to the viewport edge any more.** The editorial block used to run its media right off the side of the screen; it now overhangs the rail by a fixed *tenth of the outer margin* and stops. The margin is split 90 / 10 and the picture is allowed into the inner tenth only:
 
 ```css
---col-gutter: minmax(var(--pad-inline), 1fr);
---col-half:   minmax(0, calc(var(--wrap) / 2 - var(--pad-inline)));
+--col-half: minmax(0, calc(var(--wrap) / 2 - var(--pad-inline)));
 
 .ed {
-  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
+  grid-template-columns:
+    minmax(calc(var(--pad-inline) * .9), 9fr)   /* outer margin, 90%     */
+    minmax(calc(var(--pad-inline) * .1), 1fr)   /* overhang lane, 10%    */
+    var(--col-half) var(--col-half)
+    minmax(calc(var(--pad-inline) * .1), 1fr)
+    minmax(calc(var(--pad-inline) * .9), 9fr);
 }
-.ed__media { grid-column: 1 / 3; }   /* bleeds left, stops at the centre */
-.ed__text  { grid-column: 3 / 4; }   /* ends on the rail                 */
-.ed--rev .ed__media { grid-column: 3 / 5; }
-.ed--rev .ed__text  { grid-column: 2 / 3; }   /* starts on the rail      */
+.ed__media { grid-column: 2 / 4; }   /* overhangs the rail, stops at the centre */
+.ed__text  { grid-column: 4 / 5; }   /* ends on the rail                        */
+.ed--rev .ed__media { grid-column: 4 / 6; }
+.ed--rev .ed__text  { grid-column: 3 / 4; }   /* starts on the rail             */
 ```
 
-Because the gutters are `1fr` and the content columns are capped, the text column lands on exactly the same pixel as a centred `.wrap` at every viewport width — and the measure inside it stays constant as the window grows. No `100vw` arithmetic is involved, so there is no scrollbar-width error.
+The `9fr : 1fr` split means the overhang is always a tenth of whatever margin the viewport happens to have — 13px at 1600px, 43px at 2200px — so it stays proportionate instead of turning into a bleed on a wide screen. The matching `.9 / .1` *minimums* keep the ratio holding below the container width too, where there is no free space to distribute; the two lanes still add up to `--pad-inline`, so the rail itself never moves.
+
+Because the outer lanes are `fr` and the content columns are capped, the text column lands on exactly the same pixel as a centred `.wrap` at every viewport width — and the measure inside it stays constant as the window grows. No `100vw` arithmetic is involved, so there is no scrollbar-width error.
+
+`.ed` also carries `padding-block: var(--section-y)`, so consecutive blocks — and a block against the dark band below it — are separated by paper rather than butting together.
 
 Two things to know if you extend this:
 
-* Give every child of a bleed grid `grid-row: 1`. Without it, an item whose column starts *before* the auto-placement cursor is pushed onto a second row — which is what silently breaks reversed blocks.
-* Below 860px the grid collapses to one column and both children take `padding-inline: var(--rail-x)`, which is simply `--pad-inline` at those widths.
+* Give every child of the grid `grid-row: 1`. Without it, an item whose column starts *before* the auto-placement cursor is pushed onto a second row — which is what silently breaks reversed blocks.
+* Below 860px the grid collapses to one column and `.ed` itself takes `padding-inline: var(--pad-inline)`.
 
 ### 2.4 Spacing
 
@@ -223,6 +231,8 @@ Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 
+**The header CTA's label follows its border.** `.nav__cta` is paper-on-transparent over the hero. When `.is-scrolled` swaps in the paper background, the rule that flips the border to `--black` has to flip `color` with it — otherwise the label stays paper on paper and the button reads as an empty box.
+
 **The sheet has no rules between its items.** It used to: every `.menu__link` carried a `border-bottom`, but the link is `width: fit-content`, so each rule stopped at the end of its own text while `.menu__group` ran the full width — a ragged mix of stub and full-width lines down the sheet. They were separating items that 26px type and 18px of padding already separate. Sub-items are indented by `--s-5` instead, which does the hierarchy the rules were failing to. This is the exception that proves §1.2: a hairline earns its place by doing work no other means does. Down a list of large type in open space, it does none.
 
 ### 4.4 Image placeholder — `.ph`
@@ -267,20 +277,23 @@ Uppercase, 11px, with a `/` separator. `--on-paper` variant for use outside a da
 
 ### 4.8 Editorial block — `.ed`
 
-The workhorse: a full-bleed media panel beside a copy column.
+The workhorse: a media panel overhanging the rail beside a copy column (§2.3).
 
 ```html
-<section class="ed" data-reveal>
+<section class="ed ed--cols" data-reveal>
   <div class="ed__media"><div class="ph">…</div></div>
   <div class="ed__text">
     <span class="label">Philosophy</span>
-    <h2>…</h2><p>…</p>
+    <h2>…</h2>
+    <div class="ed__body ed__body--cols"><p>…</p><p>…</p><p>…</p></div>
     <a class="arc-link" …>…</a>
   </div>
 </section>
 ```
 
-**Modifiers:** `--rev` (media right, copy starts on the rail), `--warm` (a half-step darker placeholder, for tonal alternation between consecutive blocks).
+**Modifiers:** `--rev` (media right, copy starts on the rail), `--warm` (a half-step darker placeholder, for tonal alternation between consecutive blocks), `--cols` (see below).
+
+**Two-column copy.** Three paragraphs or more in a half-width column runs long and thin and leaves the rest of the row empty, so `c_ed()` adds `.ed--cols` / `.ed__body--cols` automatically at that length: the heading uncaps to the full column and the paragraphs run two up beneath it, collapsing back to one column under 1100px. The body is a grid rather than `column-count` so a paragraph is never split across the gutter — and the grid owns the vertical rhythm, because the global `p + p { margin-top }` would otherwise push the second paragraph 16px below the first and stop the columns lining up.
 
 ### 4.9 Strip grid — `.strip`
 
@@ -298,9 +311,23 @@ Full-width dark section for a single idea, with optional `.facts` beneath it. **
 
 Numbered hairline rows (`01`, `02`, …). The default way to explain a sequence.
 
-### 4.13 Team row — `.team__row`
+### 4.13 Team card — `.team__card`
 
-Half-width portrait beside a biography. `--rev` alternates the side.
+Headshots side by side inside `.wrap`, two up (one up under 860px). These are portraits, not landscape scenes: a full-bleed alternating row wasted the width and squeezed each biography into a thin column.
+
+```html
+<ul class="team__grid" role="list">
+  <li class="team__card">
+    <div class="team__portrait">
+      <div class="ph">…</div>
+      <div class="team__id"><h3>Dr Martin Sulo</h3><span class="label">Dental Surgeon</span></div>
+    </div>
+    <div class="team__bio"><p>…</p><p class="team__gdc">GDC No: 84351</p></div>
+  </li>
+</ul>
+```
+
+Name and role are white over the foot of the portrait; the biography reads underneath at full card width. The scrim (`.team__portrait::after`) is **flat at the bottom, not a plain ramp** — `rgba(0,0,0,.88)` held solid for the bottom 26% before fading out at 52%. The overlaid text sits entirely inside that flat zone, so it keeps 6.2:1 whatever the photograph does behind it; a straight linear fade would put the label at roughly 2:1 over a bright background.
 
 ### 4.14 Quote & carousel — `.quote`, `[data-carousel]`
 
@@ -347,6 +374,8 @@ Clinical before/during/after images with a corner tag. Any `[data-lightbox]` fig
 ### 4.22 Rail — `.rail`
 
 Sticky contextual sidebar listing sibling pages, with the current page marked by an accent tick. Used inside `.with-rail`.
+
+**It sits on the left and it looks like a menu.** `.with-rail` is `260px minmax(0, 1fr)` and the rail comes *first in the DOM*, so focus order matches what you see. `.rail__list` is a bordered card on `--paper-2` with each link a padded row — a loose column of links to the right of the copy did not read as navigation at all.
 
 ### 4.23 Pager — `.pager`
 
@@ -439,6 +468,10 @@ The tab row ships **hidden** and every panel ships **visible**; `js/ui.js` unhid
 * Enhanced, each panel's own `<h2>` is visually hidden (it would repeat the tab), but stays in the accessibility tree and the document outline.
 
 The tabs are **boxed**, not underlined, on purpose: an underlined tab row directly above the stepper's underlined progress bar reads as one confused set of lines. A chooser is a choice, not a position.
+
+### 4.24d Section split — `.section-split`
+
+Two equal columns: a `.section-head` on the left, the content that belongs to it on the right. The answer to a section whose heading and short intro leave the right half of a 1440 container empty. Collapses to one column under 900px.
 
 ### 4.25 CTA band — `.cta`
 

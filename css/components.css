@@ -30,6 +30,7 @@
      22a. Multi-step forms (stepper, step, nav)
      22b. Repeat group ("add another")
      22c. Chooser (tab switcher)
+     22d. Section split (heading column + content column)
      23. CTA band
      24. Map frame
      25. Cookie banner
@@ -294,20 +295,31 @@
    07. EDITORIAL BLOCK — the workhorse 2-up media + copy row
    Modifiers: .ed--rev (media right), .ed--warm (warm gradient placeholder)
    -------------------------------------------------------------------------- */
+/* The media no longer runs to the viewport edge. The outer margin is split
+   90 / 10 and the picture is allowed into the inner tenth only, so it reads as
+   a deliberate overhang off the container rather than a bleed — and the
+   overhang grows with the margin, so it stays proportionate on wide screens.
+   Below the container width both lanes collapse to their minimums and the
+   picture lines up with the copy. */
 .ed {
   display: grid;
-  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
-  min-height: 520px;
+  grid-template-columns:
+    minmax(calc(var(--pad-inline) * .9), 9fr)
+    minmax(calc(var(--pad-inline) * .1), 1fr)
+    var(--col-half) var(--col-half)
+    minmax(calc(var(--pad-inline) * .1), 1fr)
+    minmax(calc(var(--pad-inline) * .9), 9fr);
+  padding-block: var(--section-y);
 }
 .ed > * { min-width: 0; grid-row: 1; }
-.ed__media { grid-column: 1 / 3; }
-.ed__text  { grid-column: 3 / 4; }
-.ed--rev .ed__media { grid-column: 3 / 5; }
-.ed--rev .ed__text  { grid-column: 2 / 3; }
+.ed__media { grid-column: 2 / 4; }
+.ed__text  { grid-column: 4 / 5; }
+.ed--rev .ed__media { grid-column: 4 / 6; }
+.ed--rev .ed__text  { grid-column: 3 / 4; }
 
 .ed__media {
   position: relative; display: grid; overflow: hidden;
-  min-height: 340px;
+  min-height: 440px;
   background: var(--placeholder);
 }
 /* Subtle tonal alternation between consecutive blocks */
@@ -333,10 +345,32 @@
 .ed__text p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--s-5); }
 .ed__text .arc-link { margin-top: var(--s-2); }
 
+/* Long copy: the heading keeps the full column, the paragraphs run two up
+   beneath it. Grid rather than column-count so a paragraph is never split
+   across the gutter. */
+.ed__body--cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-8);
+  align-items: start;
+}
+/* The grid owns the rhythm here. Left alone, the global `p + p` margin-top
+   pushes the second paragraph 16px below the first and the two columns stop
+   lining up. */
+.ed__body--cols > p { margin: 0; max-width: none; }
+.ed--cols .ed__text h2 { max-width: none; }
+@media (max-width: 1100px) {
+  .ed__body--cols { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (max-width: 860px) {
-  .ed { grid-template-columns: 1fr; min-height: 0; }
+  .ed {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: var(--pad-inline);
+    padding-block: var(--section-y-tight);
+  }
   .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 3 / 2; }
-  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; padding-inline: var(--rail-x); }
+  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; padding-inline: 0; padding-block: var(--s-6) 0; }
 }
 
 /* -----------------------------------------------------------------------------
@@ -400,7 +434,7 @@ a.card:hover { transform: translateY(-2px); }
    between left-aligned sections, so centring it reads as punctuation. */
 .statement { background: var(--black); color: var(--paper); padding-block: var(--s-11); text-align: center; }
 .statement .label { display: block; color: var(--paper-mute); }
-.statement h2 { color: var(--paper); font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.5rem); line-height: 1.2; margin: var(--s-4) auto var(--s-5); max-width: 22ch; }
+.statement h2 { color: var(--paper); font-size: clamp(1.625rem, 1.2rem + 1.9vw, 2.5rem); line-height: 1.2; margin: var(--s-4) auto var(--s-5); max-width: 32ch; }
 .statement p { color: var(--paper-soft); max-width: 56ch; margin: 0 auto var(--s-7); }
 .statement .facts { margin-inline: auto; }
 /* Dark bands get the same accent link as everywhere else, not white — a link
@@ -427,12 +461,16 @@ a.card:hover { transform: translateY(-2px); }
 /* -----------------------------------------------------------------------------
    11. PROCESS LIST — numbered hairline rows
    -------------------------------------------------------------------------- */
-.process { padding-block: var(--section-y); border-top: var(--hair) solid var(--line); }
+/* Tinted, so a page does not run paper into paper — and the rows are capped
+   well short of the container, because a 1440-wide hairline over a 60ch
+   paragraph is mostly empty rule. */
+.process { padding-block: var(--section-y); background: var(--paper-3); }
 .process__head { max-width: 32rem; margin-bottom: var(--s-8); }
 .process__head .label { display: block; margin-bottom: var(--s-3); }
 
 .p-row {
-  display: grid; grid-template-columns: 60px 1fr; gap: var(--s-6);
+  display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: var(--s-6);
+  max-width: 60rem;
   padding-block: var(--s-6);
   border-bottom: var(--hair) solid var(--line);
 }
@@ -445,35 +483,43 @@ a.card:hover { transform: translateY(-2px); }
 /* -----------------------------------------------------------------------------
    12. TEAM
    -------------------------------------------------------------------------- */
-.team { border-top: var(--hair) solid var(--line); }
-.team__row {
+/* Two headshots side by side. These are portraits, not landscape scenes, so a
+   full-bleed alternating row wasted the width and pushed each bio into a thin
+   column. Name and role sit over the foot of the portrait; the bio reads
+   underneath at full card width. */
+.team__grid {
   display: grid;
-  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
-  min-height: 460px;
-  border-bottom: var(--hair) solid var(--line);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-10) var(--s-8);
+  list-style: none; padding: 0; margin: 0;
 }
-.team__row > * { min-width: 0; grid-row: 1; }
-.team__media { grid-column: 1 / 3; }
-.team__text  { grid-column: 3 / 4; }
-.team__row--rev .team__media { grid-column: 3 / 5; }
-.team__row--rev .team__text  { grid-column: 2 / 3; }
-.team__media { position: relative; display: grid; overflow: hidden; background: var(--placeholder); }
-.team__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-.team__text {
-  display: flex; flex-direction: column; justify-content: center;
-  padding-block: var(--pad-block);
-  padding-left: var(--ed-gap);
+.team__portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--placeholder);
 }
-.team__row--rev .team__text { padding-left: 0; padding-right: var(--ed-gap); }
-.team__text h3 { font-size: 1.625rem; margin-bottom: var(--s-2); }
-.team__text .label { display: block; margin-bottom: var(--s-5); }
-.team__text p { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 46ch; }
-.team__text p + p { margin-top: var(--s-4); }
+.team__portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+/* Flat at the foot so the overlaid text keeps its contrast whatever the
+   photograph does behind it — 6.2:1 for white on rgba(0,0,0,.88) even over a
+   blown-out white background. */
+.team__portrait::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .88) 26%, rgba(0, 0, 0, 0) 52%);
+}
+.team__id {
+  position: absolute; inset-inline: 0; bottom: 0; z-index: 1;
+  padding: var(--s-5) var(--s-6) var(--s-5);
+}
+.team__id h3 { font-size: clamp(1.25rem, 1.05rem + .5vw, 1.625rem); color: var(--paper); margin-bottom: var(--s-2); }
+.team__id .label { display: block; color: var(--paper-soft); }
+.team__bio { padding-top: var(--s-6); }
+.team__bio p { font-size: var(--fs-sm); color: var(--ink-soft); }
+.team__bio p + p { margin-top: var(--s-4); }
 .team__gdc { margin-top: var(--s-5); font-size: var(--fs-xs); color: var(--ink-mute); letter-spacing: .04em; }
 @media (max-width: 860px) {
-  .team__row { grid-template-columns: 1fr; min-height: 0; }
-  .team__media, .team__row--rev .team__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 4 / 3; }
-  .team__text,  .team__row--rev .team__text  { grid-column: 1; grid-row: 2; padding-inline: var(--rail-x); padding-left: var(--rail-x); }
+  .team__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-10); }
 }
 
 /* -----------------------------------------------------------------------------
@@ -497,10 +543,17 @@ a.card:hover { transform: translateY(-2px); }
 
 
 .carousel { position: relative; }
-.carousel__track { position: relative; }
-.carousel__slide { display: none; }
-.carousel__slide.is-active { display: block; animation: fade var(--t-slow) var(--ease); }
-@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* Every slide occupies the same grid cell, so the track is always as tall as
+   the LONGEST quote and the panel does not jump as slides change. Hidden
+   slides use visibility rather than display, which keeps them out of the tab
+   order and the accessibility tree while still contributing their height. */
+.carousel__track { display: grid; }
+.carousel__slide {
+  grid-area: 1 / 1;
+  visibility: hidden; opacity: 0;
+  transition: opacity var(--t-slow) var(--ease);
+}
+.carousel__slide.is-active { visibility: visible; opacity: 1; }
 
 .carousel__nav { display: flex; align-items: center; gap: var(--s-5); margin-top: var(--s-8); }
 .carousel__btn {
@@ -569,7 +622,7 @@ a.card:hover { transform: translateY(-2px); }
 .plan--feature .plan__price small { color: var(--paper-mute); }
 .plan__list { display: grid; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-soft); }
 .plan__list li { position: relative; padding-left: var(--s-6); }
-.plan__list li::before { content: ""; position: absolute; left: 0; top: .7em; width: 12px; height: var(--hair); background: var(--accent); }
+.plan__list li::before { content: ""; position: absolute; left: 3px; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .plan--feature .plan__list { color: var(--paper-soft); }
 
 .price-list { border-top: var(--hair) solid var(--line); }
@@ -652,7 +705,9 @@ a.card:hover { transform: translateY(-2px); }
 /* -----------------------------------------------------------------------------
    20. FIGURE, GALLERY & BEFORE/AFTER
    -------------------------------------------------------------------------- */
-.figure { margin: 0; }
+/* No `margin: 0` here. The reset already zeroes it, and this rule loads after
+   base.css — so it was overriding the u-mt-8 the markup asks for and letting
+   the picture butt straight against the paragraph above it. */
 .figure img { width: 100%; }
 .figure figcaption { margin-top: var(--s-3); font-size: var(--fs-xs); color: var(--ink-mute); }
 
@@ -691,13 +746,19 @@ a.card:hover { transform: translateY(-2px); }
    -------------------------------------------------------------------------- */
 .rail { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
 .rail .label { display: block; margin-bottom: var(--s-4); }
-.rail__list { border-top: var(--hair) solid var(--line); }
+/* A card, so it reads as a menu rather than as more page content. */
+.rail__list {
+  border: var(--hair) solid var(--line);
+  background: var(--paper-2);
+  padding-inline: var(--s-5);
+}
 .rail__list a {
-  display: block; padding: var(--s-3) 0;
+  display: block; padding: var(--s-4) 0;
   border-bottom: var(--hair) solid var(--line);
   font-size: var(--fs-sm); color: var(--ink-soft);
   transition: color var(--t-fast) var(--ease), padding-left var(--t-fast) var(--ease);
 }
+.rail__list a:last-child { border-bottom: 0; }
 .rail__list a:hover { color: var(--black); padding-left: 6px; }
 .rail__list a.is-active { color: var(--black); font-weight: var(--fw-medium); }
 .rail__list a.is-active::before { content: ""; display: inline-block; width: 12px; height: var(--hair); background: var(--accent); vertical-align: middle; margin-right: 8px; }
@@ -723,7 +784,7 @@ a.card:hover { transform: translateY(-2px); }
 /* One column, always. A form is read and completed top to bottom; a second
    column asks the eye to choose a path and makes the sequence ambiguous.
    .form__grid--single is kept as an alias so older markup still parses. */
-.form { max-width: 680px; }
+.form { max-width: 680px; margin-inline: auto; }
 .form__grid, .form__grid--single { display: grid; grid-template-columns: 1fr; gap: var(--s-6); }
 
 .field { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
@@ -874,7 +935,10 @@ a.card:hover { transform: translateY(-2px); }
    work — only to make it shorter.
    -------------------------------------------------------------------------- */
 .stepper { margin-bottom: var(--s-8); }
+/* Mobile only. On desktop the labelled list already names the step and the
+   bar already shows progress, so "Step 1 of 3" is a third telling of it. */
 .stepper__count {
+  display: none;
   font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
   color: var(--ink-soft); margin-bottom: var(--s-4);
 }
@@ -920,7 +984,7 @@ a.card:hover { transform: translateY(-2px); }
 
 @media (max-width: 720px) {
   .stepper__list { display: none; }
-  .stepper__count { margin-bottom: var(--s-3); }
+  .stepper__count { display: block; margin-bottom: var(--s-3); }
   .form--stepped .form__step > .form__section-title { display: block; }
 }
 
@@ -975,6 +1039,21 @@ a.card:hover { transform: translateY(-2px); }
 .repeat__remove:hover { color: var(--error); border-bottom-color: var(--error); }
 .repeat__add { align-self: flex-start; }
 .repeat__full { font-size: var(--fs-xs); color: var(--ink-mute); }
+
+/* -----------------------------------------------------------------------------
+   22d. SECTION SPLIT — heading column beside a content column
+   For a section whose heading and intro can sit beside its list, so the copy
+   does not run down the left with the right half of a 1440 container empty.
+   Both columns belong to one section, so this is not two unrelated topics.
+   -------------------------------------------------------------------------- */
+.section-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-8) var(--s-10);
+  align-items: start;
+}
+.section-split .section-head { margin-bottom: 0; max-width: 34rem; }
+@media (max-width: 900px) { .section-split { grid-template-columns: minmax(0, 1fr); } }
 
 /* -----------------------------------------------------------------------------
    23. CTA BAND

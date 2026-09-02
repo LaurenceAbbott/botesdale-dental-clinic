@@ -46,7 +46,7 @@
 .with-rail {
   display: grid;
   gap: var(--s-9) var(--s-10);
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: 260px minmax(0, 1fr);
   align-items: start;
 }
 @media (max-width: 940px) { .with-rail { grid-template-columns: minmax(0, 1fr); } }
@@ -170,9 +170,12 @@
   padding: 10px 20px;
   font-size: .75rem; letter-spacing: var(--ls-cta); text-transform: uppercase;
   border: var(--hair) solid var(--paper); color: var(--paper);
-  transition: border-color var(--t-fast) var(--ease);
+  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
-.nav.is-scrolled .nav__cta, .nav--solid .nav__cta { border-color: var(--black); }
+/* The label has to follow the border. Over the hero the header is transparent
+   and both are paper; once the header goes solid, a paper label on paper is
+   invisible. */
+.nav.is-scrolled .nav__cta, .nav--solid .nav__cta { border-color: var(--black); color: var(--black); }
 @media (max-width: 1120px) { .nav__cta { display: none; } }
 
 /* Burger */

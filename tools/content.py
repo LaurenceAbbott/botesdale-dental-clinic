@@ -230,7 +230,15 @@ def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
         wrap_cls += ' ed--rev'
     if media_wide:
         wrap_cls += ' ed--media-wide'
-    body = ''.join('<p>%s</p>' % p for p in paras)
+    # Three paragraphs or more in a half-width column runs long and thin, and
+    # leaves the rest of the row empty. Past that the copy reads better as two
+    # columns under a full-width heading.
+    two_col = len(paras) >= 3
+    if two_col:
+        wrap_cls += ' ed--cols'
+    body_cls = 'ed__body' + (' ed__body--cols' if two_col else '')
+    body = '<div class="%s">%s</div>' % (
+        body_cls, ''.join('<p>%s</p>' % p for p in paras))
     link_html = c_arc_link(link[0], link[1]) if link else ''
     return '''<section class="{wrap_cls}" data-reveal>
   <div class="ed__media">{ph}</div>
@@ -1356,14 +1364,14 @@ CASE_BY_KEY = dict((c['key'], c) for c in CASES)
 # TESTIMONIALS — as published on the current site
 # =============================================================================
 TESTIMONIALS = [
- ('My experience at your practice can only be described as beyond perfect. From the initial '
-  'consultation, through to the preparation and procedure was very professional and impressive. '
-  'Martin Sulo is undoubtedly a top man in his profession. The whole procedure was painless and '
-  'very thorough. Although my bank account has taken a hammering of late, the whole procedure '
-  'has been more than worthwhile and I am now reaping the benefits.', 'David Wattam'),
- ('Been using the surgery for near on 20 years. Great people, honest and always helpful. Denplan '
-  'works for me so cost is per month and covers everything. Very happy visiting and always leave '
-  'with a smile.', 'Darren Gundry'),
+# Kept to four lines or fewer at the carousel's measure. Longer than that and
+# a testimonial stops being a voice and becomes a passage — and the panel had
+# to grow to the longest one.
+ ('My experience at your practice can only be described as beyond perfect. Martin Sulo is '
+  'undoubtedly a top man in his profession, and the whole procedure was painless, thorough '
+  'and more than worthwhile.', 'David Wattam'),
+ ('Been using the surgery for near on 20 years. Great people, honest and always helpful. '
+  'Very happy visiting, and I always leave with a smile.', 'Darren Gundry'),
  ('Just to say a huge thank you to Martin, Eve and all the team for your dedication, skill and '
   'utmost care. Thank you all.', 'Val Forge'),
  ('I’m no longer fearful of coming to the dentist. The team put me at ease from the first '
@@ -1542,8 +1550,8 @@ def r_leaf(key, depth, H):
                      % (c_ph(LABELS[key], 'ar-3-2'), _e(LABELS[key])))
 
     out.append(c_section(
-        '<div class="with-rail"><div class="prose">%s</div>%s</div>'
-        % (''.join(prose), rail)))
+        '<div class="with-rail">%s<div class="prose">%s</div></div>'
+        % (rail, ''.join(prose))))
 
     out.append(c_process(H, depth, 'What to expect', 'How it works', d['process']))
 
@@ -1686,7 +1694,7 @@ def r_home(depth, H):
     out.append(c_quote(TESTIMONIALS))
 
     out.append(c_section(
-        '<div class="section-head"><span class="label">Case studies</span>'
+        '<div class="section-head section-head--center"><span class="label">Case studies</span>'
         '<h2>Real people, real problems, treated to the level patient allows us to treat them.</h2>'
         '<p>The cases on this page were published with consent and kind agreement of our happy '
         'patients.</p></div>'
@@ -1742,10 +1750,12 @@ def r_about(depth, H):
          'latest in dental technology.'],
         image='images/cards/practice-3.jpg', alt='Inside the new practice', rev=True))
 
-    out.append(c_section('''<div class="section-head"><span class="label">Our mission</span>
+    out.append(c_section('''<div class="section-split">
+      <div class="section-head"><span class="label">Our mission</span>
       <h2>To deliver high-quality, evidence-based dentistry using the best tools, techniques, and materials available.</h2>
       <p>We stay ahead of the curve through ongoing professional development, working with leading labs, and investing in innovations that ensure patients receive expert, personalised care.</p></div>
-      <div class="prose u-measure">
+      <div>
+      <div class="prose">
         <p>We offer a full range of services, including:</p>
         <ul>
           <li>Routine check-ups and hygiene care</li>
@@ -1756,40 +1766,52 @@ def r_about(depth, H):
         </ul>
         <p>Whether you’re a long-standing patient or visiting us for the first time, our new home was designed with you in mind — providing a relaxing space where care is not only clinical, but compassionate.</p>
       </div>
-      <div class="u-mt-8">%s</div>''' % c_btn('Now welcoming new patients', H.rel('contact', depth), 'outline'),
+      <div class="u-mt-8">%s</div>
+      </div>
+    </div>''' % c_btn('Now welcoming new patients', H.rel('contact', depth), 'outline'),
       cls='section--paper-3'))
 
-    out.append('''<section class="team">
-  <div class="wrap section--tight">
-    <div class="section-head">
+    out.append('''<section class="section team">
+  <div class="wrap">
+    <div class="section-head section-head--center">
       <span class="label">Our people</span>
       <h2>Meet our team</h2>
       <p>All our dentists adhere to the rules governing the profession under strict guidance from the
         <a class="link-inline" href="https://www.gdc-uk.org" rel="noopener">General Dental Council (GDC)</a>
         “Standards for Dental Professionals”.</p>
     </div>
-  </div>
-  <div class="team__row">
-    <div class="team__media">{martin}</div>
-    <div class="team__text">
-      <h3>Dr Martin Sulo</h3>
-      <span class="label">Dental Surgeon &middot; MUD Olomouc 1998</span>
-      <p>I am proud to be a general dental practitioner, fortunate enough to focus on the aspects of dentistry I most enjoy. Together with my wife, Eve, we have owned Botesdale Dental Practice &amp; Implant Clinic since 2010. Over the years, despite many challenges, we have grown it into a modern and successful practice.</p>
-      <p>My main areas of interest include dental implantology, crown and bridgework, composite restorations, and clear aligners.</p>
-      <p>Outside of work, family comes first. I cherish time with my wife and our two wonderful boys — tennis, football, family travel, and our dog Nero, who ensures I get plenty of interesting walks every day.</p>
-      <p class="team__gdc">GDC No: 84351</p>
-    </div>
-  </div>
-  <div class="team__row team__row--rev">
-    <div class="team__media">{eve}</div>
-    <div class="team__text">
-      <h3>Mrs Eve Sulo</h3>
-      <span class="label">Practice Manager</span>
-      <p>I began my career in 1995 as a trainee orthodontic nurse in Hong Kong, an experience that taught me a great deal at a young age and laid the foundation for becoming a Registered Dental Nurse here in the United Kingdom.</p>
-      <p>Since then, I have gained a wealth of experience across many areas of dental healthcare within both the NHS and private sector. In my role, I ensure that our dedicated team has all the support and resources they need to provide the highest level of care to our patients.</p>
-      <p>I am also available to discuss any aspect of our patients’ — or potential patients’ — dental healthcare and treatment. I pride myself on being approachable and genuinely enjoy my role within the practice.</p>
-      <p class="team__gdc">GDC No: 105918</p>
-    </div>
+    <ul class="team__grid" role="list">
+      <li class="team__card">
+        <div class="team__portrait">
+          {martin}
+          <div class="team__id">
+            <h3>Dr Martin Sulo</h3>
+            <span class="label">Dental Surgeon &middot; MUD Olomouc 1998</span>
+          </div>
+        </div>
+        <div class="team__bio">
+          <p>I am proud to be a general dental practitioner, fortunate enough to focus on the aspects of dentistry I most enjoy. Together with my wife, Eve, we have owned Botesdale Dental Practice &amp; Implant Clinic since 2010. Over the years, despite many challenges, we have grown it into a modern and successful practice.</p>
+          <p>My main areas of interest include dental implantology, crown and bridgework, composite restorations, and clear aligners.</p>
+          <p>Outside of work, family comes first. I cherish time with my wife and our two wonderful boys — tennis, football, family travel, and our dog Nero, who ensures I get plenty of interesting walks every day.</p>
+          <p class="team__gdc">GDC No: 84351</p>
+        </div>
+      </li>
+      <li class="team__card">
+        <div class="team__portrait">
+          {eve}
+          <div class="team__id">
+            <h3>Mrs Eve Sulo</h3>
+            <span class="label">Practice Manager</span>
+          </div>
+        </div>
+        <div class="team__bio">
+          <p>I began my career in 1995 as a trainee orthodontic nurse in Hong Kong, an experience that taught me a great deal at a young age and laid the foundation for becoming a Registered Dental Nurse here in the United Kingdom.</p>
+          <p>Since then, I have gained a wealth of experience across many areas of dental healthcare within both the NHS and private sector. In my role, I ensure that our dedicated team has all the support and resources they need to provide the highest level of care to our patients.</p>
+          <p>I am also available to discuss any aspect of our patients’ — or potential patients’ — dental healthcare and treatment. I pride myself on being approachable and genuinely enjoy my role within the practice.</p>
+          <p class="team__gdc">GDC No: 105918</p>
+        </div>
+      </li>
+    </ul>
   </div>
 </section>'''.format(martin=c_ph('Portrait — Dr Martin Sulo'),
                      eve=c_ph('Portrait — Mrs Eve Sulo')))
@@ -1866,6 +1888,20 @@ def r_implant(depth, H):
         'images/heroes/implant-clinic.jpg', c_crumbs(H, depth, [], 'Implant clinic'))]
 
     out.append(c_section('''<div class="with-rail">
+      <aside class="rail">
+        <span class="label">Implant clinic</span>
+        <nav class="rail__list">
+          <a href="{implant}" class="is-active">Implant clinic</a>
+          <a href="{ir}">Implant referrals</a>
+          <a href="{missing}">Missing teeth</a>
+          <a href="{cases}">Case studies</a>
+          <a href="{fees}">Fees and membership</a>
+        </nav>
+        <div class="notice u-mt-8">
+          <strong>Referring a patient?</strong>
+          We accept implant referrals from patients and dental professionals alike, with a £0 referral fee for members of Our Plan.
+        </div>
+      </aside>
       <div class="prose">
         <p class="statement-text statement-text--wide">Struggling with missing or failing teeth? Or have you lost some of your own natural teeth over time? Thanks to advances in modern dentistry, you no longer need to depend solely on bridges or dentures.</p>
         <p>Dental implants offer a proven, long-lasting solution for bringing back your smile and restoring your ability to bite and chew comfortably. Here’s how they work:</p>
@@ -1882,20 +1918,6 @@ def r_implant(depth, H):
           <li>Implants are a natural-looking way to replace missing teeth.</li>
         </ul>
       </div>
-      <aside class="rail">
-        <span class="label">Implant clinic</span>
-        <nav class="rail__list">
-          <a href="{implant}" class="is-active">Implant clinic</a>
-          <a href="{ir}">Implant referrals</a>
-          <a href="{missing}">Missing teeth</a>
-          <a href="{cases}">Case studies</a>
-          <a href="{fees}">Fees and membership</a>
-        </nav>
-        <div class="notice u-mt-8">
-          <strong>Referring a patient?</strong>
-          We accept implant referrals from patients and dental professionals alike, with a £0 referral fee for members of Our Plan.
-        </div>
-      </aside>
     </div>'''.format(implant=H.rel('implant', depth), ir=H.rel('implant-referrals', depth),
                      missing=H.rel('missing', depth), cases=H.rel('cases', depth),
                      fees=H.rel('fees', depth))))
@@ -2346,16 +2368,19 @@ def r_cases(depth, H):
         'Real people with real problems, treated to the level the patient allows us to treat them.',
         'images/heroes/case-studies.jpg', c_crumbs(H, depth, [], 'Case studies'))]
 
-    # One column, same reasoning as the fees page: this is a passage to be
-    # read, and pairing it with the testimonial squeezed the measure to about
-    # five words a line by the middle breakpoints. The quote follows it.
-    out.append(c_section('''<div class="prose">
+    # Two columns again. This was made single-column when the container was
+    # 1200, where pairing the passage with the testimonial squeezed the measure
+    # to about five words a line. At 1440 there is room for both, and a single
+    # column here just leaves the right half of the section empty.
+    out.append(c_section('''<div class="section-split">
+      <div class="prose">
       <p class="statement-text statement-text--wide">We treat real people with real problems to the level patient allows us to treat them.</p>
       <p>The cases on this page were published with consent and kind agreement of our happy patients.</p>
       <p>We acknowledge that these cases may not be perfect, but just like everything in life is not ideal or perfect, neither are our teeth.</p>
       <p>We work with a range of dental laboratories across the UK and Europe, enabling us to collaborate with certified highly skilled technicians who specialise in their respective fields.</p>
-    </div>
-    <div class="u-measure u-mt-8">{quote}</div>'''.format(
+      </div>
+      <div>{quote}</div>
+    </div>'''.format(
         quote='<div class="notice"><strong>What our patients say</strong>'
               '&ldquo;%s&rdquo;<div class="u-mt-4 label">%s</div></div>'
               % (_e(TESTIMONIALS[1][0]), _e(TESTIMONIALS[1][1])))))
@@ -2392,9 +2417,9 @@ def r_case(key, depth, H):
             body.append('<ul>%s</ul>' % ''.join('<li>%s</li>' % _e(i) for i in val))
 
     out.append(c_section(
-        '<div class="with-rail"><div class="case-body prose">'
+        '<div class="with-rail">%s<div class="case-body prose">'
         '<div class="case-meta"><span class="badge badge--accent">%s</span></div>'
-        '%s</div>%s</div>' % (_e(c['label']), ''.join(body), c_rail(H, depth, key, 'cases'))))
+        '%s</div></div>' % (c_rail(H, depth, key, 'cases'), _e(c['label']), ''.join(body))))
 
     out.append(c_section(
         '<div class="section-head"><span class="label">The case</span><h2>Before, during and after</h2>'

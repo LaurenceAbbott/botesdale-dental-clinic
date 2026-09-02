@@ -273,7 +273,12 @@ code, kbd, samp {
 .meta  { font-size: var(--fs-xs); color: var(--ink-mute); }
 
 /* Long-form copy block (policies, case notes) */
-.prose { max-width: var(--measure); }
+/* Centred as a box, not as text. Where a --measure block sits inside the
+   1440 container it now sits in the middle of it rather than hard left with
+   all the empty space on one side; the copy inside stays left-aligned.
+   margin-inline:auto only does anything when the box is narrower than its
+   parent, so inside a grid column it is a no-op. */
+.prose { max-width: var(--measure); margin-inline: auto; }
 .prose > * + * { margin-top: var(--s-5); }
 .prose p, .prose li { font-size: var(--fs-lead); line-height: var(--lh-copy); color: var(--ink-soft); }
 .prose h2 { margin-top: var(--s-9); font-size: var(--fs-h3); color: var(--black); }
@@ -284,9 +289,11 @@ code, kbd, samp {
 .prose ul, .prose ol { padding-left: 0; list-style: none; }
 .prose li + li { margin-top: var(--s-3); }
 .prose ul > li { position: relative; padding-left: var(--s-6); }
+/* A round bullet. This was a 14px hairline, which read as a dash rather than
+   a list marker — the one place the system's line language got in the way. */
 .prose ul > li::before {
-  content: ""; position: absolute; left: 0; top: .72em;
-  width: 14px; height: var(--hair); background: var(--accent);
+  content: ""; position: absolute; left: 3px; top: .62em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
 }
 .prose ol { counter-reset: n; }
 .prose ol > li { position: relative; padding-left: var(--s-7); counter-increment: n; }
@@ -342,7 +349,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
    05. UTILITIES
    -------------------------------------------------------------------------- */
 .u-center      { text-align: center; }
-.u-measure     { max-width: var(--measure); }
+.u-measure     { max-width: var(--measure); margin-inline: auto; }
 .u-measure-c   { max-width: var(--measure); margin-inline: auto; }
 .u-nowrap      { white-space: nowrap; }
 .u-invert      { color: var(--paper); }

@@ -301,6 +301,8 @@ The mark is **three colours** — icon in `--black-2`, wordmark in `--black`, ar
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 
+**A scrim sits behind the transparent header.** `.is-scrolled` does not arrive until the hero has almost passed, so hero copy scrolls underneath the transparent header well before it goes solid — the page title collided with the wordmark, white on white. `.nav::before` is a top-down gradient in `--ink-rgb` that keeps the transparent-over-hero look while guaranteeing anything sliding under the header is darkened before it reaches the logo; it fades out as the solid state fades in, and `.nav__inner` takes `position: relative; z-index: 1` so the header's own content paints above it.
+
 **The header CTA's label follows its border.** `.nav__cta` is paper-on-transparent over the hero. When `.is-scrolled` swaps in the paper background, the rule that flips the border to `--black` has to flip `color` with it — otherwise the label stays paper on paper and the button reads as an empty box.
 
 **The sheet has no rules between its items.** It used to: every `.menu__link` carried a `border-bottom`, but the link is `width: fit-content`, so each rule stopped at the end of its own text while `.menu__group` ran the full width — a ragged mix of stub and full-width lines down the sheet. They were separating items that 26px type and 18px of padding already separate. Sub-items are indented by `--s-5` instead, which does the hierarchy the rules were failing to. This is the exception that proves §1.2: a hairline earns its place by doing work no other means does. Down a list of large type in open space, it does none.
@@ -449,15 +451,15 @@ Uppercase micro-label header row, hairline separators. The wrapper scrolls horiz
 
 Clinical before/during/after images with a corner tag. Any `[data-lightbox]` figure opens full-screen; Escape or a click closes it.
 
-### 4.22 Rail — `.rail`
+### 4.22 Prev / next pager — `.pager`
 
-Sticky contextual sidebar listing sibling pages, with the current page marked by an accent tick. Used inside `.with-rail`.
+Two links at the foot of a page: the previous and next page in its section, built by `c_group_pager()` from the same `GROUPS` ordering the sidebar rail used to render.
 
-**It sits on the left and it looks like a menu.** `.with-rail` is `260px minmax(0, 1fr)` and the rail comes *first in the DOM*, so focus order matches what you see. `.rail__list` is a bordered card on `--paper-2` with each link a padded row — a loose column of links to the right of the copy did not read as navigation at all.
+**This replaced the rail.** A sticky column of sibling links competed with the copy for the whole scroll and cost the content a 260px column on every treatment and case-study page. The pager says the same thing once, at the point it becomes useful — when the reader has finished. It sits after the content and before the closing CTA band.
 
-### 4.23 Pager — `.pager`
+First and last in a sequence render a single link. `.pager__item--next:only-child` forces it into the right-hand cell so it still reads as "next" rather than falling into the left.
 
-Previous / next split used between case studies.
+Hub and overview pages take no pager: they are the top of a section, not a step in it.
 
 ### 4.24 Forms — `.form`, `.field` + `js/forms.js`
 

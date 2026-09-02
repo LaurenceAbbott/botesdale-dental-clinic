@@ -114,6 +114,7 @@ GROUPS = {
     'preventative': ('Preventative dentistry', ['preventative', 'check-up', 'hygiene', 'sensitive']),
     'cases':        ('Case studies', ['case-worn', 'case-missing', 'case-newdenture',
                                       'case-loose', 'case-sameday']),
+    'implant':      ('Implant clinic', ['implant', 'implant-referrals', 'missing']),
 }
 
 LABELS = {
@@ -396,18 +397,6 @@ def c_accordion(items, single=True, idbase='acc'):
                                                   '\n    '.join(rows))
 
 
-def c_rail(H, depth, current, group_key):
-    title, keys = GROUPS[group_key]
-    links = []
-    for k in keys:
-        cls = ' class="is-active"' if k == current else ''
-        links.append('<a href="%s"%s>%s</a>' % (H.rel(k, depth), cls, _e(LABELS[k])))
-    return '''<aside class="rail">
-  <span class="label">{title}</span>
-  <nav class="rail__list" aria-label="{title}">{links}</nav>
-</aside>'''.format(title=_e(title), links=''.join(links))
-
-
 def c_specs(rows):
     body = ''.join('<div class="spec"><span class="spec__k">%s</span>'
                    '<span class="spec__v">%s</span></div>' % (_e(k), v) for k, v in rows)
@@ -436,7 +425,7 @@ def c_cta(H, depth, heading, para='', primary=('Book an appointment', 'contact')
                      buttons=''.join(buttons), arc=BAND_ARC)
 
 
-def c_pager(H, depth, prev=None, next_=None):
+def c_pager(H, depth, prev=None, next_=None, label='Case studies'):
     left = ''
     right = ''
     if prev:
@@ -447,7 +436,25 @@ def c_pager(H, depth, prev=None, next_=None):
         right = ('<a class="pager__item pager__item--next" href="%s">'
                  '<span class="label">Next</span><span class="pager__title">%s</span></a>'
                  % (H.rel(next_, depth), _e(LABELS[next_])))
-    return '<nav class="pager" aria-label="Case studies">%s%s</nav>' % (left, right)
+    if not (left or right):
+        return ''
+    return '<nav class="pager" aria-label="%s">%s%s</nav>' % (_e(label), left, right)
+
+
+def c_group_pager(H, depth, current, group_key):
+    """Previous / next within a section, from the same ordering the rail used.
+
+    This replaces the sidebar rail. A sticky column of sibling links competed
+    with the copy for the whole scroll; two links at the foot say the same
+    thing once the reader has finished, which is when it is useful.
+    """
+    title, keys = GROUPS[group_key]
+    if current not in keys:
+        return ''
+    i = keys.index(current)
+    prev = keys[i - 1] if i > 0 else None
+    nxt = keys[i + 1] if i < len(keys) - 1 else None
+    return c_pager(H, depth, prev, nxt, label=title)
 
 
 def c_gallery(H, depth, shots):
@@ -1561,16 +1568,13 @@ def r_leaf(key, depth, H):
     crumbs = c_crumbs(H, depth, ['treatments', parent], LABELS[key])
     out = [c_page_head(H, depth, LABELS[parent], LABELS[key], d['sub'], d['hero'], crumbs)]
 
-    rail = c_rail(H, depth, key, d['group'])
     prose = ['<p class="statement-text statement-text--wide">%s</p>' % _e(d['lead'])]
     prose += ['<p>%s</p>' % p for p in d['paras']]
     if d.get('image'):
         prose.append('<figure class="figure u-mt-8">%s<figcaption>%s</figcaption></figure>'
                      % (c_ph(LABELS[key], 'ar-3-2'), _e(LABELS[key])))
 
-    out.append(c_section(
-        '<div class="with-rail">%s<div class="prose">%s</div></div>'
-        % (rail, ''.join(prose))))
+    out.append(c_section('<div class="prose">%s</div>' % ''.join(prose)))
 
     out.append(c_process(H, depth, 'What to expect', 'How it works', d['process']))
 
@@ -1579,6 +1583,8 @@ def r_leaf(key, depth, H):
             '<div class="section-head"><span class="label">Common questions</span>'
             '<h2>Good to know</h2></div>'
             + c_accordion(d['faqs'], idbase=key), cls='section--paper-3', narrow=True))
+
+    out.append(c_group_pager(H, depth, key, d['group']))
 
     out.append(c_cta(H, depth, 'Ready when you are.',
                      'Call the practice on %s or send us a message and we will get back to you.'
@@ -1906,22 +1912,7 @@ def r_implant(depth, H):
         'A proven, long-lasting way to replace missing or failing teeth.',
         'images/heroes/implant-clinic.jpg', c_crumbs(H, depth, [], 'Implant clinic'))]
 
-    out.append(c_section('''<div class="with-rail">
-      <aside class="rail">
-        <span class="label">Implant clinic</span>
-        <nav class="rail__list">
-          <a href="{implant}" class="is-active">Implant clinic</a>
-          <a href="{ir}">Implant referrals</a>
-          <a href="{missing}">Missing teeth</a>
-          <a href="{cases}">Case studies</a>
-          <a href="{fees}">Fees and membership</a>
-        </nav>
-        <div class="notice u-mt-8">
-          <strong>Referring a patient?</strong>
-          We accept implant referrals from patients and dental professionals alike, with a £0 referral fee for members of Our Plan.
-        </div>
-      </aside>
-      <div class="prose">
+    out.append(c_section('''<div class="prose">
         <p class="statement-text statement-text--wide">Struggling with missing or failing teeth? Or have you lost some of your own natural teeth over time? Thanks to advances in modern dentistry, you no longer need to depend solely on bridges or dentures.</p>
         <p>Dental implants offer a proven, long-lasting solution for bringing back your smile and restoring your ability to bite and chew comfortably. Here’s how they work:</p>
         <ol>
@@ -1936,10 +1927,11 @@ def r_implant(depth, H):
           <li>Implants help restore function so you can eat, chew and bite as usual.</li>
           <li>Implants are a natural-looking way to replace missing teeth.</li>
         </ul>
-      </div>
-    </div>'''.format(implant=H.rel('implant', depth), ir=H.rel('implant-referrals', depth),
-                     missing=H.rel('missing', depth), cases=H.rel('cases', depth),
-                     fees=H.rel('fees', depth))))
+        <div class="notice u-mt-8">
+          <strong>Referring a patient?</strong>
+          We accept implant referrals from patients and dental professionals alike, with a £0 referral fee for members of Our Plan.
+        </div>
+      </div>'''))
 
     out.append(c_process(H, depth, 'The pathway', 'From consultation to aftercare', [
         ('Consultation and assessment', 'A full examination and a discussion of what you want to '
@@ -1983,6 +1975,7 @@ def r_implant(depth, H):
         ], idbase='implant'), cls='section--paper-3', narrow=True))
 
     out.append(c_quote([TESTIMONIALS[0]]))
+    out.append(c_group_pager(H, depth, 'implant', 'implant'))
     out.append(c_cta(H, depth, 'Would you like to talk about dental implants?',
                      'Get in touch and we will arrange a consultation.',
                      primary=('Book a consultation', 'contact'),
@@ -2436,9 +2429,9 @@ def r_case(key, depth, H):
             body.append('<ul>%s</ul>' % ''.join('<li>%s</li>' % _e(i) for i in val))
 
     out.append(c_section(
-        '<div class="with-rail">%s<div class="case-body prose">'
+        '<div class="case-body prose">'
         '<div class="case-meta"><span class="badge badge--accent">%s</span></div>'
-        '%s</div></div>' % (c_rail(H, depth, key, 'cases'), _e(c['label']), ''.join(body))))
+        '%s</div>' % (_e(c['label']), ''.join(body))))
 
     out.append(c_section(
         '<div class="section-head"><span class="label">The case</span><h2>Before, during and after</h2>'
@@ -2884,10 +2877,8 @@ def r_styleguide(depth, H):
         ('images/cases/case-worn-2.jpg', 'After', 'After treatment'),
         ('images/cases/case-worn-3.jpg', 'Detail', 'Detail of the finished work')])))
 
-    # Rail & pager
-    body.append(_sg('Rail & pager', '14',
-                    '<div class="cols-2 u-mb-8"><div>' + c_rail(H, depth, 'crowns', 'cosmetic')
-                    + '</div><div></div></div>' + c_pager(H, depth, 'case-worn', 'case-newdenture')))
+    # Pager
+    body.append(_sg('Pager', '14', c_pager(H, depth, 'case-worn', 'case-newdenture')))
 
     # Quote
     body.append(_sg('Quote carousel', '15', c_quote(TESTIMONIALS[:3])))

@@ -781,35 +781,6 @@ a.card:hover { transform: translateY(-2px); }
 /* -----------------------------------------------------------------------------
    21. RAIL (contextual sidebar nav) & PREV/NEXT
    -------------------------------------------------------------------------- */
-.rail { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
-.rail .label { display: block; margin-bottom: var(--s-4); }
-/* A card, so it reads as a menu rather than as more page content. */
-/* A menu, not a list of links in a box. Full-width rows that highlight on
-   hover, and a current row marked by a solid accent edge and a tinted
-   ground rather than a floating dash — the dash sat outside the row and read
-   as punctuation. The dividing hairlines are gone: the rows are the
-   structure, and hover makes each one's extent obvious. */
-.rail__list {
-  border: var(--hair) solid var(--line);
-  background: var(--paper-2);
-  padding: var(--s-2) 0;
-}
-.rail__list a {
-  display: block;
-  padding: var(--s-3) var(--s-5);
-  border-left: 3px solid transparent;
-  font-size: var(--fs-body); line-height: 1.35; color: var(--ink-soft);
-  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease),
-              border-color var(--t-fast) var(--ease);
-}
-.rail__list a:hover { color: var(--black); background: var(--paper-3); }
-.rail__list a.is-active {
-  color: var(--black); font-weight: var(--fw-medium);
-  border-left-color: var(--accent);
-  background: var(--accent-tint);
-}
-@media (max-width: 940px) { .rail { position: static; } }
-
 .pager {
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--hair);
   background: var(--line);
@@ -821,6 +792,9 @@ a.card:hover { transform: translateY(-2px); }
 .pager__item .label { display: block; margin-bottom: var(--s-2); }
 .pager__title { display: block; font-family: var(--font-head); font-size: 1rem; font-weight: var(--fw-semi); color: var(--black); }
 .pager__item--next { text-align: right; }
+/* First or last in a sequence: one link only, which must still sit on its own
+   side rather than falling into the left-hand cell. */
+.pager__item--next:only-child { grid-column: 2; }
 @media (max-width: 560px) { .pager { grid-template-columns: 1fr; } .pager__item--next { text-align: left; } }
 
 /* -----------------------------------------------------------------------------

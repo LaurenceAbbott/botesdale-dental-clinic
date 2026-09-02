@@ -13,7 +13,7 @@ be edited by hand. Re-running the script OVERWRITES those files, so once you
 start hand-editing pages, either stop using it or fold your edits back into
 tools/content.py.
 """
-import os, re, sys, html
+import os, re, sys, html, hashlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -39,6 +39,33 @@ def rel(target_key, depth):
 
 def asset(path, depth):
     return ('../' * depth) + 'assets/' + path.lstrip('/')
+
+
+_FINGERPRINTS = {}
+
+
+def fingerprint(repo_rel):
+    """Short content hash for a static file, appended to its URL as ?v=.
+
+    Without it, a returning visitor can pair freshly deployed HTML with the
+    stylesheet still in their browser cache — which is exactly how the new
+    two-image brand mark rendered twice, at full size, on a phone that had
+    the previous layout.css. Hashing the content means any edit changes the
+    URL, so HTML and CSS can never be a version apart.
+    """
+    if repo_rel not in _FINGERPRINTS:
+        full = os.path.join(ROOT, repo_rel)
+        try:
+            with open(full, 'rb') as fh:
+                _FINGERPRINTS[repo_rel] = hashlib.md5(fh.read()).hexdigest()[:8]
+        except OSError:
+            _FINGERPRINTS[repo_rel] = '0'
+    return _FINGERPRINTS[repo_rel]
+
+
+def versioned(repo_rel, depth):
+    """URL for a static file, relative to a page at `depth`, cache-busted."""
+    return '%s%s?v=%s' % ('../' * depth, repo_rel, fingerprint(repo_rel))
 
 
 def esc(s):
@@ -286,10 +313,10 @@ def document(page, body, depth):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="{css}base.css">
-<link rel="stylesheet" href="{css}layout.css">
-<link rel="stylesheet" href="{css}components.css">
-<link rel="stylesheet" href="{css}pages.css">
+<link rel="stylesheet" href="{css_base}">
+<link rel="stylesheet" href="{css_layout}">
+<link rel="stylesheet" href="{css_components}">
+<link rel="stylesheet" href="{css_pages}">
 </head>
 <body>
 
@@ -304,19 +331,25 @@ def document(page, body, depth):
 
 {footer}
 
-<script src="{js}nav.js" defer></script>
-<script src="{js}ui.js" defer></script>
-<script src="{js}forms.js" defer></script>
-<script src="{js}main.js" defer></script>
+<script src="{js_nav}" defer></script>
+<script src="{js_ui}" defer></script>
+<script src="{js_forms}" defer></script>
+<script src="{js_main}" defer></script>
 </body>
 </html>
 '''.format(
         title=esc(page['title']),
         description=esc(page['description']),
         canonical=canonical,
-        favicon=asset('images/brand/favicon.svg', depth),
-        css=('../' * depth) + 'css/',
-        js=('../' * depth) + 'js/',
+        favicon=versioned('assets/images/brand/favicon.svg', depth),
+        css_base=versioned('css/base.css', depth),
+        css_layout=versioned('css/layout.css', depth),
+        css_components=versioned('css/components.css', depth),
+        css_pages=versioned('css/pages.css', depth),
+        js_nav=versioned('js/nav.js', depth),
+        js_ui=versioned('js/ui.js', depth),
+        js_forms=versioned('js/forms.js', depth),
+        js_main=versioned('js/main.js', depth),
         defs=SMILE_DEFS,
         header=build_header(page['key'], depth),
         body=body,

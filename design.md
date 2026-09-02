@@ -86,6 +86,14 @@ Two values moved *because* the ink moved, and both are load-bearing:
 
 `--accent` is only used for large text, borders and iconography — never for small body copy on paper.
 
+### 2.1a Cache busting
+
+Every local stylesheet, script and the favicon is linked with a `?v=<8-char md5>` of its own contents, computed at build time by `fingerprint()` in `tools/build.py`.
+
+This is not an optimisation, it is a correctness fix. The files were previously linked as bare paths, so a returning visitor could load freshly deployed HTML against the stylesheet still sitting in their browser cache. That is not theoretical: it is exactly how the two-image brand mark shipped and rendered *twice, at full 648px width*, overflowing the viewport on a phone holding the previous `layout.css` — the markup was new, the rules that size and swap the two cuts were not there yet.
+
+Hashing the content means any edit changes the URL, so the HTML and the CSS can never be a version apart. Nothing needs doing by hand; add a new stylesheet or script by routing it through `versioned()` alongside the others.
+
 ### 2.2 Typography
 
 Two families, loaded from Google Fonts with a full system fallback stack:

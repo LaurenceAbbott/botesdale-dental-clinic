@@ -30,8 +30,6 @@
      22a. Multi-step forms (stepper, step, nav)
      22b. Repeat group ("add another")
      22c. Chooser (tab switcher)
-     22d. Band (asymmetric heading + content)
-     22e. Arc rule (the motif as a divider)
      23. CTA band
      24. Map frame
      25. Cookie banner
@@ -293,43 +291,26 @@
 .crumbs--on-paper a:hover, .crumbs--on-paper [aria-current] { color: var(--black); }
 
 /* -----------------------------------------------------------------------------
-   07. EDITORIAL BLOCK — the workhorse media + copy row
-   Contained, not bled. The media used to run out to the viewport edge, which
-   on a wide screen pinned the copy into a thin ribbon on the left and left the
-   picture half off the page. Both now sit inside .wrap.
-
-   Three layouts, so a page is not a chessboard of identical alternating rows:
-     .ed              media one side, copy the other
-     .ed--rev         the same, mirrored
-     .ed--feature     wide media across the top, heading and two-column copy under
-   Modifiers: .ed--media-wide (give the picture the larger share), .ed--warm.
+   07. EDITORIAL BLOCK — the workhorse 2-up media + copy row
+   Modifiers: .ed--rev (media right), .ed--warm (warm gradient placeholder)
    -------------------------------------------------------------------------- */
-.ed { padding-block: var(--pad-block); }
-.ed__inner {
+.ed {
   display: grid;
-  gap: var(--s-10) var(--ed-gap);
-  align-items: center;
-  /* The media column is the narrower of the two by default, so the copy has
-     room for its two columns. Which SIDE it sits on is --rev's job; how much
-     width it gets is --media-wide's. The two are independent, so the template
-     is restated per combination rather than letting --rev silently hand the
-     picture the wide column. */
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
+  min-height: 520px;
 }
-.ed__media { grid-column: 1; grid-row: 1; }
-.ed__text  { grid-column: 2; grid-row: 1; }
-.ed--rev .ed__inner { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
-.ed--rev .ed__media { grid-column: 2; }
-.ed--rev .ed__text  { grid-column: 1; }
-/* Hand the larger share to the picture where the copy is short. */
-.ed--media-wide .ed__inner { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
-.ed--media-wide.ed--rev .ed__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.ed > * { min-width: 0; grid-row: 1; }
+.ed__media { grid-column: 1 / 3; }
+.ed__text  { grid-column: 3 / 4; }
+.ed--rev .ed__media { grid-column: 3 / 5; }
+.ed--rev .ed__text  { grid-column: 2 / 3; }
 
 .ed__media {
   position: relative; display: grid; overflow: hidden;
-  aspect-ratio: 4 / 5;
+  min-height: 340px;
   background: var(--placeholder);
 }
+/* Subtle tonal alternation between consecutive blocks */
 .ed--warm .ed__media, .ed--warm .ed__media .ph { background: var(--placeholder-2); }
 .ed__media img {
   position: absolute; inset: 0;
@@ -339,44 +320,23 @@
 }
 .ed:hover .ed__media img { transform: scale(1.03); filter: saturate(1.02); }
 
-/* The copy is a heading block and a body, not one undifferentiated column. */
-.ed__head { margin-bottom: var(--s-7); }
-.ed__head .label { display: block; margin-bottom: var(--s-4); }
-/* No ch cap in a split block — the grid column already constrains it, and a
-   narrower cap only forced these lead sentences into more lines. The feature
-   layout does need one, because there the column is the whole container. */
-.ed__head h2 { font-size: var(--fs-h2-lg); letter-spacing: var(--ls-tight); }
-.ed__body p { color: var(--ink-soft); margin-bottom: var(--s-5); }
-.ed__body p:last-child { margin-bottom: 0; }
-/* Two columns once there is enough copy to warrant them — set by the
-   generator, not by guessing here. Kept off below 900px. */
-.ed__body--split { column-count: 2; column-gap: var(--s-9); }
-.ed__body--split p { break-inside: avoid; }
-.ed__text .arc-link { margin-top: var(--s-7); }
+/* Media bleeds to the viewport edge; the copy column starts or stops on the
+   container's own grid line, so the measure is identical at every width. */
+.ed__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: var(--pad-block);
+  padding-left: var(--ed-gap);
+}
+.ed--rev .ed__text { padding-left: 0; padding-right: var(--ed-gap); }
+.ed__text .label { display: block; margin-bottom: var(--s-4); }
+.ed__text h2 { margin-bottom: var(--s-4); max-width: 22ch; }
+.ed__text p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--s-5); }
+.ed__text .arc-link { margin-top: var(--s-2); }
 
-/* In the wide column a 4:5 portrait becomes a wall, so it relaxes. */
-.ed--media-wide .ed__media { aspect-ratio: 3 / 2; }
-/* Set by the generator when a block carries a single paragraph. A tall panel
-   beside one short paragraph leaves the copy floating in a void, so the
-   picture comes down to meet it. */
-.ed--brief .ed__media { aspect-ratio: 3 / 2; }
-.ed--brief.ed--media-wide .ed__media { aspect-ratio: 16 / 10; }
-
-/* --- feature: wide media, then heading and copy beneath ------------------- */
-.ed--feature .ed__inner { grid-template-columns: minmax(0, 1fr); gap: var(--s-9); }
-.ed--feature .ed__media { grid-column: 1; grid-row: 1; aspect-ratio: 21 / 9; }
-.ed--feature .ed__text  { grid-column: 1; grid-row: 2; }
-.ed--feature .ed__head h2 { max-width: 26ch; }
-.ed--feature .ed__body { max-width: 72rem; }
-
-@media (max-width: 900px) {
-  .ed__inner,
-  .ed--media-wide .ed__inner,
-  .ed--media-wide.ed--rev .ed__inner { grid-template-columns: minmax(0, 1fr); gap: var(--s-8); }
-  .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 1; aspect-ratio: 3 / 2; }
-  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; }
-  .ed__body--split { column-count: 1; }
-  .ed--feature .ed__media { aspect-ratio: 3 / 2; }
+@media (max-width: 860px) {
+  .ed { grid-template-columns: 1fr; min-height: 0; }
+  .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 3 / 2; }
+  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; padding-inline: var(--rail-x); }
 }
 
 /* -----------------------------------------------------------------------------
@@ -1006,42 +966,6 @@ a.card:hover { transform: translateY(-2px); }
 .repeat__remove:hover { color: var(--error); border-bottom-color: var(--error); }
 .repeat__add { align-self: flex-start; }
 .repeat__full { font-size: var(--fs-xs); color: var(--ink-mute); }
-
-/* -----------------------------------------------------------------------------
-   22d. BAND — asymmetric heading + content
-   A narrow heading column beside a wide content column. The alternative is a
-   single left-aligned stack, which on a 1440 container leaves the right half
-   of every section empty and reads as unfinished rather than spacious.
-   The heading column is not a second topic — it is this section's own head —
-   so this is not the two-unrelated-columns trap of §4.30.
-   -------------------------------------------------------------------------- */
-.band {
-  display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
-  gap: var(--s-8) var(--s-10);
-  align-items: start;
-}
-.band__head .label { display: block; margin-bottom: var(--s-4); }
-.band__head h2 { font-size: var(--fs-h2-lg); letter-spacing: var(--ls-tight); }
-.band__head p { margin-top: var(--s-5); color: var(--ink-soft); font-size: var(--fs-sm); }
-.band__body > :first-child { margin-top: 0; }
-
-@media (max-width: 1000px) {
-  .band { grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
-}
-
-/* -----------------------------------------------------------------------------
-   22e. ARC RULE — the motif at full width
-   The smile at the scale of the page rather than of a link: a section divider
-   drawn as one shallow arc across the container. Used between major bands,
-   never more than once or twice a page.
-   -------------------------------------------------------------------------- */
-.arc-rule { display: block; width: 100%; height: clamp(28px, 4vw, 56px); overflow: visible; }
-.arc-rule path {
-  fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-.arc-rule--line path { stroke: var(--line); }
 
 /* -----------------------------------------------------------------------------
    23. CTA BAND

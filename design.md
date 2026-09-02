@@ -88,7 +88,7 @@ Tracking tightens as size increases (`--ls-tight: -.02em` on `h1` and `.display`
 
 ### 2.3 The content rail and the bleed grid
 
-`--wrap` (1200px) is the maximum width of any line of text on the site. A centred `.wrap` puts its content at `(100vw − 1200) / 2 + --pad-inline` from the viewport edge; that line is **the rail**, and everything textual aligns to it.
+`--wrap` (1440px) is the maximum width of any line of text on the site. A centred `.wrap` puts its content at `(100vw − 1440) / 2 + --pad-inline` from the viewport edge; that line is **the rail**, and everything textual aligns to it.
 
 Full-bleed components — the editorial block and the team row — cannot use `.wrap`, because their media has to run out to the viewport edge. They use a four-column *bleed grid* instead, built from two tokens:
 
@@ -116,7 +116,7 @@ Two things to know if you extend this:
 
 A 4px base scale: `--s-1` (4px) through `--s-12` (112px). Section padding uses the fluid `--section-y` / `--section-y-tight` tokens rather than a fixed step, so vertical rhythm scales with the viewport.
 
-Layout tokens: `--wrap` (1200px), `--wrap-wide` (1440px), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px), `--control-h` (48px).
+Layout tokens: `--wrap` (1440px), `--wrap-wide` (1440px — currently the same, and `.wrap--wide` is unused), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px), `--control-h` (48px).
 
 `--control-h` is the height of every single-line form control. It is fixed rather than left to each input's intrinsic sizing because date and time inputs size themselves from their own internal rendering and will not match a text input — Chromium makes them a couple of pixels taller, Safari collapses an empty one well below the rest. Pinning both to one token is the only thing that holds on both engines, and it keeps every field above the 44px tap-target minimum.
 

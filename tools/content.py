@@ -158,6 +158,15 @@ def _e(s):
 ARC = ('<svg class="arc" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">'
        '<path d="M0,1 Q50,7 100,1" pathLength="100"/></svg>')
 
+# The same smile, standing on its own at the foot of a closing band. It keeps
+# its aspect ratio (no preserveAspectRatio="none") so it reads as the motif
+# rather than a stretched rule, and it carries its own data-reveal so it draws
+# itself in when scrolled to. Decorative, so if scripting is off it simply
+# never appears — no copy depends on it.
+BAND_ARC = ('<div class="band-arc" data-reveal aria-hidden="true">'
+            '<svg viewBox="0 0 200 22" fill="none">'
+            '<path d="M3,3 Q100,27 197,3" pathLength="100"/></svg></div>')
+
 
 def c_btn(label, href, variant='solid'):
     return ('<a class="btn btn--%s" href="%s"><span class="btn__label">%s</span></a>'
@@ -335,9 +344,10 @@ def c_statement(H, depth, eyebrow, heading, para, facts=None, link=None):
     <p>{para}</p>
     {facts}
     {link}
+    {arc}
   </div>
 </section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading), para=_e(para),
-                     facts=facts_html, link=link_html)
+                     facts=facts_html, link=link_html, arc=BAND_ARC)
 
 
 def c_quote(quotes):
@@ -419,10 +429,11 @@ def c_cta(H, depth, heading, para='', primary=('Book an appointment', 'contact')
     <h2>{heading}</h2>
     {para}
     <div class="btn-row">{buttons}</div>
+    {arc}
   </div>
 </section>'''.format(dark=' cta--dark' if dark else '', heading=_e(heading),
                      para=('<p>%s</p>' % _e(para)) if para else '',
-                     buttons=''.join(buttons))
+                     buttons=''.join(buttons), arc=BAND_ARC)
 
 
 def c_pager(H, depth, prev=None, next_=None):

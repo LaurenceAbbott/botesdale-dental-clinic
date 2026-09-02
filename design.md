@@ -255,6 +255,8 @@ So an ink label has exactly one darker step available. Hover takes it, and press
 
 Also `--sm`, `--block`, `.is-disabled`. Wrap groups in `.btn-row`.
 
+**Full width on a phone.** Below 620px every `.btn` spans its column and `.btn-row` stacks. A 180px button floating in a 390px viewport reads as unfinished and is a worse tap target. `.btn--sm` is excluded — those are in-form utilities (Back, "add another") that belong inline.
+
 ### 4.2 Arc link — `components.css`
 
 The standard "read more" affordance.
@@ -362,6 +364,14 @@ The workhorse: a media panel overhanging the rail beside a copy column (§2.3).
 **Modifiers:** `--rev` (media right, copy starts on the rail), `--warm` (a half-step darker placeholder, for tonal alternation between consecutive blocks), `--cols` (see below).
 
 **Two-column copy.** Three paragraphs or more in a half-width column runs long and thin and leaves the rest of the row empty, so `c_ed()` adds `.ed--cols` / `.ed__body--cols` automatically at that length: the heading uncaps to the full column and the paragraphs run two up beneath it, collapsing back to one column under 1100px. The body is a grid rather than `column-count` so a paragraph is never split across the gutter — and the grid owns the vertical rhythm, because the global `p + p { margin-top }` would otherwise push the second paragraph 16px below the first and stop the columns lining up.
+
+### 4.8a Band arc — `.band-arc`
+
+The smile standing on its own at the foot of a closing band (`.cta`, `.statement`), about a third of the container, centred, drawn in on scroll.
+
+It carries its own `[data-reveal]`, so the existing observer adds `.is-in` and the stroke runs from `stroke-dashoffset: 100` to `0`. `pathLength="100"` makes that dash arithmetic independent of the path's real length, so the curve can be edited without retuning the animation. Unlike `.arc` it keeps its aspect ratio — no `preserveAspectRatio="none"` — so it reads as the motif rather than a stretched rule.
+
+Putting `[data-reveal]` on the arc rather than on the section matters: `[data-reveal]` starts at `opacity: 0`, so anything carrying it is invisible until scripting runs. The arc is decorative and `aria-hidden`, so with scripting off it simply never appears and no copy is at risk.
 
 ### 4.9 Strip grid — `.strip`
 

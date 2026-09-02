@@ -387,6 +387,8 @@ A bordered tile for grids that need visible gaps rather than hairline seams. `--
 
 Full-width dark section for a single idea, with optional `.facts` beneath it. **Centred** — heading at `22ch`, copy at `56ch`, the facts grid and any link centred under them (§1.5). Use `.facts--paper` for the same component on a light ground; that variant is unaffected outside a `.statement`.
 
+**An odd number of facts on a phone.** The grid is `auto-fit`, which settles at two columns on a phone, so an odd count strands the last fact alone in the left-hand column. Below 620px the count is pinned to two — so the behaviour is deterministic rather than dependent on how the `auto-fit` maths falls — and `.fact:last-child:nth-child(odd)` spans both columns. The band is centred, so the orphan centres under the pairs.
+
 ### 4.12 Process list — `.p-row`
 
 Numbered hairline rows (`01`, `02`, …). The default way to explain a sequence.

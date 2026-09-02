@@ -94,6 +94,21 @@ This is not an optimisation, it is a correctness fix. The files were previously 
 
 Hashing the content means any edit changes the URL, so the HTML and the CSS can never be a version apart. Nothing needs doing by hand; add a new stylesheet or script by routing it through `versioned()` alongside the others.
 
+### 2.1b Container widths
+
+| Container | Width | Use |
+|---|---|---|
+| `.wrap` | 1440 | **Only** where text and images sit side by side |
+| `.wrap--narrow` | 900 | Text-only sections: numbered steps, FAQs, benefit lists, the team grid |
+| `.u-form-col` / `.form` | 680 | A form, and any copy directly above one |
+| `.prose` / `.u-measure` | 640 | A single column of running prose |
+
+1440 is a *side-by-side* width. A section that is only text — a run of numbered steps, an FAQ, a list of membership benefits — reads badly stretched across it.
+
+The failure mode to avoid is capping the inner element while its heading stays on the 1440 line. That is what produced the ragged look on the fees page: `Your benefits include the following:` sat on the wide line while its list was centred at a 640 measure below, so the two had different left edges and the section read as two mismatched columns. **Cap the container, not the content** — then the heading and its content share one left edge, and centring the container is what moves the block, never centring the copy inside it.
+
+Copy that sits directly above a form is the same trap at smaller scale: a `--measure` intro above a `--form-col` form is centred to a different width, so the two start 20px apart. Use `.u-form-col`.
+
 ### 2.2 Typography
 
 Two families, loaded from Google Fonts with a full system fallback stack:
@@ -118,6 +133,22 @@ Every size is fluid, interpolating between a mobile and a desktop value with `cl
 Tracking tightens as size increases (`--ls-tight: -.02em` on `h1` and `.display`). Line height is `1.08` for display, `1.2` for headings, `1.7` for body.
 
 **Measure.** Long-form copy is capped at `--measure` (640px) via `.prose` or `.u-measure`.
+
+### 2.2a One size for running copy
+
+Body copy had drifted to **seven** sizes across components doing the same job — 17px in `.prose`, 16px on bare paragraphs with no rule at all, 15px in `.ed`, 14px in `.p-row`, accordion panels, plan lists and team bios, 13px in strip captions. Same job, five different sizes.
+
+The ladder is now:
+
+| Token | px | Use |
+|---|---|---|
+| `--fs-lead` | 16 → 18 | An intro paragraph under a heading; the hero sub |
+| `--fs-body` | 16 | **All running copy**, everywhere |
+| `--fs-sm` | 14 | Copy inside a narrow grid tile (3–4 up), where 16 would not fit the column |
+| `--fs-xs` | 13 | Meta, captions, field hints, form notes |
+| `--fs-label` | 11 | Uppercase micro-labels |
+
+If you are adding a component with a paragraph in it, it takes `--fs-body` unless it is a tile in a grid. Two specificity traps caught this: `.team__bio p` (0,0,1,1) silently beat `.team__gdc` (0,0,1,0), so the GDC line rendered as body copy rather than meta; and `.form__step-intro` had no rule of its own and borrowed `.field__hint`, so a step's intro rendered as a 13px grey hint.
 
 ### 2.3 The content rail and the bleed grid
 

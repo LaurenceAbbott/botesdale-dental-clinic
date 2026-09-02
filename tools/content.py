@@ -309,7 +309,7 @@ def c_process(H, depth, eyebrow, heading, rows, top_line=True):
       <div><h3>{title}</h3><p>{text}</p></div>
     </div>'''.format(n=i, title=_e(title), text=text))
     return '''<section class="process{cls}">
-  <div class="wrap">
+  <div class="wrap wrap--narrow">
     <div class="process__head">
       <span class="label">{eyebrow}</span>
       <h2>{heading}</h2>
@@ -448,8 +448,16 @@ def c_gallery(H, depth, shots):
     return '<div class="gallery">%s</div>' % ''.join(out)
 
 
-def c_section(inner, cls='', wrap=True):
-    body = '<div class="wrap">%s</div>' % inner if wrap else inner
+def c_section(inner, cls='', wrap=True, narrow=False):
+    """narrow=True caps the container at --wrap-narrow (900px).
+
+    1440 is for text and images side by side. A section that is only text
+    reads badly stretched across it, and capping just the inner element while
+    the heading stays on the 1440 line is what produced the ragged
+    two-column look on the fees page.
+    """
+    wcls = 'wrap wrap--narrow' if narrow else 'wrap'
+    body = '<div class="%s">%s</div>' % (wcls, inner) if wrap else inner
     return '<section class="section%s">%s</section>' % ((' ' + cls) if cls else '', body)
 
 
@@ -1422,7 +1430,7 @@ def f_step(title, fields, intro=''):
     visible and the form reads as one long page. js/forms.js turns the set into
     a wizard — see the header of that file.
     """
-    lead = '<p class="form__step-intro field__hint">%s</p>' % intro if intro else ''
+    lead = '<p class="form__step-intro">%s</p>' % intro if intro else ''
     return ('<div class="form__step" data-step data-step-title="%s">\n'
             '    <div class="form__section-title">%s</div>%s\n'
             '    <div class="form__grid">\n      %s\n    </div>\n  </div>'
@@ -1559,7 +1567,7 @@ def r_leaf(key, depth, H):
         out.append(c_section(
             '<div class="section-head"><span class="label">Common questions</span>'
             '<h2>Good to know</h2></div>'
-            + c_accordion(d['faqs'], idbase=key), cls='section--paper-3'))
+            + c_accordion(d['faqs'], idbase=key), cls='section--paper-3', narrow=True))
 
     out.append(c_cta(H, depth, 'Ready when you are.',
                      'Call the practice on %s or send us a message and we will get back to you.'
@@ -1961,7 +1969,7 @@ def r_implant(depth, H):
            'receive a fully costed written plan after your assessment, and finance options are '
            'available — see <a class="link-inline" href="fees-and-membership.html">fees and '
            'membership</a>.</p>'),
-        ], idbase='implant'), cls='section--paper-3'))
+        ], idbase='implant'), cls='section--paper-3', narrow=True))
 
     out.append(c_quote([TESTIMONIALS[0]]))
     out.append(c_cta(H, depth, 'Would you like to talk about dental implants?',
@@ -2191,7 +2199,7 @@ def r_referrals(depth, H):
     <div class="form-stack">
       <div class="form-block">
         <h2 class="u-mb-6">Send a referral</h2>
-        <p class="lead u-mb-8 u-measure">Use this for every patient you refer to us for a CBCT scan or an OPG radiograph.</p>
+        <p class="lead u-mb-8 u-form-col">Use this for every patient you refer to us for a CBCT scan or an OPG radiograph.</p>
         {f1}
       </div>
       <div class="form-block">
@@ -2284,7 +2292,7 @@ def r_fees(depth, H):
     </div>
     <p class="meta u-mt-6">*Child must have at least one adult who is part of our membership plan.</p>
     <h3 class="u-mt-8 u-mb-6">Your benefits include the following:</h3>
-    <ul class="plan__list u-measure">
+    <ul class="plan__list">
       <li>Two visits a year with your dentist for a full oral health assessment.</li>
       <li>Two visits a year with your dentist for assessment and maintenance to ensure the ultimate in dental hygiene.</li>
       <li>10% off any treatment — cannot be claimed retrospectively.</li>
@@ -2294,7 +2302,7 @@ def r_fees(depth, H):
       <li>Preventative and dietary advice.</li>
       <li>Emergency service 365 days of the year should you require advice or treatment when the practice is closed.</li>
       <li>UK and worldwide dental injury and emergency insurance available.</li>
-    </ul>''', cls='section--paper-3'))
+    </ul>''', cls='section--paper-3', narrow=True))
 
     # --- 3. The one number, given a band of its own -----------------------
     out.append(c_statement(

@@ -224,23 +224,46 @@ def c_page_head(H, depth, eyebrow, heading, sub='', image=None, crumbs='', short
 
 
 def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
-         warm=False, alt='', media_wide=False):
-    wrap_cls = 'ed'
-    if rev:
-        wrap_cls += ' ed--rev'
-    if media_wide:
-        wrap_cls += ' ed--media-wide'
+         warm=False, alt='', media_wide=False, layout='split'):
+    """Media + copy. `layout` is 'split' (media one side) or 'feature' (wide
+    media, heading and two-column copy beneath).
+
+    The copy is emitted as a heading block and a separate body so the two can
+    be laid out independently, and the body takes two columns once there is
+    enough of it — three or more paragraphs in a split block, two in a feature,
+    where the column is much wider. Decided here rather than in CSS, because
+    only the generator knows how much copy there actually is.
+    """
+    cls = ['ed']
+    if layout == 'feature':
+        cls.append('ed--feature')
+    elif rev:
+        cls.append('ed--rev')
+    if media_wide and layout != 'feature':
+        cls.append('ed--media-wide')
+    if warm:
+        cls.append('ed--warm')
+    if len(paras) < 2 and layout != 'feature':
+        cls.append('ed--brief')
+
+    split_at = 2 if layout == 'feature' else 3
+    body_cls = 'ed__body ed__body--split' if len(paras) >= split_at else 'ed__body'
     body = ''.join('<p>%s</p>' % p for p in paras)
     link_html = c_arc_link(link[0], link[1]) if link else ''
-    return '''<section class="{wrap_cls}" data-reveal>
-  <div class="ed__media">{ph}</div>
-  <div class="ed__text">
-    <span class="label">{eyebrow}</span>
-    <h2>{heading}</h2>
-    {body}
-    {link}
+
+    return '''<section class="{cls}" data-reveal>
+  <div class="wrap ed__inner">
+    <div class="ed__media">{ph}</div>
+    <div class="ed__text">
+      <div class="ed__head">
+        <span class="label">{eyebrow}</span>
+        <h2>{heading}</h2>
+      </div>
+      <div class="{body_cls}">{body}</div>
+      {link}
+    </div>
   </div>
-</section>'''.format(wrap_cls=wrap_cls, ph=c_ph(alt or heading),
+</section>'''.format(cls=' '.join(cls), ph=c_ph(alt or heading), body_cls=body_cls,
                      eyebrow=_e(eyebrow), heading=_e(heading), body=body, link=link_html)
 
 
@@ -438,6 +461,24 @@ def c_gallery(H, depth, shots):
         tag_html = '<span class="shot__tag">%s</span>' % _e(tag) if tag else ''
         out.append('<figure class="shot">%s%s</figure>' % (c_ph(alt), tag_html))
     return '<div class="gallery">%s</div>' % ''.join(out)
+
+
+def c_band(eyebrow, heading, body, note=''):
+    """Asymmetric section: a narrow heading column beside a wide content one."""
+    note_html = '<p>%s</p>' % note if note else ''
+    return ('<div class="band">\n'
+            '  <div class="band__head">\n'
+            '    <span class="label">%s</span>\n'
+            '    <h2>%s</h2>\n    %s\n  </div>\n'
+            '  <div class="band__body">%s</div>\n</div>'
+            % (_e(eyebrow), _e(heading), note_html, body))
+
+
+def c_arc_rule(light=False):
+    """The smile at page scale — a divider drawn as one shallow arc."""
+    return ('<svg class="arc-rule%s" viewBox="0 0 100 6" preserveAspectRatio="none" '
+            'aria-hidden="true" focusable="false"><path d="M0,1 Q50,6 100,1"/></svg>'
+            % (' arc-rule--line' if light else ''))
 
 
 def c_section(inner, cls='', wrap=True):
@@ -1817,21 +1858,26 @@ def r_treatments(depth, H):
         'Four areas of care, plus a dedicated implant clinic — all under one roof.',
         'images/heroes/general.jpg', c_crumbs(H, depth, [], 'Treatments'))]
 
+    # (key, text, rev, warm, layout, media_wide). The rhythm is deliberate:
+    # media left, media right, a full-width feature, then a wide-media row —
+    # rather than four identical rows alternating sides down the page.
     specs = [('general', 'Check-ups, fillings, root canal treatment, extractions, emergencies '
-                         'and support for nervous patients.', False, False),
+                         'and support for nervous patients.', False, False, 'split', False),
              ('cosmetic', 'Clear aligners, veneers, crowns, bridges, whitening and gum '
-                          'reshaping.', True, True),
+                          'reshaping.', True, True, 'split', False),
              ('preventative', 'Check-ups, hygiene visits and help with sensitive teeth — the '
-                              'foundation of everything else.', False, False),
-             ('missing', 'Crowns, bridges, dentures and implant-supported replacements.', True, True)]
+                              'foundation of everything else.', False, False, 'feature', False),
+             ('missing', 'Crowns, bridges, dentures and implant-supported replacements.',
+              False, True, 'split', True)]
     imgs = {'general': 'images/cards/general-dentistry.jpg',
             'cosmetic': 'images/cards/cosmetic-dentistry.jpg',
             'preventative': 'images/cards/preventative-dentistry.jpg',
             'missing': 'images/cards/implant-clinic-card.jpg'}
-    for i, (k, text, rev, warm) in enumerate(specs, 1):
+    for i, (k, text, rev, warm, layout, wide) in enumerate(specs, 1):
         out.append(c_ed(H, depth, '%02d — %s' % (i, LABELS[k]), CATEGORY[k]['lead'],
                         [text], link=('Learn more', H.rel(k, depth)),
-                        image=imgs[k], alt=LABELS[k], rev=rev, warm=warm))
+                        image=imgs[k], alt=LABELS[k], rev=rev, warm=warm,
+                        layout=layout, media_wide=wide))
 
     out.append(c_statement(
         H, depth, '05 — Implant clinic',
@@ -2243,12 +2289,9 @@ def r_fees(depth, H):
     </div>'''))
 
     # --- 2. The plan, on its own band so the cards get real width ----------
-    out.append(c_section('''<div class="section-head">
-      <span class="label">Membership scheme</span>
-      <h2>Our Plan</h2>
-      <p>Two visits a year with your dentist, two with your hygienist, all your necessary X-rays, and 10% off any treatment you go on to have.</p>
-    </div>
-    <div class="plan-row">
+    out.append(c_section(c_band(
+        'Membership scheme', 'Our Plan',
+        '''<div class="plan-row">
       <div class="plan plan--feature">
         <span class="label">Peace of mind for</span>
         <h3>Adults</h3>
@@ -2272,7 +2315,10 @@ def r_fees(depth, H):
       <li>Preventative and dietary advice.</li>
       <li>Emergency service 365 days of the year should you require advice or treatment when the practice is closed.</li>
       <li>UK and worldwide dental injury and emergency insurance available.</li>
-    </ul>''', cls='section--paper-3'))
+    </ul>''',
+        note='Two visits a year with your dentist, two with your hygienist, all your necessary '
+             'X-rays, and 10% off any treatment you go on to have.'),
+        cls='section--paper-3'))
 
     # --- 3. The one number, given a band of its own -----------------------
     out.append(c_statement(
@@ -2282,13 +2328,10 @@ def r_fees(depth, H):
         'and maintain a confident smile.'))
 
     # --- 4. Price guide ----------------------------------------------------
-    out.append(c_section('''<div class="section-head">
-      <span class="label">Price guide</span>
-      <h2>Botesdale Dental Practice and Implant Clinic price guide</h2>
-      <p>Fees correct as of February 2022. A new price list will be provided soon and we will send an information pack to every new patient.</p>
-    </div>
-    <div class="u-measure">
-      <h3 class="u-mb-4">Our Plan</h3>
+    out.append(c_section(c_arc_rule(), cls='section--tight'))
+    out.append(c_section(c_band(
+        'Price guide', 'Botesdale Dental Practice and Implant Clinic price guide',
+        '''<h3 class="u-mb-4">Our Plan</h3>
       <div class="price-list">
         <div class="price-list__row"><div><strong>2 exams &amp; oral health visits</strong><div class="price-list__note">With small X-rays</div></div><div>£19.95 / month</div></div>
         <div class="price-list__row"><div><strong>3 exams &amp; oral health visits</strong><div class="price-list__note">With small X-rays</div></div><div>£26.25 / month</div></div>
@@ -2299,18 +2342,13 @@ def r_fees(depth, H):
         A fully costed treatment plan will be provided to you at your appointment.
       </div>
       <h3 class="u-mt-8 u-mb-4">Finance</h3>
-      <p class="muted">Payment plans are available for dental treatment. Please ask during your next visit for more details.</p>
-    </div>'''))
+      <p class="muted">Payment plans are available for dental treatment. Please ask during your next visit for more details.</p>''',
+        note='Fees correct as of February 2022. A new price list will be provided soon and we '
+             'will send an information pack to every new patient.')))
 
     # --- 5. Terms and questions -------------------------------------------
-    out.append(c_section('''<div class="section-head">
-      <span class="label">Before you join</span>
-      <h2>Terms and questions</h2>
-    </div>
-    <div class="u-measure">
-      {tcs}
-      <div class="u-mt-8">{cta}</div>
-    </div>'''.format(
+    out.append(c_section(c_band('Before you join', 'Terms and questions', '''{tcs}
+      <div class="u-mt-8">{cta}</div>'''.format(
         tcs=c_accordion([
             ('Terms and conditions',
              '<ul><li>Minimum initial term of 12 months in the membership plan. If you cancel we '
@@ -2327,7 +2365,7 @@ def r_fees(depth, H):
              '<p>The plan covers your routine preventative care. Restorative and cosmetic '
              'treatment is charged separately, with a 10% member discount applied.</p>'),
         ], idbase='fees'),
-        cta=c_btn('Book a consultation', H.rel('contact', depth), 'solid')),
+        cta=c_btn('Book a consultation', H.rel('contact', depth), 'solid'))),
         cls='section--paper-3'))
 
     out.append(c_statement(

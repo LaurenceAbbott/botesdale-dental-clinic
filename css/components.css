@@ -127,7 +127,39 @@
 .btn[disabled], .btn.is-disabled { opacity: .45; pointer-events: none; }
 
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--s-4); }
-@media (max-width: 479px) { .btn-row .btn { flex: 1 1 100%; } }
+/* On a phone every real action button spans the column — a 180px button
+   floating in a 390px viewport reads as unfinished and is a worse tap target.
+   .btn--sm is excluded: those are in-form utilities (Back, "add another")
+   that belong inline, not stretched across the screen. */
+@media (max-width: 620px) {
+  .btn-row { flex-direction: column; align-items: stretch; }
+  .btn:not(.btn--sm) { display: block; width: 100%; }
+  .cluster > .btn:not(.btn--sm) { flex: 1 1 100%; }
+}
+
+/* The smile standing alone at the foot of a closing band (.cta, .statement).
+   About a third of the container, centred, and drawn in on scroll: it carries
+   its own [data-reveal], so the existing observer adds .is-in and the stroke
+   runs from dashoffset 100 to 0. pathLength="100" makes the dash maths
+   independent of the path's real length. */
+.band-arc {
+  width: 30%; max-width: 320px; min-width: 160px;
+  margin: var(--s-10) auto 0;
+}
+.band-arc svg { display: block; width: 100%; height: auto; overflow: visible; }
+.band-arc path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.1s var(--ease-out) .12s;
+}
+.band-arc.is-in path { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .band-arc path { transition: none; stroke-dashoffset: 0; }
+}
 
 /* -----------------------------------------------------------------------------
    03. ARC LINK — the standard "read more" affordance
@@ -348,19 +380,21 @@
 /* Long copy: the heading keeps the full column, the paragraphs run two up
    beneath it. Grid rather than column-count so a paragraph is never split
    across the gutter. */
+/* Balanced columns, not a grid. A grid places whole paragraphs into cells,
+   so an odd count leaves the last one alone beside a tall gap. Multi-column
+   fills to equal height instead; orphans/widows stop a single line being
+   stranded across the gutter. */
 .ed__body--cols {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-6) var(--s-8);
-  align-items: start;
+  columns: 2;
+  column-gap: var(--s-8);
+  orphans: 2;
+  widows: 2;
 }
-/* The grid owns the rhythm here. Left alone, the global `p + p` margin-top
-   pushes the second paragraph 16px below the first and the two columns stop
-   lining up. */
-.ed__body--cols > p { margin: 0; max-width: none; }
+.ed__body--cols > p { margin: 0 0 var(--s-5); max-width: none; }
+.ed__body--cols > p:last-child { margin-bottom: 0; }
 .ed--cols .ed__text h2 { max-width: none; }
 @media (max-width: 1100px) {
-  .ed__body--cols { grid-template-columns: minmax(0, 1fr); }
+  .ed__body--cols { columns: 1; }
 }
 
 @media (max-width: 860px) {
@@ -402,7 +436,7 @@
 .strip__cap { padding: var(--s-5) var(--s-5) var(--s-7); }
 .strip__cap .label { display: block; margin-bottom: var(--s-2); }
 .strip__cap h3 { font-size: 1rem; margin-bottom: var(--s-2); }
-.strip__cap p { font-size: var(--fs-xs); line-height: 1.6; color: var(--ink-soft); }
+.strip__cap p { font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-soft); }
 .strip__cap .arc-link { margin-top: var(--s-4); }
 
 /* -----------------------------------------------------------------------------
@@ -465,19 +499,20 @@ a.card:hover { transform: translateY(-2px); }
    well short of the container, because a 1440-wide hairline over a 60ch
    paragraph is mostly empty rule. */
 .process { padding-block: var(--section-y); background: var(--paper-3); }
-.process__head { max-width: 32rem; margin-bottom: var(--s-8); }
+/* The head and the rows share one centred container. Capping only .p-row
+   while the head sat on the 1440 line is what made this look left-heavy. */
+.process__head { margin-bottom: var(--s-8); }
 .process__head .label { display: block; margin-bottom: var(--s-3); }
 
 .p-row {
   display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: var(--s-6);
-  max-width: 60rem;
   padding-block: var(--s-6);
   border-bottom: var(--hair) solid var(--line);
 }
 .p-row:first-child { border-top: var(--hair) solid var(--line); }
 .p-row__num { font-family: var(--font-head); font-size: var(--fs-sm); color: var(--ink-mute); letter-spacing: .04em; }
 .p-row h3 { font-family: var(--font-head); font-size: 1.0625rem; font-weight: var(--fw-semi); margin-bottom: var(--s-2); }
-.p-row p { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 60ch; }
+.p-row p { font-size: var(--fs-body); color: var(--ink-soft); max-width: 62ch; }
 @media (max-width: 520px) { .p-row { grid-template-columns: 40px 1fr; gap: var(--s-4); } }
 
 /* -----------------------------------------------------------------------------
@@ -491,7 +526,9 @@ a.card:hover { transform: translateY(-2px); }
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--s-10) var(--s-8);
-  list-style: none; padding: 0; margin: 0;
+  /* Two headshots across 1440 gives portraits the size of doorways. */
+  max-width: var(--wrap-narrow); margin-inline: auto;
+  list-style: none; padding: 0; margin-block: 0;
 }
 .team__portrait {
   position: relative;
@@ -515,9 +552,9 @@ a.card:hover { transform: translateY(-2px); }
 .team__id h3 { font-size: clamp(1.25rem, 1.05rem + .5vw, 1.625rem); color: var(--paper); margin-bottom: var(--s-2); }
 .team__id .label { display: block; color: var(--paper-soft); }
 .team__bio { padding-top: var(--s-6); }
-.team__bio p { font-size: var(--fs-sm); color: var(--ink-soft); }
+.team__bio p { font-size: var(--fs-body); color: var(--ink-soft); }
 .team__bio p + p { margin-top: var(--s-4); }
-.team__gdc { margin-top: var(--s-5); font-size: var(--fs-xs); color: var(--ink-mute); letter-spacing: .04em; }
+.team__bio .team__gdc { margin-top: var(--s-5); font-size: var(--fs-xs); color: var(--ink-mute); letter-spacing: .04em; }
 @media (max-width: 860px) {
   .team__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-10); }
 }
@@ -620,7 +657,7 @@ a.card:hover { transform: translateY(-2px); }
   color: var(--ink-soft); letter-spacing: 0;
 }
 .plan--feature .plan__price small { color: var(--paper-mute); }
-.plan__list { display: grid; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-soft); }
+.plan__list { display: grid; gap: var(--s-4); font-size: var(--fs-body); color: var(--ink-soft); }
 .plan__list li { position: relative; padding-left: var(--s-6); }
 .plan__list li::before { content: ""; position: absolute; left: 3px; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .plan--feature .plan__list { color: var(--paper-soft); }
@@ -654,7 +691,7 @@ a.card:hover { transform: translateY(-2px); }
 .accordion__icon::after { transform: rotate(90deg); }
 .accordion__btn[aria-expanded="true"] .accordion__icon::after { transform: rotate(0); }
 .accordion__panel { overflow: hidden; max-height: 0; transition: max-height var(--t) var(--ease); }
-.accordion__panel-inner { padding-bottom: var(--s-5); font-size: var(--fs-sm); color: var(--ink-soft); max-width: 62ch; }
+.accordion__panel-inner { padding-bottom: var(--s-5); font-size: var(--fs-body); color: var(--ink-soft); max-width: 62ch; }
 .accordion__panel-inner > * + * { margin-top: var(--s-4); }
 
 /* -----------------------------------------------------------------------------
@@ -747,21 +784,30 @@ a.card:hover { transform: translateY(-2px); }
 .rail { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
 .rail .label { display: block; margin-bottom: var(--s-4); }
 /* A card, so it reads as a menu rather than as more page content. */
+/* A menu, not a list of links in a box. Full-width rows that highlight on
+   hover, and a current row marked by a solid accent edge and a tinted
+   ground rather than a floating dash — the dash sat outside the row and read
+   as punctuation. The dividing hairlines are gone: the rows are the
+   structure, and hover makes each one's extent obvious. */
 .rail__list {
   border: var(--hair) solid var(--line);
   background: var(--paper-2);
-  padding-inline: var(--s-5);
+  padding: var(--s-2) 0;
 }
 .rail__list a {
-  display: block; padding: var(--s-4) 0;
-  border-bottom: var(--hair) solid var(--line);
-  font-size: var(--fs-sm); color: var(--ink-soft);
-  transition: color var(--t-fast) var(--ease), padding-left var(--t-fast) var(--ease);
+  display: block;
+  padding: var(--s-3) var(--s-5);
+  border-left: 3px solid transparent;
+  font-size: var(--fs-body); line-height: 1.35; color: var(--ink-soft);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease),
+              border-color var(--t-fast) var(--ease);
 }
-.rail__list a:last-child { border-bottom: 0; }
-.rail__list a:hover { color: var(--black); padding-left: 6px; }
-.rail__list a.is-active { color: var(--black); font-weight: var(--fw-medium); }
-.rail__list a.is-active::before { content: ""; display: inline-block; width: 12px; height: var(--hair); background: var(--accent); vertical-align: middle; margin-right: 8px; }
+.rail__list a:hover { color: var(--black); background: var(--paper-3); }
+.rail__list a.is-active {
+  color: var(--black); font-weight: var(--fw-medium);
+  border-left-color: var(--accent);
+  background: var(--accent-tint);
+}
 @media (max-width: 940px) { .rail { position: static; } }
 
 .pager {
@@ -784,7 +830,7 @@ a.card:hover { transform: translateY(-2px); }
 /* One column, always. A form is read and completed top to bottom; a second
    column asks the eye to choose a path and makes the sequence ambiguous.
    .form__grid--single is kept as an alias so older markup still parses. */
-.form { max-width: 680px; margin-inline: auto; }
+.form { max-width: var(--form-col); margin-inline: auto; }
 .form__grid, .form__grid--single { display: grid; grid-template-columns: 1fr; gap: var(--s-6); }
 
 .field { display: flex; flex-direction: column; gap: var(--s-2); min-width: 0; }
@@ -943,18 +989,24 @@ a.card:hover { transform: translateY(-2px); }
   color: var(--ink-soft); margin-bottom: var(--s-4);
 }
 
+/* A step's intro is copy, not a field hint — it was borrowing .field__hint
+   and rendering at 13px in --ink-mute, the styling for a note under an input. */
+.form__step-intro { font-size: var(--fs-sm); color: var(--ink-soft); max-width: 60ch; }
+
+/* No rule above the labels. The bar underneath already carries progress, and
+   the top border plus each button's 2px top edge read as a second, competing
+   track directly above it. */
 .stepper__list {
   display: flex; flex-wrap: wrap; gap: 0;
   list-style: none; margin: 0 0 var(--s-4); padding: 0;
-  border-top: var(--hair) solid var(--line);
 }
 .stepper__item { flex: 1 1 0; min-width: 0; }
 .stepper__btn {
   display: flex; align-items: baseline; gap: var(--s-2);
   width: 100%; padding: var(--s-3) var(--s-3) var(--s-3) 0;
-  background: none; border: 0; border-top: 2px solid transparent; margin-top: -1px;
+  background: none; border: 0;
   font: inherit; text-align: left; color: var(--ink-mute); cursor: pointer;
-  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  transition: color var(--t-fast) var(--ease);
 }
 .stepper__btn:disabled { cursor: default; }
 .stepper__btn:not(:disabled):hover { color: var(--black); }
@@ -966,8 +1018,9 @@ a.card:hover { transform: translateY(-2px); }
   font-size: var(--fs-xs); line-height: 1.3;
   overflow: hidden; text-overflow: ellipsis;
 }
-.stepper__item.is-done .stepper__btn { color: var(--ink-soft); border-top-color: var(--line); }
-.stepper__item.is-current .stepper__btn { color: var(--black); border-top-color: var(--accent); }
+.stepper__item.is-done .stepper__btn { color: var(--ink-soft); }
+.stepper__item.is-current .stepper__btn { color: var(--black); }
+.stepper__item.is-current .stepper__label { font-weight: var(--fw-medium); }
 
 /* The thin bar is the only progress cue left once the labels are hidden. */
 .stepper__bar { height: 2px; background: var(--line); }

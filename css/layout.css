@@ -22,6 +22,12 @@
   padding-inline: var(--pad-inline);
 }
 .wrap--wide { max-width: var(--wrap-wide); }
+/* 1440 is for text and images side by side. A section that is only text —
+   a numbered list, an FAQ, a form, a run of benefits — reads badly stretched
+   across it, and capping just the inner element while the heading stays on
+   the 1440 line is what produced the ragged two-column look. Cap the whole
+   container instead, so the heading and its content share one left edge. */
+.wrap--narrow { max-width: var(--wrap-narrow); }
 .wrap--text { max-width: calc(var(--measure) + var(--pad-inline) * 2); }
 
 /* Auto-fit grid. --min sets the smallest acceptable column. */

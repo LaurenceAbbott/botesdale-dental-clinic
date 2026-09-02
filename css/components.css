@@ -25,7 +25,7 @@
      18. Badge & pill
      19. Data table
      20. Figure, gallery & before/after
-     21. Rail (sidebar nav) & prev/next
+     21. Prev / next pager
      22. Forms
      22a. Multi-step forms (stepper, step, nav)
      22b. Repeat group ("add another")
@@ -779,7 +779,7 @@ a.card:hover { transform: translateY(-2px); }
 }
 
 /* -----------------------------------------------------------------------------
-   21. RAIL (contextual sidebar nav) & PREV/NEXT
+   21. PREV / NEXT PAGER
    -------------------------------------------------------------------------- */
 .pager {
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--hair);

@@ -72,6 +72,7 @@
   --fs-hero:  clamp(1.875rem, 1.1rem + 3.4vw, 4.25rem);  /* 30 → 68 */
   --fs-h1:    clamp(1.75rem, 1.15rem + 2.6vw, 3.25rem);  /* 28 → 52 */
   --fs-h2:    clamp(1.5rem, 1.22rem + 1.15vw, 2.125rem); /* 24 → 34 */
+  --fs-h2-lg: clamp(1.625rem, 1.25rem + 1.6vw, 2.625rem); /* 26 → 42 — editorial and feature headings */
   --fs-h3:    clamp(1.25rem, 1.14rem + .45vw, 1.5rem);   /* 20 → 24 */
   --fs-h4:    1.0625rem;                                  /* 17      */
   --fs-lead:  clamp(.9375rem, .9rem + .2vw, 1.0625rem);  /* 15 → 17 */
@@ -104,8 +105,8 @@
   --section-y-tight: clamp(2.5rem, 1.8rem + 2.6vw, 3.75rem);
 
   /* --- Layout ------------------------------------------------------------- */
-  --wrap:       1200px;
-  --wrap-wide:  1440px;
+  --wrap:       1440px;
+  --wrap-wide:  1680px;
   --measure:    640px;      /* comfortable reading width                     */
   --gutter:     clamp(1.25rem, .7rem + 2.4vw, 2rem);
   --nav-h:      73px;

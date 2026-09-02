@@ -37,8 +37,9 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 
 | Token | Value | Use |
 |---|---|---|
-| `--black` | `#0E1116` | Ink. Headings, dark sections, solid buttons |
-| `--black-800` | `#1A1F26` | Secondary dark surface |
+| `--black` | `#1A1A18` | Ink. Headings, dark sections, solid buttons |
+| `--black-2` | `#22292F` | Secondary dark ground — a second dark band, dark media panels |
+| `--ink-rgb` | `26, 26, 24` | `--black` as channels, for `rgba()` scrims and shadows |
 | `--paper` | `#F7F6F3` | The page ground |
 | `--paper-2` | `#FFFFFF` | Pure white, used sparingly for lift |
 | `--paper-3` | `#EFEDE8` | Alternating section band |
@@ -49,9 +50,9 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--line` | `#D9D7D0` | Hairline on paper |
 | `--line-dark` | `rgba(247,246,243,.18)` | Hairline on black |
 | `--paper-soft` | `rgba(247,246,243,.70)` | Body copy on black |
-| `--paper-mute` | `rgba(247,246,243,.45)` | Micro-labels on black |
+| `--paper-mute` | `rgba(247,246,243,.50)` | Micro-labels on black |
 | `--accent` | `#17A6DE` | Arc motif, markers, focus, validation |
-| `--accent-600` / `--accent-700` | `#1189BB` / `#0B6E97` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
+| `--accent-600` / `--accent-700` | `#128FC3` / `#0B6E97` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
 | `--accent-800` | `#08506E` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
@@ -59,7 +60,27 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 
 **Dark grounds** for the hero and page heads: `--grad-hero`, plus `--grad-cool`, `--grad-warm`, `--grad-slate` if a gradient panel is ever needed. Media panels awaiting photography use `--placeholder` (see §4.4).
 
-**Contrast.** `--ink-soft` on `--paper` is 6.4:1; `--paper-soft` on `--black` is 9.5:1. Both clear WCAG AA for body text. `--accent` is only used for large text, borders and iconography — never for small body copy on paper.
+**Two blacks.** `--black` is the warm ink the whole site is set in; `--black-2` is a cooler, slightly lighter ground for a *second* dark surface — `.section--dark-2` and `.ph--dark` — so two dark sections in a row do not merge into one slab. `--dark` styling is unchanged by the variant; only the ground moves.
+
+Every `rgba()` scrim and shadow derives from `--ink-rgb` rather than a hand-written triplet, so the ink is genuinely a single point of change. If you move `--black`, move `--ink-rgb` with it.
+
+**Contrast.** Measured on the rendered page, not by eye:
+
+| Pair | Ratio |
+|---|---|
+| `--black` on `--paper` | 16.1:1 |
+| `--black-2` on `--paper` | 13.6:1 |
+| `--paper-soft` on `--black` / `--black-2` | 8.4:1 / 7.4:1 |
+| `--paper-mute` on `--black` / `--black-2` | 4.9:1 / 4.6:1 |
+| Primary button ink label on `--accent` | 6.3:1 |
+| …on `--accent-600` (hover) | 4.8:1 |
+
+Two values moved *because* the ink moved, and both are load-bearing:
+
+* **`--paper-mute` went from `.45` to `.50`.** At `.45` it measures 4.2:1 on `--black` and 4.0:1 on `--black-2` — under AA for the small uppercase meta it is used for. It was already failing at `.45` against the old ink (4.3:1); the new palette simply made it visible. `.50` clears 4.5:1 on both grounds.
+* **`--accent-600` was lifted from `#1189BB` to `#128FC3`.** The primary button carries an *ink* label, so its hover fill has to stay light enough to sit under one. Against the old, darker ink `#1189BB` gave 4.8:1; against `#1A1A18` it gives 4.4:1 and fails. `#128FC3` restores 4.8:1 and still reads clearly darker than `--accent`.
+
+`--accent` is only used for large text, borders and iconography — never for small body copy on paper.
 
 ### 2.2 Typography
 

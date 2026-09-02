@@ -65,6 +65,9 @@
 .section--no-line, .process.section--no-line { border-top: 0; }
 .section--paper-3 { background: var(--paper-3); }
 .section--dark { background: var(--black); color: var(--paper-soft); }
+/* Second dark ground. Everything --dark styles applies, only the ground
+   changes — use it so two dark sections in a row do not merge into one slab. */
+.section--dark-2 { background: var(--black-2); }
 .section--dark h1, .section--dark h2, .section--dark h3, .section--dark h4 { color: var(--paper); }
 .section--dark .label { color: var(--paper-mute); }
 

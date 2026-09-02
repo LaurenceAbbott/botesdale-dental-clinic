@@ -104,7 +104,7 @@
    --accent is 2.78:1 and fails AA at this size, where ink gives 6.8:1.
    That choice sets how far the button can darken. An ink label needs a fill
    of at least L 0.2, which --accent-600 clears at 4.8:1 and --accent-700 does
-   not (3.3:1) — so there is exactly one darker step available. Hover takes
+   not (3.2:1) — so there is exactly one darker step available. Hover takes
    it; press darkens the border instead of the fill, which reads as pressed
    without dragging the label under contrast. */
 .btn--solid {
@@ -175,7 +175,7 @@
   content: "";
   position: absolute;
   inset: clamp(8px, 1.4vw, 16px);
-  border: var(--hair) solid rgba(14, 17, 22, .07);
+  border: var(--hair) solid rgba(var(--ink-rgb), .07);
   pointer-events: none;
 }
 .ph__label {
@@ -191,7 +191,7 @@
   line-height: 1.6;
 }
 .section--paper-3 .ph, .strip .ph { background: var(--placeholder-2); }
-.ph--dark { background: var(--black-800); }
+.ph--dark { background: var(--black-2); }
 .ph--dark::after { border-color: var(--line-dark); }
 .ph--dark .ph__label { color: var(--paper-mute); }
 
@@ -217,7 +217,7 @@
 }
 .hero__scrim {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(14,17,22,.55) 0%, rgba(14,17,22,.15) 42%, rgba(14,17,22,.82) 100%);
+  background: linear-gradient(180deg, rgba(var(--ink-rgb), .55) 0%, rgba(var(--ink-rgb), .15) 42%, rgba(var(--ink-rgb), .82) 100%);
 }
 /* One step deeper than it would otherwise need: the arc lifts the bottom
    corners, and the copy sits in the corner it lifts. */
@@ -263,7 +263,7 @@
 }
 .page-head__scrim {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(14,17,22,.62) 0%, rgba(14,17,22,.28) 40%, rgba(14,17,22,.86) 100%);
+  background: linear-gradient(180deg, rgba(var(--ink-rgb), .62) 0%, rgba(var(--ink-rgb), .28) 40%, rgba(var(--ink-rgb), .86) 100%);
 }
 .page-head__inner {
   position: relative;
@@ -719,7 +719,7 @@ a.card:hover { transform: translateY(-2px); }
 .shot__tag {
   position: absolute; left: 0; bottom: 0;
   padding: 6px 12px;
-  background: rgba(14, 17, 22, .78);
+  background: rgba(var(--ink-rgb), .78);
   color: var(--paper);
   font-size: var(--fs-label); letter-spacing: .12em; text-transform: uppercase;
 }
@@ -731,7 +731,7 @@ a.card:hover { transform: translateY(-2px); }
   position: fixed; inset: 0; z-index: var(--z-menu);
   display: none; align-items: center; justify-content: center;
   padding: var(--s-6);
-  background: rgba(14, 17, 22, .92);
+  background: rgba(var(--ink-rgb), .92);
 }
 .lightbox.is-open { display: flex; }
 .lightbox img { max-width: min(1100px, 100%); max-height: 88vh; object-fit: contain; }

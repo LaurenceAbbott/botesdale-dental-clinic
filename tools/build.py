@@ -274,7 +274,7 @@ def document(page, body, depth):
 <meta property="og:description" content="{description}">
 <meta property="og:url" content="{canonical}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0E1116">
+<meta name="theme-color" content="#1A1A18">
 
 <link rel="icon" href="{favicon}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -18,13 +18,12 @@ The reference for this system is precision-engineering brand design — Porsche 
 
 ### The arc
 
-The practice's signature motif is a shallow arc — a smile. It appears in three places:
+The practice's signature motif is a shallow arc — a smile. It appears in two places:
 
 * **`.arc`** — an inline SVG stroke that draws itself in under nav items, footer links and tabs on hover. It is a decoration on things that already read as navigation, never the only signal that something is a link — see §4.3. On a device that cannot hover, tapping one of these links draws the arc and the navigation waits for it; see §4.3a.
 * **`#heroArc`** — an SVG `clipPath` on the bottom edge of the dark hero and page-head panels, so each one ends in a smile rather than a straight line.
-* **`.arc-rule`** — the same curve at page scale, drawn as a section divider across the container. Once or twice a page at most (§4.32).
 
-`#heroArc` is defined once per page in `<svg class="svg-defs">`; `.arc` and `.arc-rule` are inline SVG at the point of use. Remove the `svg-defs` block and the hero panels go back to a straight bottom edge. It once also held `#smileClip`, which clipped a sweeping fill across buttons on hover; that is gone (§4.1).
+Both are defined once per page (`<svg class="svg-defs">`). If you remove the `svg-defs` block, the hero panels go back to a straight bottom edge. It once also held `#smileClip`, which clipped a sweeping fill across buttons on hover; that is gone (§4.1).
 
 The arc is **cut into** the panel rather than drawn on top of it, so whatever is behind shows through the curve — which is the page ground, since the panel still occupies its full height in layout. That means the section following a hero has to be on `--paper` (or have no background of its own). Every page currently satisfies this; if you ever put a `--paper-3` band directly under a page head, the sliver revealed by the arc will be the wrong colour.
 
@@ -76,7 +75,6 @@ Every size is fluid, interpolating between a mobile and a desktop value with `cl
 | `--fs-hero` | 30 → 68px | `.display` |
 | `--fs-h1` | 28 → 52px | `h1` |
 | `--fs-h2` | 24 → 34px | `h2` |
-| `--fs-h2-lg` | 26 → 42px | `.ed__head h2`, `.band__head h2` |
 | `--fs-h3` | 20 → 24px | `h3`, `.statement-text` |
 | `--fs-h4` | 17px | `h4` |
 | `--fs-lead` | 15 → 17px | `.lead`, `.prose p` |
@@ -90,21 +88,21 @@ Tracking tightens as size increases (`--ls-tight: -.02em` on `h1` and `.display`
 
 ### 2.3 The content rail and the bleed grid
 
-`--wrap` (1440px) is the maximum width of the content column. A centred `.wrap` puts its content at `(100vw − 1440) / 2 + --pad-inline` from the viewport edge; that line is **the rail**, and everything textual aligns to it.
+`--wrap` (1200px) is the maximum width of any line of text on the site. A centred `.wrap` puts its content at `(100vw − 1200) / 2 + --pad-inline` from the viewport edge; that line is **the rail**, and everything textual aligns to it.
 
-> **The editorial block no longer bleeds.** Running its media out to the viewport edge pinned the copy into a thin ribbon on the left and pushed half the picture off the page on a wide screen. `.ed` is contained inside `.wrap` now (§4.8). The bleed grid below is still used by `.team__row`, and the tokens remain for anything that genuinely needs to cross the rail.
-
-Full-bleed components cannot use `.wrap`, because their media has to run out to the viewport edge. They use a four-column *bleed grid* instead, built from two tokens:
+Full-bleed components — the editorial block and the team row — cannot use `.wrap`, because their media has to run out to the viewport edge. They use a four-column *bleed grid* instead, built from two tokens:
 
 ```css
 --col-gutter: minmax(var(--pad-inline), 1fr);
 --col-half:   minmax(0, calc(var(--wrap) / 2 - var(--pad-inline)));
 
-.team__row {
+.ed {
   grid-template-columns: var(--col-gutter) var(--col-half) var(--col-half) var(--col-gutter);
 }
-.team__portrait { grid-column: 1 / 3; }   /* bleeds left, stops at the centre */
-.team__bio      { grid-column: 3 / 4; }   /* ends on the rail                 */
+.ed__media { grid-column: 1 / 3; }   /* bleeds left, stops at the centre */
+.ed__text  { grid-column: 3 / 4; }   /* ends on the rail                 */
+.ed--rev .ed__media { grid-column: 3 / 5; }
+.ed--rev .ed__text  { grid-column: 2 / 3; }   /* starts on the rail      */
 ```
 
 Because the gutters are `1fr` and the content columns are capped, the text column lands on exactly the same pixel as a centred `.wrap` at every viewport width — and the measure inside it stays constant as the window grows. No `100vw` arithmetic is involved, so there is no scrollbar-width error.
@@ -118,7 +116,7 @@ Two things to know if you extend this:
 
 A 4px base scale: `--s-1` (4px) through `--s-12` (112px). Section padding uses the fluid `--section-y` / `--section-y-tight` tokens rather than a fixed step, so vertical rhythm scales with the viewport.
 
-Layout tokens: `--wrap` (1440px), `--wrap-wide` (1680px), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px), `--control-h` (48px).
+Layout tokens: `--wrap` (1200px), `--wrap-wide` (1440px), `--measure` (640px), `--gutter`, `--pad-inline`, `--pad-block`, `--nav-h` (73px), `--control-h` (48px).
 
 `--control-h` is the height of every single-line form control. It is fixed rather than left to each input's intrinsic sizing because date and time inputs size themselves from their own internal rendering and will not match a text input — Chromium makes them a couple of pixels taller, Safari collapses an empty one well below the rest. Pinning both to one token is the only thing that holds on both engines, and it keeps every field above the 44px tap-target minimum.
 
@@ -269,42 +267,20 @@ Uppercase, 11px, with a `/` separator. `--on-paper` variant for use outside a da
 
 ### 4.8 Editorial block — `.ed`
 
-The workhorse: a media panel and a copy column. **Contained, not bled.**
+The workhorse: a full-bleed media panel beside a copy column.
 
 ```html
-<section class="ed ed--rev" data-reveal>
-  <div class="wrap ed__inner">
-    <div class="ed__media">…</div>
-    <div class="ed__text">
-      <div class="ed__head"><span class="label">…</span><h2>…</h2></div>
-      <div class="ed__body ed__body--split"><p>…</p><p>…</p><p>…</p></div>
-      <a class="arc-link" …>…</a>
-    </div>
+<section class="ed" data-reveal>
+  <div class="ed__media"><div class="ph">…</div></div>
+  <div class="ed__text">
+    <span class="label">Philosophy</span>
+    <h2>…</h2><p>…</p>
+    <a class="arc-link" …>…</a>
   </div>
 </section>
 ```
 
-The media used to run out to the viewport edge. On a 1920 screen that pinned the copy into a ~390px ribbon on the left and pushed half the picture off the page. Both now sit inside `.wrap`.
-
-**The copy is a heading block and a body**, not one undifferentiated column, so the two can be laid out independently — and the body takes **two columns** once there is enough of it.
-
-**Three layouts, so a page is not a chessboard.** Four identical rows alternating sides is a pattern, not a composition:
-
-| Class | Shape |
-|---|---|
-| `.ed` | media one side, copy the other |
-| `.ed--rev` | the same, mirrored |
-| `.ed--feature` | wide 21:9 media across the top, heading and two-column copy beneath |
-
-Plus `.ed--media-wide` (give the picture the larger share) and `.ed--warm` (tonal alternation).
-
-**Three things are decided by the generator, not guessed at in CSS**, because only it knows how much copy there is:
-
-* `.ed__body--split` — two columns at 3+ paragraphs in a split block, 2+ in a feature, where the column is much wider.
-* `.ed--brief` — a single paragraph brings the media down from 4:5 to 3:2. A tall portrait beside one short paragraph leaves the copy floating in a void.
-* Which layout each block gets. `r_treatments` reads media-left, media-right, feature, wide-media rather than F/T/F/T.
-
-**`--rev` controls which side, `--media-wide` controls how much width.** They are independent, so the grid template is restated for each combination — otherwise `--rev` silently hands the picture the wide column, which is what it did at first.
+**Modifiers:** `--rev` (media right, copy starts on the rail), `--warm` (a half-step darker placeholder, for tonal alternation between consecutive blocks).
 
 ### 4.9 Strip grid — `.strip`
 
@@ -501,32 +477,6 @@ The test before reaching for `.cols-2`:
 * **Does each column need its own heading?** Two `h2`s side by side have no reading order.
 
 A page is allowed to be tall. Vertical space is free; horizontal space is not.
-
----
-
-### 4.31 Band — `.band`
-
-A narrow heading column beside a wide content column.
-
-```html
-<div class="band">
-  <div class="band__head"><span class="label">…</span><h2>…</h2><p>…</p></div>
-  <div class="band__body">…</div>
-</div>
-```
-
-The alternative is a single left-aligned stack, which on a 1440 container leaves the right half of every section empty and reads as unfinished rather than spacious. The heading column is not a second topic — it is this section's own head — so this is **not** the two-unrelated-columns trap of §4.30. Collapses to one column below 1000px.
-
-### 4.32 Arc rule — `.arc-rule`
-
-The smile at the scale of the page rather than of a link: a section divider drawn as one shallow arc across the container.
-
-```html
-<svg class="arc-rule" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true">
-  <path d="M0,1 Q50,6 100,1"/></svg>
-```
-
-`preserveAspectRatio="none"` lets it stretch to any container width while `vector-effect: non-scaling-stroke` keeps the line weight constant. `--line` variant for a neutral rule. Use it once, at most twice, on a page — it is the brand mark at full size, and it stops meaning anything if it appears between every section.
 
 ---
 

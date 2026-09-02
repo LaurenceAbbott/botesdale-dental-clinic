@@ -114,7 +114,6 @@ GROUPS = {
     'preventative': ('Preventative dentistry', ['preventative', 'check-up', 'hygiene', 'sensitive']),
     'cases':        ('Case studies', ['case-worn', 'case-missing', 'case-newdenture',
                                       'case-loose', 'case-sameday']),
-    'implant':      ('Implant clinic', ['implant', 'implant-referrals', 'missing']),
 }
 
 LABELS = {
@@ -408,8 +407,14 @@ def c_cta(H, depth, heading, para='', primary=('Book an appointment', 'contact')
     """demote=True renders the leading button as an outline instead of a solid.
     Use it where the page's real primary action is a form further up: only one
     primary per page, and a closing CTA must not compete with the form."""
+    # The primary is solid on any ground. On a dark band it used to render as
+    # an outline like the secondary, which left the page with two equal-weight
+    # buttons and no primary action at all. The accent fill with an ink label
+    # measures 6.3:1 on --black, so it carries the emphasis on dark as well as
+    # on paper. demote=True still drops it to an outline — that is for pages
+    # whose real primary is a form further up.
     buttons = [c_btn(primary[0], H.rel(primary[1], depth),
-                     'light' if dark else ('outline' if demote else 'solid'))]
+                     'outline' if demote else 'solid')]
     if secondary:
         buttons.append(c_btn(secondary[0], H.rel(secondary[1], depth),
                              'light' if dark else 'outline'))
@@ -1975,11 +1980,11 @@ def r_implant(depth, H):
         ], idbase='implant'), cls='section--paper-3', narrow=True))
 
     out.append(c_quote([TESTIMONIALS[0]]))
-    out.append(c_group_pager(H, depth, 'implant', 'implant'))
     out.append(c_cta(H, depth, 'Would you like to talk about dental implants?',
-                     'Get in touch and we will arrange a consultation.',
-                     primary=('Book a consultation', 'contact'),
-                     secondary=('Implant referrals', 'implant-referrals'), dark=True))
+                     'Refer yourself or a patient using the implant referral form, or get in '
+                     'touch and we will arrange a consultation.',
+                     primary=('Implant referrals', 'implant-referrals'),
+                     secondary=('Book a consultation', 'contact'), dark=True))
     return '\n'.join(out)
 
 
@@ -2570,6 +2575,10 @@ def r_privacy(depth, H):
     <p>You also have the right to lodge a complaint with the Information Commissioner’s Office (ICO) at <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>.</p>
   </div>
 </div></section>''')
+    out.append(c_cta(H, depth, 'Questions about your data?',
+                     'Ask for the Practice Manager and we will talk it through.',
+                     primary=('Contact the practice', 'contact'),
+                     secondary=('Cookie policy', 'cookies')))
     return '\n'.join(out)
 
 
@@ -2612,6 +2621,10 @@ def r_cookies(depth, H):
     {tables}
   </div>
 </div></section>'''.format(tables='\n    '.join(tables)))
+    out.append(c_cta(H, depth, 'Prefer to ask a person?',
+                     'We are happy to explain what we store and why.',
+                     primary=('Contact the practice', 'contact'),
+                     secondary=('Privacy policy', 'privacy')))
     return '\n'.join(out)
 
 

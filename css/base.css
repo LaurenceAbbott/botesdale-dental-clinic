@@ -19,9 +19,12 @@
    -------------------------------------------------------------------------- */
 :root {
   /* --- Core palette ------------------------------------------------------- */
-  --black:        #0E1116;   /* Ink. Headings, dark sections, solid buttons  */
-  --black-800:    #1A1F26;
-  --black-700:    #262C34;
+  --black:        #1A1A18;   /* Ink. Headings, dark sections, solid buttons  */
+  --ink-rgb:      26, 26, 24; /* --black as channels, for rgba() scrims and   */
+                             /* shadows. Keep in step with --black.           */
+  --black-2:      #22292F;   /* Secondary dark ground — cooler, for a second  */
+                             /* dark band and for dark media panels           */
+  --black-700:    #2C333A;   /* One step above --black-2                      */
   --paper:        #F7F6F3;   /* Warm off-white — the page ground            */
   --paper-2:      #FFFFFF;   /* Pure white, used sparingly for lift          */
   --paper-3:      #EFEDE8;   /* Alternating band                             */
@@ -32,14 +35,21 @@
   --line:         #D9D7D0;   /* Hairline on paper                            */
   --line-dark:    rgba(247, 246, 243, .18);  /* Hairline on black            */
   --paper-soft:   rgba(247, 246, 243, .70);  /* Body copy on black           */
-  --paper-mute:   rgba(247, 246, 243, .45);  /* Meta on black                */
+  /* .50, not .45: at .45 this lands at 4.2:1 on --black and 4.0:1 on
+     --black-2, under AA for the small uppercase meta it is used for. .50
+     clears 4.5:1 on both grounds. */
+  --paper-mute:   rgba(247, 246, 243, .50);  /* Meta on black                */
 
   /* --- Accent ------------------------------------------------------------- */
   /* NOTE: the written brief specifies #009ee3. The approved design system
      uses #17A6DE, which reads better against the warm paper ground.
      To revert to the brief value, change --accent only. */
   --accent:       #17A6DE;
-  --accent-600:   #1189BB;
+  /* Primary button hover. Lifted a step from #1189BB when the ink moved to
+     #1A1A18: the button carries an ink label, and against the older, darker
+     ink #1189BB gave 4.8:1 but against #1A1A18 only 4.4:1. #128FC3 restores
+     4.8:1 and still reads clearly darker than --accent. */
+  --accent-600:   #128FC3;
   --accent-700:   #0B6E97;
   /* Darkest step, used for the primary button's pressed border. The fill
      cannot go this dark: the primary carries an ink label, which needs a fill
@@ -50,10 +60,10 @@
   --accent-line:  rgba(23, 166, 222, .35);
 
   /* --- Dark media grounds (used behind imagery and empty media panels) ---- */
-  --grad-cool:    linear-gradient(160deg, #1A2420 0%, #0E1116 100%);
+  --grad-cool:    linear-gradient(160deg, #1A2420 0%, #1A1A18 100%);
   --grad-warm:    linear-gradient(160deg, #2A2118 0%, #1F1712 100%);
-  --grad-hero:    linear-gradient(155deg, #1A2420 0%, #0E1116 60%, #1F1712 100%);
-  --grad-slate:   linear-gradient(160deg, #2C3A34 0%, #0E1116 100%);
+  --grad-hero:    linear-gradient(155deg, #1A2420 0%, #1A1A18 60%, #1F1712 100%);
+  --grad-slate:   linear-gradient(160deg, #2C3A34 0%, #22292F 100%);
 
   /* --- Status ------------------------------------------------------------- */
   --ok:           #1D7A57;
@@ -133,9 +143,9 @@
   --hair:        1px;
 
   /* --- Elevation (used sparingly — this system prefers lines to shadows) -- */
-  --shadow-sm: 0 1px 2px rgba(14, 17, 22, .06);
-  --shadow:    0 12px 32px rgba(14, 17, 22, .12);
-  --shadow-lg: 0 28px 64px rgba(14, 17, 22, .2);
+  --shadow-sm: 0 1px 2px rgba(var(--ink-rgb), .06);
+  --shadow:    0 12px 32px rgba(var(--ink-rgb), .12);
+  --shadow-lg: 0 28px 64px rgba(var(--ink-rgb), .2);
 
   /* --- Motion ------------------------------------------------------------- */
   --ease:      cubic-bezier(.4, 0, .2, 1);
@@ -273,7 +283,12 @@ code, kbd, samp {
 .meta  { font-size: var(--fs-xs); color: var(--ink-mute); }
 
 /* Long-form copy block (policies, case notes) */
-.prose { max-width: var(--measure); }
+/* Centred as a box, not as text. Where a --measure block sits inside the
+   1440 container it now sits in the middle of it rather than hard left with
+   all the empty space on one side; the copy inside stays left-aligned.
+   margin-inline:auto only does anything when the box is narrower than its
+   parent, so inside a grid column it is a no-op. */
+.prose { max-width: var(--measure); margin-inline: auto; }
 .prose > * + * { margin-top: var(--s-5); }
 .prose p, .prose li { font-size: var(--fs-lead); line-height: var(--lh-copy); color: var(--ink-soft); }
 .prose h2 { margin-top: var(--s-9); font-size: var(--fs-h3); color: var(--black); }
@@ -284,9 +299,11 @@ code, kbd, samp {
 .prose ul, .prose ol { padding-left: 0; list-style: none; }
 .prose li + li { margin-top: var(--s-3); }
 .prose ul > li { position: relative; padding-left: var(--s-6); }
+/* A round bullet. This was a 14px hairline, which read as a dash rather than
+   a list marker — the one place the system's line language got in the way. */
 .prose ul > li::before {
-  content: ""; position: absolute; left: 0; top: .72em;
-  width: 14px; height: var(--hair); background: var(--accent);
+  content: ""; position: absolute; left: 3px; top: .62em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
 }
 .prose ol { counter-reset: n; }
 .prose ol > li { position: relative; padding-left: var(--s-7); counter-increment: n; }
@@ -342,7 +359,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
    05. UTILITIES
    -------------------------------------------------------------------------- */
 .u-center      { text-align: center; }
-.u-measure     { max-width: var(--measure); }
+.u-measure     { max-width: var(--measure); margin-inline: auto; }
 .u-measure-c   { max-width: var(--measure); margin-inline: auto; }
 .u-nowrap      { white-space: nowrap; }
 .u-invert      { color: var(--paper); }

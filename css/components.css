@@ -540,8 +540,24 @@ a.card:hover { transform: translateY(-2px); }
 .plan--feature { background: var(--black); border-color: var(--black); color: var(--paper-soft); }
 .plan--feature h3, .plan--feature .plan__price { color: var(--paper); }
 .plan--feature .label { color: var(--paper-mute); }
+/* Two cards, held to a width where each one is a card rather than a panel.
+   Left on the rail, so the space to their right is deliberate rather than the
+   result of stretching them across the whole wrap. */
+.plan-row {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-5); max-width: 720px;
+}
+@media (max-width: 560px) { .plan-row { grid-template-columns: minmax(0, 1fr); } }
+
 .plan__price { font-family: var(--font-head); font-size: 2.25rem; font-weight: var(--fw-semi); letter-spacing: var(--ls-tight); color: var(--black); line-height: 1; }
-.plan__price small { font-family: var(--font-body); font-size: var(--fs-sm); font-weight: var(--fw-regular); color: var(--ink-soft); letter-spacing: 0; }
+/* The unit sits under the figure. Inline, it collided with the last digit as
+   soon as the card narrowed — "£19.95/ month" with no space between them. */
+.plan__price small {
+  display: block; margin-top: var(--s-2);
+  font-family: var(--font-body); font-size: var(--fs-sm); font-weight: var(--fw-regular);
+  color: var(--ink-soft); letter-spacing: 0;
+}
+.plan--feature .plan__price small { color: var(--paper-mute); }
 .plan__list { display: grid; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-soft); }
 .plan__list li { position: relative; padding-left: var(--s-6); }
 .plan__list li::before { content: ""; position: absolute; left: 0; top: .7em; width: 12px; height: var(--hair); background: var(--accent); }

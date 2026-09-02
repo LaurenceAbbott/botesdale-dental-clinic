@@ -462,6 +462,24 @@ Add the attribute to any element; `js/ui.js` adds `.is-in` when it enters the vi
 
 ---
 
+### 4.30 Two columns, and when not to use them
+
+`.cols-2` is for **peers** — three treatment cards, two plan cards, a row of the same kind of thing. It is not a way to fit two unrelated blocks onto one screen.
+
+Putting an `h2` in each column gives a reader two things at the same level and no order to read them in, and it halves the measure of whatever passage is in there. The fees page had two such sections, with the plan cards nested in a *second* two-column grid inside the right-hand one — so each card got a quarter of the page and the price collided with its own unit. The case studies intro paired a passage with a testimonial and squeezed the copy to about five words a line by the middle breakpoints.
+
+Both are single column now, laid out as a vertical narrative: one idea per band, each with its own `.section-head`, alternating `--paper` and `--paper-3`, with a `.statement` where a single number or sentence deserves the whole width.
+
+The test before reaching for `.cols-2`:
+
+* **Are the two columns the same kind of thing?** If not, they are bands, not columns.
+* **Is either column a passage to read?** Long-form copy wants `--measure`, and half of a `.wrap` is narrower than that below about 1400px.
+* **Does each column need its own heading?** Two `h2`s side by side have no reading order.
+
+A page is allowed to be tall. Vertical space is free; horizontal space is not.
+
+---
+
 ## 5. Layout utilities
 
 `.wrap` (+ `--wide`, `--text`) · `.grid` with `--min` · `.cols-2/3/4` · `.with-rail` · `.stack` · `.cluster` · `.section` (+ `--tight`, `--paper-3`, `--dark`, `--top-line`) · `.section-head` (+ `--center`) · `.rule` (+ `--dark`, `--tick`).

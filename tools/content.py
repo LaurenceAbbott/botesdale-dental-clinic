@@ -137,19 +137,6 @@ LABELS = {
     'styleguide': 'Style guide', '404': 'Page not found',
 }
 
-# The Treatments dropdown carries every treatment page, not just the four
-# category pages. Thirteen leaf pages were reachable only from a category page
-# or the previous/next pager — findable if you already knew they existed.
-# Built from GROUPS so the menu and the pager cannot disagree about what
-# belongs where.
-for _n in NAV:
-    if _n['key'] == 'treatments':
-        _n['children'] = [
-            {'key': _g, 'label': GROUPS[_g][0],
-             'children': [{'key': _k, 'label': LABELS[_k]}
-                          for _k in GROUPS[_g][1] if _k != _g]}
-            for _g in ('general', 'cosmetic', 'preventative')
-        ] + [{'key': 'missing', 'label': LABELS['missing']}]
 
 
 # =============================================================================
@@ -1399,6 +1386,21 @@ CATEGORY = {
       'root as well as the tooth, and the only one that preserves the bone.')],
  },
 }
+
+# The Treatments dropdown carries every treatment page, not just the four
+# category pages. Thirteen leaf pages were reachable only from a category page
+# or the previous/next pager — findable if you already knew they existed.
+# Built from GROUPS so the menu and the pager cannot disagree about what
+# belongs where.
+for _n in NAV:
+    if _n['key'] == 'treatments':
+        _n['children'] = [
+            {'key': _g, 'label': GROUPS[_g][0], 'blurb': CATEGORY[_g]['sub'],
+             'children': [{'key': _k, 'label': LABELS[_k]}
+                          for _k in GROUPS[_g][1] if _k != _g]}
+            for _g in ('general', 'cosmetic', 'preventative')
+        ] + [{'key': 'missing', 'label': LABELS['missing'],
+              'blurb': CATEGORY['missing']['sub']}]
 
 
 # =============================================================================

@@ -220,7 +220,8 @@
   display: none; flex-direction: column;
 }
 .nav__dd:hover > .nav__panel,
-.nav__dd:focus-within > .nav__panel { display: flex; }
+.nav__dd:focus-within > .nav__panel,
+.nav__dd.is-open > .nav__panel { display: flex; }
 .nav__panel a {
   display: block;
   background: rgba(247, 246, 243, .97);
@@ -235,47 +236,78 @@
 .nav__panel a:first-child { border-top: var(--hair) solid var(--line); }
 .nav__panel a:hover, .nav__panel a.is-active { color: var(--black); background: var(--paper-2); }
 
-/* The Treatments panel carries every treatment page, so it is a panel of
-   columns rather than a list. It anchors to .nav__inner, not to the link that
-   opens it — .nav__dd--mega drops out of the positioning chain for exactly
-   that reason. Anchored to the link, a four-column panel opening from an item
-   two thirds along the header runs off the right edge at 1120px, which is
-   where this menu still shows. */
+/* The Treatments panel is a CARD that floats under the header, not a band
+   ruled edge to edge. Full-bleed with divider lines between the columns read
+   as a table dropped over the page; inset, rounded and separated by space it
+   reads as a surface belonging to the menu.
+
+   It anchors to .nav__inner, not to the link that opens it — .nav__dd--mega
+   drops out of the positioning chain for exactly that. Hung off an item two
+   thirds along the header, a four-column card runs off the right edge at
+   1120px, which is where this menu still shows. */
 .nav__dd--mega { position: static; }
 .nav__panel--mega {
-  /* Pulled out by the item padding so the LABELS land on the rail (2.3), not
-     the panel's box. The box then reads as a panel around the text rather
-     than pushing every column 16px off the line the logo starts on. */
-  left: calc(var(--pad-inline) - 16px);
-  right: calc(var(--pad-inline) - 16px);
+  left: 50%; transform: translateX(-50%);
+  width: min(1180px, 100%);
   min-width: 0;
   display: none;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
+  /* The gap between the link and the card is dead space for the pointer, so
+     the card's own box starts at the header's bottom edge and this padding
+     carries the visual gap. nav.js also holds the panel open briefly on the
+     way out — see the hover-intent note there. */
+  padding-top: 12px;
 }
 .nav__dd--mega:hover > .nav__panel--mega,
-.nav__dd--mega:focus-within > .nav__panel--mega { display: grid; }
-.nav__col {
-  display: flex; flex-direction: column;
-  background: rgba(247, 246, 243, .97);
-  backdrop-filter: blur(10px);
-  border-top: var(--hair) solid var(--line);
-  border-bottom: var(--hair) solid var(--line);
-  padding-bottom: var(--s-4);
+.nav__dd--mega:focus-within > .nav__panel--mega,
+.nav__dd--mega.is-open > .nav__panel--mega { display: block; }
+
+/* ONE surface. The columns and the footer are parts of the same card, so the
+   background, border and corner live here and they are plain blocks inside
+   it — styled separately they rendered as two cards with a gap between. */
+.nav__card {
+  background: var(--paper-2);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--radius-media);
+  overflow: hidden;
 }
-.nav__col + .nav__col { border-left: var(--hair) solid var(--line); }
-.nav__panel--mega a { border-bottom: 0; white-space: normal; }
-/* The category is the heading AND a link to its overview — the one page that
-   describes the group. It reads as a heading, so it takes the head font and
-   the ink, and the treatments under it stay secondary. */
+.nav__cols {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-7);
+  padding: var(--s-8) var(--s-8) var(--s-7);
+}
+.nav__col { display: flex; flex-direction: column; }
+/* The hover mark is a rounded pill on the item, not a full-width band — the
+   corner language the rest of the site uses, at the small end of it. */
+/* The flat-list panel gives its first item a top rule; in a card of columns
+   that draws a stray line above every heading. */
+.nav__panel--mega a, .nav__panel--mega a:first-child {
+  background: none; backdrop-filter: none;
+  border: 0; border-radius: var(--radius-btn);
+  text-transform: none; letter-spacing: .01em;
+  white-space: normal;
+  padding: 8px 10px; margin-left: -10px;
+}
+.nav__panel--mega a:hover,
+.nav__panel--mega a.is-active { background: var(--paper-3); color: var(--black); }
 .nav__panel--mega .nav__col-head {
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
+  font-size: .8125rem;
   color: var(--black);
-  padding-bottom: var(--s-2);
 }
-.nav__panel--mega .nav__col-head.is-active { background: transparent; text-decoration: underline; text-underline-offset: .25em; }
-.nav__panel--mega .nav__col > a:not(.nav__col-head) { padding-block: 7px; }
+.nav__col-blurb {
+  /* The header sets uppercase for the nav labels and it inherits down into
+     the panel; a sentence in caps reads as a label, not as a description. */
+  text-transform: none; letter-spacing: 0;
+  font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-soft);
+  margin: 2px 0 var(--s-4);
+}
+.nav__panel-foot {
+  padding: var(--s-5) var(--s-8);
+  background: var(--paper);
+  border-top: var(--hair) solid var(--line);
+}
+.nav__panel-foot .arc-link { font-size: var(--fs-xs); }
 
 /* Header CTA */
 .nav__cta {

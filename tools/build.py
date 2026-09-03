@@ -124,12 +124,32 @@ def build_header(active, depth):
             cls, rel(item['key'], depth), esc(item['label']), ARC)
 
         if item.get('children'):
-            sub = []
-            for child in item['children']:
-                ccls = ' class="is-active"' if active == child['key'] else ''
-                sub.append('<a href="%s"%s>%s</a>' % (rel(child['key'], depth), ccls, esc(child['label'])))
-            links.append('<div class="nav__dd">%s<div class="nav__panel">%s</div></div>'
-                         % (anchor, ''.join(sub)))
+            # Two shapes. A flat list where the children are leaves, and a
+            # column-per-category panel where they have children of their own —
+            # which is the only way every treatment page is reachable from the
+            # header rather than only from its category page.
+            nested = any(c.get('children') for c in item['children'])
+            if nested:
+                cols = []
+                for child in item['children']:
+                    ccls = ' nav__col-head is-active' if active == child['key'] else ' nav__col-head'
+                    col = ['<a class="%s" href="%s">%s</a>'
+                           % (ccls.strip(), rel(child['key'], depth), esc(child['label']))]
+                    for leaf in child.get('children', []):
+                        lcls = ' class="is-active"' if active == leaf['key'] else ''
+                        col.append('<a href="%s"%s>%s</a>'
+                                   % (rel(leaf['key'], depth), lcls, esc(leaf['label'])))
+                    cols.append('<div class="nav__col">%s</div>' % ''.join(col))
+                links.append('<div class="nav__dd nav__dd--mega">%s'
+                             '<div class="nav__panel nav__panel--mega">%s</div></div>'
+                             % (anchor, ''.join(cols)))
+            else:
+                sub = []
+                for child in item['children']:
+                    ccls = ' class="is-active"' if active == child['key'] else ''
+                    sub.append('<a href="%s"%s>%s</a>' % (rel(child['key'], depth), ccls, esc(child['label'])))
+                links.append('<div class="nav__dd">%s<div class="nav__panel">%s</div></div>'
+                             % (anchor, ''.join(sub)))
         else:
             links.append(anchor)
 
@@ -140,8 +160,18 @@ def build_header(active, depth):
             gid = 'menuGroup%d' % i
             subs = []
             for child in item['children']:
-                ccls = ' class="is-active"' if active == child['key'] else ''
-                subs.append('<a href="%s"%s>%s</a>' % (rel(child['key'], depth), ccls, esc(child['label'])))
+                ccls = ' menu__subhead is-active' if active == child['key'] else ' menu__subhead'
+                if child.get('children'):
+                    subs.append('<a class="%s" href="%s">%s</a>'
+                                % (ccls.strip(), rel(child['key'], depth), esc(child['label'])))
+                    for leaf in child['children']:
+                        lcls = ' menu__subitem is-active' if active == leaf['key'] else ' menu__subitem'
+                        subs.append('<a class="%s" href="%s">%s</a>'
+                                    % (lcls.strip(), rel(leaf['key'], depth), esc(leaf['label'])))
+                else:
+                    lcls = ' class="is-active"' if active == child['key'] else ''
+                    subs.append('<a href="%s"%s>%s</a>'
+                                % (rel(child['key'], depth), lcls, esc(child['label'])))
             sheet.append(
                 '<div class="menu__group">'
                 '<button class="menu__toggle" type="button" aria-expanded="false" aria-controls="%s">'

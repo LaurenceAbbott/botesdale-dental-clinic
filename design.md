@@ -407,6 +407,8 @@ That override block has to sit **after** the base `.page-head .label` / `.page-h
 
 The suite hides the text, screenshots the head, decodes the PNG and samples the pixels where each element sat — so contrast is checked against the real composite of photograph plus both scrims, not against an assumption.
 
+The arc closes the prose on a leaf treatment page, where the second picture used to sit — the motif in its place, rather than another photograph.
+
 The compact hero used on every inner page. Same structure as `.hero`; add `--short` for legal pages. Carries the breadcrumb and, where it is not simply a repeat of the `h1`, a micro-label.
 
 **The crumbs sit at the top of the head, not on the title block.** They answer where-am-I; the label, `h1` and sub are one unit and read better without a line of meta above them.
@@ -460,6 +462,12 @@ The halves share a container, so there is no gap and no inner radius — the car
 The opening copy on a page whose only picture is its header hero. The category pages carried a second photograph directly under the head, duplicating the job the hero does; with it gone the copy had a full-width container and nothing to sit beside, so it is centred.
 
 That makes it the **fourth** centred moment on the site, and it earns it the same way the other three do (§1.5): one idea taken in at a glance, not a passage worked through. The measure is what keeps it readable — `30ch` on the heading, `60ch` on the copy, because centred text past about 60ch is where the eye starts losing the line.
+
+**The Treatments dropdown carries every treatment page.** It listed only the four categories, so thirteen leaf pages were in neither menu — reachable from a category page or the previous/next pager, which is to say findable only if you already knew they existed. The panel is now a column per category: the category is its own heading *and* a link to its overview, with its treatments beneath. It anchors to `.nav__inner` rather than to the link that opens it (`.nav__dd--mega` drops out of the positioning chain for exactly that) — anchored to a link two thirds along the header, a four-column panel runs off the right edge at 1120px, which is where this menu still shows. The mobile sheet carries the same two levels indented, not behind a second toggle: a treatment three taps deep is the same problem in a different shape.
+
+The panel's children are built **from `GROUPS`**, the same ordering the pager walks, so the menu and the pager cannot disagree about what belongs to a category. `verify-reach.js` asserts all 17 treatment pages are linked from the header at 1440 and from the sheet at 390.
+
+**Previous / next walks siblings, never up to the parent.** A group's first key is its overview page, and leaving it in the sequence made *previous* on Clear aligner read "Cosmetic dentistry" — a level up rather than a step sideways, from inside Cosmetic dentistry. `c_group_pager` drops the group's own key. `verify-pager.js` checks the rule directly across all 19 pagers rather than inferring it from one page.
 
 **A treatment page gets one picture, and it is the header hero.** This came up twice — first the `.ed` under the head on the category pages, then a `<figure>` in the prose on the leaf pages. Both showed the same subject the hero had already shown, a screen further down, captioned with the page title the `h1` had already said. Navigational thumbnails are not a second picture: a category page's strip of child treatments is a menu, not a photograph of the subject, so those stay. `verify-onepicture.js` sweeps all 17 pages a level below *Treatments* and fails on any `.ph` or `img` outside the head that is not inside `.strip__media` or `.card__media`. `treatments.html` itself is exempt by trail depth, not by filename — it is the hub, and its four rows are its content.
 

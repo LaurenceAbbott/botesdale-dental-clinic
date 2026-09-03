@@ -235,6 +235,48 @@
 .nav__panel a:first-child { border-top: var(--hair) solid var(--line); }
 .nav__panel a:hover, .nav__panel a.is-active { color: var(--black); background: var(--paper-2); }
 
+/* The Treatments panel carries every treatment page, so it is a panel of
+   columns rather than a list. It anchors to .nav__inner, not to the link that
+   opens it — .nav__dd--mega drops out of the positioning chain for exactly
+   that reason. Anchored to the link, a four-column panel opening from an item
+   two thirds along the header runs off the right edge at 1120px, which is
+   where this menu still shows. */
+.nav__dd--mega { position: static; }
+.nav__panel--mega {
+  /* Pulled out by the item padding so the LABELS land on the rail (2.3), not
+     the panel's box. The box then reads as a panel around the text rather
+     than pushing every column 16px off the line the logo starts on. */
+  left: calc(var(--pad-inline) - 16px);
+  right: calc(var(--pad-inline) - 16px);
+  min-width: 0;
+  display: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+}
+.nav__dd--mega:hover > .nav__panel--mega,
+.nav__dd--mega:focus-within > .nav__panel--mega { display: grid; }
+.nav__col {
+  display: flex; flex-direction: column;
+  background: rgba(247, 246, 243, .97);
+  backdrop-filter: blur(10px);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line);
+  padding-bottom: var(--s-4);
+}
+.nav__col + .nav__col { border-left: var(--hair) solid var(--line); }
+.nav__panel--mega a { border-bottom: 0; white-space: normal; }
+/* The category is the heading AND a link to its overview — the one page that
+   describes the group. It reads as a heading, so it takes the head font and
+   the ink, and the treatments under it stay secondary. */
+.nav__panel--mega .nav__col-head {
+  font-family: var(--font-head);
+  font-weight: var(--fw-semi);
+  color: var(--black);
+  padding-bottom: var(--s-2);
+}
+.nav__panel--mega .nav__col-head.is-active { background: transparent; text-decoration: underline; text-underline-offset: .25em; }
+.nav__panel--mega .nav__col > a:not(.nav__col-head) { padding-block: 7px; }
+
 /* Header CTA */
 .nav__cta {
   position: relative; overflow: hidden; white-space: nowrap;
@@ -314,6 +356,17 @@ body.is-locked { overflow: hidden; }
 }
 .menu__sub a:last-child { padding-bottom: 18px; }
 .menu__sub a:hover, .menu__sub a.is-active { color: var(--black); }
+
+/* The sheet carries the same two levels. Indented, not behind a second
+   toggle: a treatment page three taps deep is the hidden-pages problem in a
+   different shape. */
+.menu__subhead {
+  font-family: var(--font-head);
+  font-weight: var(--fw-semi);
+  color: var(--black);
+}
+.menu__subhead:not(:first-child) { margin-top: var(--s-4); }
+.menu__subitem { padding-left: var(--s-5); }
 
 .menu__cta {
   margin-top: var(--s-6);

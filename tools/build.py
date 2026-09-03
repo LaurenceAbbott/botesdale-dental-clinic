@@ -134,8 +134,7 @@ def build_header(active, depth):
                 for child in item['children']:
                     # A title, not a link: the overview page is the first item
                     # in the list below it.
-                    col = ['<span class="nav__col-head">%s</span>'
-                           % esc(child.get('short') or child['label'])]
+                    col = ['<span class="nav__col-head">%s</span>' % esc(child['label'])]
                     # The blurb is what stops a category with no sub-pages —
                     # Missing teeth — reading as an empty column.
                     if child.get('blurb'):

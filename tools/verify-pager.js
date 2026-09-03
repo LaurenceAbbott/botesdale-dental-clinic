@@ -23,7 +23,11 @@ const ok = (n, c, x = '') => { console.log(`${c ? '  PASS' : '  FAIL'}  ${n}${c 
 
   console.log('\n== pager present, at the foot, after the content ==');
   for (const [u, wantPrev, wantNext] of [
-      ['pages/crowns.html', true, true],
+      // Veneers sits mid-sequence in Cosmetic, so it is the two-item case.
+      // Crowns used to be, until it moved to Missing teeth and became the
+      // first sibling there — one link, not two.
+      ['pages/veneers.html', true, true],
+      ['pages/crowns.html', false, true],
       // First sibling in its group: next only. It used to page BACK to the
       // category overview, which is a level up rather than a step sideways —
       // "previous: Cosmetic dentistry" from inside Cosmetic dentistry.

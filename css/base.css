@@ -159,6 +159,8 @@
      lone image, a standalone card, or — where tiles are hairline-joined into
      one block, as in .strip__row — the whole block, not each tile. */
   --radius:       0;
+  --radius-btn:   4px;    /* just off square — softens the corner without
+                             reading as a rounded button */
   --radius-media: 32px;
   --radius-pill:  999px;
   --hair:        1px;

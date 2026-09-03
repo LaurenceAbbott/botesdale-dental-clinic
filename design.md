@@ -12,6 +12,8 @@ The reference for this system is precision-engineering brand design — Porsche 
 1. **One rail.** Every piece of text on the site — inside a centred container or inside a full-bleed section — starts or stops on the same vertical line. Media is the only thing allowed to cross it. See §2.3.
 2. **Lines, not boxes.** Structure is expressed with 1px hairlines and alignment. Shadows are almost never used; **structural** corners are square (`--radius: 0`) — buttons, fields, bands, tables. **Form controls are the deliberate exception** — an input is a thing you put something into, and it has to look like one, so fields are bordered boxes (§4.24). The border is the same hairline and the corners are still square, so they sit inside the system rather than beside it.
 
+   **Buttons are just off square, at 4px** (`--radius-btn`) — enough to soften the corner without reading as a rounded button. `.btn`, the header CTA and the sheet CTA all share it.
+
    **Photography is the other exception, and it rounds at 32px** (`--radius-media`). A picture is an object sitting *on* the page rather than part of its structure, and the softer corner reads as such without turning the system into a rounded one. The radius goes on the **outermost object**: a lone image, a standalone card, or — where tiles are hairline-joined into a single block, as in `.strip__row` — the whole block rather than each tile. Rounding both would double the corner at the ends of the row. The hero and page-head panels keep the arc (`#heroArc`, §1) instead; that is already their corner treatment and a radius would fight it.
 3. **Two grounds.** A warm off-white (`--paper`) and a near-black (`--black`). Every section belongs to one of them. Dark sections are used deliberately, for emphasis, roughly one per screenful of scrolling.
 4. **One accent, sparingly.** `--accent` appears in the arc motif, list markers, focus rings, validation, text links (§4.2) and the fill of the one primary button a page is allowed (§4.1). It is never used as a background for large areas — a button is the largest thing it fills.
@@ -433,6 +435,16 @@ Both muted tones were also failing where it counted. `--ink-mute` is **3.04:1** 
 ### 4.8 Editorial block — `.ed`
 
 The workhorse: a media panel overhanging the rail beside a copy column (§2.3).
+
+**The picture is a fixed 4:3, start-aligned — not stretched to the copy.** It used to take its height from whatever the copy column happened to be, so the same component drew a different-sized picture in every block. Two of them on one page made that obvious. A ratio means every editorial image on the site is the same shape, and a tall copy column simply leaves air beside a shorter picture rather than dragging it out of proportion.
+
+**Consecutive rows alternate.** `--rev` puts the media right; plain puts it left. Two rows on a page both favouring the same side read as a mistake rather than a rhythm.
+
+**Stacked, the copy comes first.** Below 860px `.ed__text` takes `grid-row: 1` and `.ed__media` `grid-row: 2`. The picture supports the words; leading with it pushes the heading off a phone screen.
+
+**A block whose copy is not label / h2 / paragraphs uses `c_ed_shell()`** — the grid on its own. About us opens in a statement voice and had its own two-column grid, which is why its picture came out a different size from the `.ed` directly below it. Sharing the grid is the only thing that makes two pictures match, because the `.ed` media column is a half-column plus the overhang rather than a fraction of the container.
+
+`verify-ed-rows.js` checks all three: one picture size per page, alternating sides at 1440, and copy-first at 390.
 
 ```html
 <section class="ed ed--cols" data-reveal>

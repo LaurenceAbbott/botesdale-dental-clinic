@@ -90,6 +90,7 @@
   position: relative; display: inline-block;
   /* 48px tall: 12 + 12 padding, 22px of 13px label, 2px of border. */
   padding: 12px 30px;
+  border-radius: var(--radius-btn);
   font-size: var(--fs-xs); letter-spacing: var(--ls-cta); text-transform: uppercase;
   font-weight: var(--fw-medium);
   border: var(--hair) solid var(--black);
@@ -459,7 +460,13 @@
 .ed__media {
   position: relative; display: grid; overflow: hidden;
   border-radius: var(--radius-media);
-  min-height: 440px;
+  /* A fixed ratio, and start-aligned rather than stretched. The media used to
+     take its height from whatever the copy column happened to be, so the same
+     component rendered a different-sized picture in every block — two of them
+     side by side on About us made that obvious. Ratio, not stretch: every
+     editorial image on the site is now the same shape. */
+  aspect-ratio: 4 / 3;
+  align-self: start;
   background: var(--placeholder);
 }
 /* Subtle tonal alternation between consecutive blocks */
@@ -511,8 +518,11 @@
     padding-inline: var(--pad-inline);
     padding-block: var(--section-y-tight);
   }
-  .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 1; min-height: 0; aspect-ratio: 3 / 2; }
-  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 2; padding-inline: 0; padding-block: var(--s-6) 0; }
+  /* Copy first, image second. Stacked, the picture is support for the words
+     rather than an introduction to them, and leading with it pushes the
+     heading below the fold on a phone. */
+  .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 1; padding-inline: 0; padding-block: 0; }
+  .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 2; margin-top: var(--s-7); aspect-ratio: 3 / 2; }
 }
 
 /* -----------------------------------------------------------------------------

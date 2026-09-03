@@ -28,6 +28,16 @@
    the 1440 line is what produced the ragged two-column look. Cap the whole
    container instead, so the heading and its content share one left edge. */
 .wrap--narrow { max-width: var(--wrap-narrow); }
+/* Inside a narrow container the container IS the cap, so a .prose or
+   .u-measure must not centre itself a second time — that put the copy 192px
+   right of its own heading and read as two mismatched columns. Line length is
+   held by a measure on the paragraphs instead, so the block still starts on
+   the container's left edge, level with the heading. */
+.wrap--narrow > .prose,
+.wrap--narrow > .u-measure,
+.wrap--narrow > .u-measure-c { max-width: none; margin-inline: 0; }
+.wrap--narrow .prose p,
+.wrap--narrow .prose li { max-width: 68ch; }
 .wrap--text { max-width: calc(var(--measure) + var(--pad-inline) * 2); }
 
 /* Auto-fit grid. --min sets the smallest acceptable column. */
@@ -60,6 +70,7 @@
 .section--tight { padding-block: var(--section-y-tight); }
 .section--top-line { border-top: var(--hair) solid var(--line); }
 .section--no-line, .process.section--no-line { border-top: 0; }
+.section--paper-2 { background: var(--paper-2); }   /* pure white band */
 .section--paper-3 { background: var(--paper-3); }
 .section--dark { background: var(--black); color: var(--paper-soft); }
 /* Second dark ground. Everything --dark styles applies, only the ground

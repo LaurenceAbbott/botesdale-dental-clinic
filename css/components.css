@@ -915,7 +915,11 @@ a.card:hover { transform: translateY(-2px); }
 /* Two forms on one page sit one under the other, separated by a rule, rather
    than side by side — a form is a sequence, and a second column beside it
    reads as an alternative rather than as the next thing to do. */
+/* A form block IS the form column, so its heading and intro sit on the same
+   left edge as the fields. Left to fill the container, the h2 sat on the
+   wrap's edge while the .form centred itself 330px to the right. */
 .form-stack { display: flex; flex-direction: column; gap: var(--s-11); }
+.form-block { max-width: var(--form-col); margin-inline: auto; width: 100%; }
 .form-block + .form-block { border-top: var(--hair) solid var(--line); padding-top: var(--s-11); }
 
 /* -----------------------------------------------------------------------------

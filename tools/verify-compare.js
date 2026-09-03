@@ -1,5 +1,10 @@
-// Does the before/after comparison actually work — as a wipe, by pointer and
-// by keyboard — and does the tag sit clear of the 32px corner?
+// Does the before/after comparison actually work — by mouse, by TOUCH and by
+// keyboard — and do the labels sit where the pattern puts them?
+//
+// The touch case is here because it is the one that shipped broken: the
+// native range took the drag, which works with a mouse but on iOS only jumps
+// on tap, so the comparison could not be dragged on a phone at all. A test
+// that only drives page.mouse would have stayed green through that.
 const { chromium } = require('playwright');
 const EXE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const BASE = 'http://localhost:8931';
@@ -56,7 +61,7 @@ const ok = (m) => console.log('  ok   ' + m);
       if (!/inset/.test(geo.clip)) bad('no clip-path on the before pane: ' + geo.clip);
       if (geo.r !== '32px') bad('frame radius is ' + geo.r); else ok('frame radius 32px');
 
-      // 3. Dragging the range moves the divider and the clip.
+      // 3. Mouse: press and drag moves the divider and the clip with it.
       const box = await c.boundingBox();
       await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);
       await page.mouse.down();
@@ -73,6 +78,43 @@ const ok = (m) => console.log('  ok   ' + m);
       if (Math.abs(after.frac - pct / 100) > 0.02) bad(`divider at ${(after.frac * 100).toFixed(1)}% but --pos ${after.pos}`);
       else ok('divider tracks --pos');
 
+      // 3b. TOUCH: a real pointerType 'touch' drag has to move it too, and
+      //     it must move on the DRAG, not on the initial contact — the first
+      //     touch of a vertical scroll must not yank the divider sideways.
+      const touch = await c.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        const y = r.top + r.height / 2;
+        const ev = (type, x) => el.dispatchEvent(new PointerEvent(type, {
+          bubbles: true, cancelable: true, pointerId: 7, pointerType: 'touch',
+          isPrimary: true, clientX: x, clientY: y }));
+        const read = () => parseFloat(el.style.getPropertyValue('--pos'));
+        el.querySelector('.compare__range').value = 50; 
+        el.style.setProperty('--pos', '50%');
+        // Press somewhere OTHER than the current 50%, or a jump-on-contact
+        // regression lands on the value that was already there and hides.
+        ev('pointerdown', r.left + r.width * 0.8);
+        const onDown = read();
+        ev('pointermove', r.left + r.width * 0.22);
+        const onMove = read();
+        ev('pointerup', r.left + r.width * 0.22);
+        return { onDown, onMove };
+      });
+      if (Math.abs(touch.onMove - 22) > 3) bad(`touch drag to 22% left --pos at ${touch.onMove}%`);
+      else ok(`touch drag moved --pos to ${touch.onMove.toFixed(0)}%`);
+      if (touch.onDown !== 50) bad(`touch contact alone moved --pos to ${touch.onDown}% — a vertical scroll would yank the divider`);
+      else ok('touch contact alone does not move it');
+
+      // 3c. The input must not be the pointer target — that is what broke on
+      //     iOS. Whatever is under the middle of the frame has to be the
+      //     frame or its own decoration, never the range.
+      const hit = await c.evaluate(el => {
+        const r = el.getBoundingClientRect();
+        const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return t ? t.className.toString() : 'none';
+      });
+      if (/compare__range/.test(hit)) bad('the range input is the pointer target — drag will not work on iOS');
+      else ok('the frame takes the pointer, not the range');
+
       // 4. Keyboard.
       await c.locator('.compare__range').focus();
       const beforeKey = parseFloat(await c.evaluate(el => el.style.getPropertyValue('--pos')));
@@ -86,8 +128,8 @@ const ok = (m) => console.log('  ok   ' + m);
       const label = await c.locator('.compare__range').getAttribute('aria-label');
       if (!label) bad('range has no accessible name'); else ok('range is named');
 
-      // 6. Tags: at the bottom centre, flanking the middle, clear of the
-      //    32px corner curve and of each other.
+      // 6. Labels: each pinned to the outer corner of the half it names,
+      //    inset far enough to clear the 32px curve.
       const tags = await c.evaluate(el => {
         const f = el.getBoundingClientRect();
         const t = [...el.querySelectorAll('.compare__tag')].map(x => {
@@ -99,23 +141,53 @@ const ok = (m) => console.log('  ok   ' + m);
       });
       const bt = tags.t.find(x => /--before/.test(x.cls));
       const at = tags.t.find(x => /--after/.test(x.cls));
-      if (!bt || !at) bad('missing a tag');
+      if (!bt || !at) bad('missing a label');
       else {
-        if (bt.b < 8 || at.b < 8) bad(`tag flush to the bottom edge (${bt.b}/${at.b}px)`);
-        else ok(`tags ${bt.b.toFixed(0)}px off the bottom`);
-        const gap = (at.l) - (bt.l + bt.w);
-        if (gap < 4) bad(`tags overlap (gap ${gap.toFixed(1)}px)`);
-        else ok(`tags flank the centre, ${gap.toFixed(0)}px apart`);
-        // The axis is the GAP between them — i.e. the divider's rest
-        // position — not the pair's bounding box: "Before" and "After" are
-        // different widths, so centring the box would push the gap off centre.
-        const mid = tags.fw / 2;
-        const gapMid = (bt.l + bt.w + at.l) / 2;
-        if (Math.abs(gapMid - mid) > 1) bad(`gap between tags not on the centre line (${gapMid.toFixed(1)} vs ${mid.toFixed(1)})`);
-        else ok('gap between tags sits on the centre line');
-        // Corner clearance: the tag must not intrude on the 32px curve.
-        if (bt.l < 24 && bt.b < 24) bad('before tag sits inside the corner curve');
+        if (bt.b < 8 || at.b < 8) bad(`label flush to the bottom edge (${bt.b}/${at.b}px)`);
+        else ok(`labels ${bt.b.toFixed(0)}px off the bottom`);
+        if (Math.abs(bt.l - 16) > 1) bad(`before label ${bt.l.toFixed(1)}px from the left, want 16`);
+        else if (Math.abs(at.r - 16) > 1) bad(`after label ${at.r.toFixed(1)}px from the right, want 16`);
+        else ok('labels in the outer corners, 16px in');
+        // The 32px curve reaches sqrt(2)*(32-d) from the corner centre; at a
+        // 16px inset that is 22.6px, inside the 32px radius. Assert the real
+        // geometry rather than the number, so a change to --radius-media is
+        // caught rather than silently clipping a corner off a label.
+        const rad = 32, d = Math.min(bt.l, bt.b);
+        if (Math.hypot(rad - d, rad - d) > rad) bad(`label intrudes on the ${rad}px curve at a ${d}px inset`);
+        else ok('labels clear the corner curve');
+        // They must not collide across the middle at any width.
+        if (bt.l + bt.w > at.l) bad('labels overlap');
+        else ok(`${(at.l - bt.l - bt.w).toFixed(0)}px between them`);
       }
+
+      // 6b. A label whose side has shrunk past it gets out of the way, rather
+      //     than sitting over the other photograph and mislabelling it.
+      const fade = await c.evaluate(async el => {
+        const range = el.querySelector('.compare__range');
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+        // Past the .18s transition — reading opacity the instant the class
+        // lands returns the value it is animating FROM, not to.
+        const set = async v => {
+          range.value = v;
+          range.dispatchEvent(new Event('input', { bubbles: true }));
+          await wait(320);
+        };
+        const read = () => ({
+          b: getComputedStyle(el.querySelector('.compare__tag--before')).opacity,
+          a: getComputedStyle(el.querySelector('.compare__tag--after')).opacity,
+          bc: el.querySelector('.compare__tag--before').classList.contains('is-gone'),
+          ac: el.querySelector('.compare__tag--after').classList.contains('is-gone'),
+        });
+        await set(2);  const lo = read();
+        await set(98); const hi = read();
+        await set(50); const mid = read();
+        return { lo, hi, mid };
+      });
+      if (!fade.lo.bc || !fade.hi.ac) bad('the is-gone class does not track the divider');
+      else if (fade.lo.b !== '0') bad(`before label still shown with the before image gone (opacity ${fade.lo.b})`);
+      else if (fade.hi.a !== '0') bad(`after label still shown with the after image gone (opacity ${fade.hi.a})`);
+      else if (fade.mid.b !== '1' || fade.mid.a !== '1') bad(`a label is hidden at rest (${fade.mid.b}/${fade.mid.a})`);
+            else ok('each label steps aside once its own side is gone');
 
       // 7. The grip is on top of the panes and centred on the divider.
       const grip = await c.evaluate(el => {
@@ -128,7 +200,7 @@ const ok = (m) => console.log('  ok   ' + m);
       if (grip.w < 40) bad(`grip only ${grip.w}px — under the 44px touch target`);
 
       // 8. A vertical swipe over the comparison must still scroll the page.
-      const ta = await c.locator('.compare__range').evaluate(el => getComputedStyle(el).touchAction);
+      const ta = await c.evaluate(el => getComputedStyle(el).touchAction);
       if (!/pan-y/.test(ta)) bad('touch-action is ' + ta + ' — a vertical swipe would be swallowed');
       else ok('vertical swipe still scrolls');
 

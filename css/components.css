@@ -1068,6 +1068,13 @@ a.card:hover { transform: translateY(-2px); }
   position: relative; overflow: hidden;
   border-radius: var(--radius-media);
   background: var(--placeholder); aspect-ratio: 3 / 2;
+  cursor: ew-resize;
+  /* The frame, not the input, takes the pointer (js/ui.js 4b). pan-y lets a
+     vertical swipe scroll the page while a horizontal drag comes to us; the
+     rest stops a drag selecting the caption text or raising iOS's long-press
+     image menu. */
+  touch-action: pan-y;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
 .compare__pane { position: absolute; inset: 0; }
 .compare__pane > img, .compare__pane > .ph { width: 100%; height: 100%; object-fit: cover; }
@@ -1099,23 +1106,31 @@ a.card:hover { transform: translateY(-2px); }
 .compare__grip::before { left: 13px; transform: rotate(-135deg); }
 .compare__grip::after  { right: 13px; transform: rotate(45deg); }
 
+/* Holds the value, and gives the control its keyboard and screen-reader
+   behaviour — but never sees the pointer: the frame handles that. */
 .compare__range {
   position: absolute; inset: 0; z-index: 4;
   width: 100%; height: 100%; margin: 0; padding: 0;
   -webkit-appearance: none; appearance: none;
   background: none; border: 0; opacity: 0;
-  cursor: ew-resize;
-  touch-action: pan-y; /* a vertical swipe still scrolls the page */
+  pointer-events: none;
 }
-.compare__range::-webkit-slider-thumb { -webkit-appearance: none; width: 2px; height: 100%; }
-.compare__range::-moz-range-thumb { width: 2px; height: 100%; border: 0; }
 /* The input is invisible, so its own focus ring would be too. */
 .compare__range:focus-visible ~ .compare__line .compare__grip {
   box-shadow: 0 0 0 3px var(--accent), 0 2px 12px rgba(var(--ink-rgb), .3);
 }
 
-.compare__tag--before { right: calc(50% + 5px); }
-.compare__tag--after  { left:  calc(50% + 5px); }
+/* The conventional placement for a comparison: each label pinned to the
+   outer corner of the half it names. Flanking the centre put them under the
+   grip, where they read as a pair of buttons and crowded the one thing you
+   are meant to grab. 16px in clears the 32px curve with room to spare — the
+   curve only reaches ~9px along the diagonal. */
+.compare__tag--before { left: 16px; }
+.compare__tag--after  { right: 16px; }
+.compare__tag.is-gone { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .compare__tag { transition: opacity .18s ease; }
+}
 
 /* Until the case photography lands both panes are placeholders, and a
    placeholder centres its label — so the two captions would print on top of

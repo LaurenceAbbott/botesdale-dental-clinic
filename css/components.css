@@ -297,6 +297,54 @@
   position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(var(--ink-rgb), .62) 0%, rgba(var(--ink-rgb), .28) 40%, rgba(var(--ink-rgb), .86) 100%);
 }
+
+/* --- A page head carrying a real photograph -------------------------------
+   Two scrims, not one, so the middle of the picture stays clean: one rising
+   from the foot for the crumbs, heading and sub, one falling from the top so
+   the wordmark and nav read against whatever the sky is doing. The single
+   .62 -> .28 -> .86 ramp above muted the whole image AND reversed slope at
+   40%, which creases visibly over a photograph.
+
+   Both are smoothstep: zero slope where they meet the plateau and where they
+   reach nothing, so neither shows an edge (see 4.13, the team scrim).
+
+   The values are measured, not guessed. Against the lightest pixel actually
+   behind each element on the about-us photograph, the minimum scrim needed
+   is .56 for the crumbs, .54 for the h1, .69 for the sub, and .50 for the
+   nav links. The plateaus clear all four.
+
+   The top plateau is only .28 because the header carries its own scrim
+   (.nav::before) which compounds with this one — measured together the nav
+   links land at 6.3:1 over the brightest sky. */
+.page-head--shot .page-head__scrim {
+  background:
+    linear-gradient(to top,
+      rgba(var(--ink-rgb), .750) 0%,
+      rgba(var(--ink-rgb), .750) 58%,
+      rgba(var(--ink-rgb), .694) 62%,
+      rgba(var(--ink-rgb), .556) 67%,
+      rgba(var(--ink-rgb), .375) 72%,
+      rgba(var(--ink-rgb), .194) 76%,
+      rgba(var(--ink-rgb), .056) 80%,
+      rgba(var(--ink-rgb), 0)    85%),
+    linear-gradient(to bottom,
+      rgba(var(--ink-rgb), .280) 0%,
+      rgba(var(--ink-rgb), .280) 10%,
+      rgba(var(--ink-rgb), .259) 13%,
+      rgba(var(--ink-rgb), .207) 17%,
+      rgba(var(--ink-rgb), .140) 20%,
+      rgba(var(--ink-rgb), .073) 23%,
+      rgba(var(--ink-rgb), .021) 27%,
+      rgba(var(--ink-rgb), 0)    30%);
+}
+/* --paper-mute over a bright photograph cannot reach AA at any scrim short of
+   blacking the picture out — it needs .92, against .56 at full paper. The
+   soft tone is for a flat dark ground; over a photograph the hierarchy comes
+   from size and weight instead, and legibility wins. */
+.page-head--shot .crumbs a,
+.page-head--shot .crumbs [aria-current],
+.page-head--shot .label { color: var(--paper); }
+.page-head--shot .crumbs { color: var(--paper); }
 .page-head__inner {
   position: relative;
   padding-top: calc(var(--nav-h) + var(--s-6));

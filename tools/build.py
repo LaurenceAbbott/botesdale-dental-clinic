@@ -44,6 +44,17 @@ def asset(path, depth):
 _FINGERPRINTS = {}
 
 
+def asset_exists(path):
+    """Is this asset actually on disk?
+
+    Every page head is written with an `image` argument, but the hero
+    photography does not exist yet — which is why the <img> ships as a
+    comment. Rendering it unconditionally would give 34 pages a broken
+    reference, so the tag appears only for the photographs that are real.
+    """
+    return os.path.exists(os.path.join(ROOT, 'assets', path.lstrip('/')))
+
+
 def fingerprint(repo_rel):
     """Short content hash for a static file, appended to its URL as ?v=.
 
@@ -405,6 +416,7 @@ def depth_of(key):
 class helpers:
     rel = staticmethod(rel)
     asset = staticmethod(asset)
+    asset_exists = staticmethod(asset_exists)
     esc = staticmethod(esc)
     btn = staticmethod(btn)
     arc_link = staticmethod(arc_link)

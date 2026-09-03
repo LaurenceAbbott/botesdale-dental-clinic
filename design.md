@@ -355,6 +355,16 @@ The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The pat
 
 ### 4.6 Page head — `components.css`
 
+**With a photograph (`.page-head--shot`).** `c_page_head()` renders the `<img>` only when the file is actually on disk — every page head is written with an `image` argument, but the hero photography mostly does not exist yet, so rendering it unconditionally would give 34 pages a broken reference. Without a file it keeps the commented placeholder.
+
+A photographic head takes **two scrims, not one**, so the middle of the picture stays clean: one rising from the foot for the crumbs, heading and sub, one falling from the top so the wordmark and nav read against whatever the sky is doing. The single `.62 → .28 → .86` ramp it replaced muted the whole image *and* reversed slope at 40%, which creases visibly over a photograph. Both are smoothstep, for the reason given in §4.13.
+
+**The values are measured, not guessed.** Against the lightest pixel actually behind each element on the about-us photograph, the minimum scrim needed is `.56` for the crumbs, `.54` for the h1, `.69` for the sub and `.50` for the nav links. The top plateau is only `.28` because `.nav::before` compounds with it.
+
+**`--paper-mute` cannot be used over a photograph.** At 50% white on a bright pixel it needs a `.92` scrim to reach AA — effectively blacking the picture out — against `.56` at full paper. So on `--shot` the crumbs and label go to `--paper`. The soft tone exists for a flat dark ground; over a photograph the hierarchy comes from size and weight instead, and legibility wins.
+
+The suite hides the text, screenshots the head, decodes the PNG and samples the pixels where each element sat — so contrast is checked against the real composite of photograph plus both scrims, not against an assumption.
+
 The compact hero used on every inner page. Same structure as `.hero`; add `--short` for legal pages. Carries the breadcrumb and, where it is not simply a repeat of the `h1`, a micro-label.
 
 ### 4.7 Breadcrumb — `.crumbs`

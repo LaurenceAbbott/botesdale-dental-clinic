@@ -444,21 +444,6 @@
 .page-head--shot .label,
 .page-head--shot p { color: var(--paper); }
 
-/* The crumbs sit highest in the head, where the header scrim has already
-   eased off, so they are the one element reading straight onto bright sky —
-   4.94:1 at 390px, which passes AA but does not LOOK it: 11px uppercase at
-   .1em tracking is thin, and a busy sky gives the eye no steady ground.
-   More scrim is the wrong answer; it costs picture everywhere to fix one
-   row of type. A shadow is local — it darkens only what sits directly behind
-   the glyphs, so the photograph keeps its brightness.
-   Two layers: a tight one that does the contrast work, and a wider, softer
-   one that stops the tight one reading as an outline. */
-.page-head--shot .crumbs {
-  text-shadow:
-    0 1px 2px rgba(var(--ink-rgb), .55),
-    0 0 8px  rgba(var(--ink-rgb), .35);
-}
-
 /* -----------------------------------------------------------------------------
    06. BREADCRUMB
    -------------------------------------------------------------------------- */

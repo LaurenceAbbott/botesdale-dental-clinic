@@ -1422,13 +1422,18 @@ for _n in NAV:
         # it, so it was the least informative word on the row.
         _short = {'general': 'General', 'cosmetic': 'Cosmetic',
                   'preventative': 'Preventative', 'missing': 'Missing teeth'}
+        # `label` is the full name — the mobile sheet shows the tree in full,
+        # where "General" on its own reads as a different thing from the page
+        # it heads. `short` is the desktop column title only, where the column
+        # is four words wide and the blurb underneath says the rest.
         _n['children'] = [
-            {'key': _g, 'label': _short[_g], 'blurb': CATEGORY[_g]['sub'],
+            {'key': _g, 'label': GROUPS[_g][0], 'short': _short[_g],
+             'blurb': CATEGORY[_g]['sub'],
              'children': [{'key': _g, 'label': '%s overview' % GROUPS[_g][0]}]
                          + [{'key': _k, 'label': LABELS[_k]}
                             for _k in GROUPS[_g][1] if _k != _g]}
             for _g in ('general', 'cosmetic', 'preventative')
-        ] + [{'key': 'missing', 'label': _short['missing'],
+        ] + [{'key': 'missing', 'label': LABELS['missing'], 'short': _short['missing'],
               'blurb': CATEGORY['missing']['sub'],
               'children': [{'key': 'missing', 'label': '%s overview' % LABELS['missing']}]}]
 

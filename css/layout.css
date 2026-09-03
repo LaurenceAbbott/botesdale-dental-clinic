@@ -455,16 +455,29 @@ body.is-locked { overflow: hidden; }
 /* The sheet carries the same two levels. Indented, not behind a second
    toggle: a treatment page three taps deep is the hidden-pages problem in a
    different shape. */
-/* .menu__sub a is (0,1,1) and beat a bare .menu__subhead at (0,1,0), so the
-   section headings rendered --ink-soft like the items under them. Same
-   specificity trap as .team__bio p over .team__gdc (2.2a). */
-.menu__sub a.menu__subhead {
+/* The sheet is a TREE, and the indents have to say so. Headings and items
+   sat at the same left edge, so three levels read as one flat list. The
+   category heading now starts on the same line as the group title above it
+   — Treatments — and everything clickable sits one step in:
+
+     Treatments                  <- group toggle
+       Treatments overview
+     General dentistry           <- heading, not a link
+       General dentistry overview
+       Root canal therapy
+
+   It is a span, not an anchor, so it cannot be tapped: its overview page is
+   the first item beneath it, named in full. */
+.menu__subhead {
+  display: block;
+  padding: 10px 0 4px;
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
+  font-size: 1.0625rem;
   color: var(--black);
 }
-.menu__subhead:not(:first-child) { margin-top: var(--s-4); }
-.menu__subitem { padding-left: var(--s-5); }
+.menu__subhead:not(:first-child) { margin-top: var(--s-5); }
+.menu__sub a { padding-left: var(--s-5); }
 
 .menu__cta {
   margin-top: var(--s-6);
@@ -478,7 +491,20 @@ body.is-locked { overflow: hidden; }
   padding-top: var(--s-6); margin-top: var(--s-2);
   font-size: var(--fs-sm); color: var(--ink-soft);
 }
-.menu__contact a { color: var(--black); width: fit-content; }
+/* The phone number and address were --black with no underline — the same
+   "a link that does not look like one" the split card had (4.7a). They take
+   the site's inline-link treatment: --accent-700 for 5.2:1 on paper, and an
+   underline, because colour alone is never the only signal. */
+.menu__contact a {
+  width: fit-content;
+  color: var(--accent-700);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--t-fast) var(--ease), text-decoration-thickness var(--t-fast) var(--ease);
+}
+.menu__contact a:hover,
+.menu__contact a:focus-visible { color: var(--black); text-decoration-thickness: 2px; }
 
 /* -----------------------------------------------------------------------------
    05. STICKY TAB NAV (in-page section jumps)

@@ -365,7 +365,17 @@ The hero and page heads are dark panels rather than placeholders; each carries a
 
 `margin-top: calc(-1 * var(--nav-h))` pulls it under the transparent header. The scrim is a three-stop gradient that keeps text legible whatever the photograph does.
 
-**Height: `88vh`, floor 460, cap 780.** It was `78vh` capped at 660. A browser's own chrome — tab strip, address bar, bookmarks — comes out of the viewport before the page gets any, so a hero sized to look generous in a bare window arrives short on a real laptop. The cap is what keeps it honest: at 780 on a 900px viewport the tab strip below the hero (`.tabs`, §4.9) still shows, so the page reads as scrollable rather than as a full-screen splash with nothing under it. If you raise the cap further, check that strip is still visible at 900px — it is the only affordance saying there is more.
+**Height: a fixed 780px.** Not a share of the viewport. It was `88vh` capped at 780, and on a desktop window — which is resizable vertically — the panel grew and shrank as you dragged the edge, the copy sliding around inside it and the arc travelling up and down the photograph. A hero is a composition; it should not restage itself while you resize a window.
+
+780 is where the `88vh`/780 cap landed on a 900px viewport, so the desktop look is unchanged — it just stops moving. It also keeps the tab strip below the hero (`.tabs`, §4.9) visible at 900px, which is the only affordance saying there is more to scroll; if you raise it, check that strip again.
+
+**Phones keep `vh`, deliberately.** There the viewport *is* the device and it ranges from 667 to 932: a fixed value that suits one is wrong on the other, and nobody resizes a phone window. Below 480px the hero is `max(380px, 70vh)` and the page heads track similarly.
+
+The same reasoning applies to every panel in §4.6: `.page-head` is 400px, `--short` 300px and `--shot` 660px (620 below 720px), all fixed, with the phone rules restoring `vh` under 480px.
+
+**The trade-off, stated plainly:** on a window shorter than the panel — under about 660px of viewport for a photographic head — the head now runs past the fold instead of shrinking to fit. That is the cost of a stable composition, and it is the side the design comes down on.
+
+`verify-fixedhero.js` loads each panel at 620 / 760 / 900 / 1180px window heights across three widths and fails if the measured height moves by more than half a pixel. It also asserts the *opposite* at 390px — that the phone head still grows from 667 to 932 — so the exemption is tested rather than merely assumed.
 
 The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The path lifts the two bottom corners to `0.955` of the panel height and holds full height at the centre, so the curve only ever eats into the corners — and `.hero__inner` / `.page-head__inner` carry one extra step of bottom padding because the copy sits in a corner the arc lifts.
 

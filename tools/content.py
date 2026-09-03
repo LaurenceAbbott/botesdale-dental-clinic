@@ -109,9 +109,16 @@ NAV = [
 # Sibling groups used by the contextual rail and the mobile group expansion
 GROUPS = {
     'general':      ('General dentistry', ['general', 'root-canal', 'extractions', 'emergency', 'nervous']),
-    'cosmetic':     ('Cosmetic dentistry', ['cosmetic', 'clear-aligner', 'veneers', 'crowns',
-                                            'bridges', 'whitening', 'gum-reshaping']),
+    'cosmetic':     ('Cosmetic dentistry', ['cosmetic', 'clear-aligner', 'veneers',
+                                            'whitening', 'gum-reshaping']),
     'preventative': ('Preventative dentistry', ['preventative', 'check-up', 'hygiene', 'sensitive']),
+    # Crowns and bridges sit here, not under Cosmetic. Their own copy decides
+    # it: a bridge is "a fixed replacement anchored to the teeth beside the
+    # gap", and Missing teeth's own summary already names both. Crowns is the
+    # arguable one — its page is about rebuilding a broken tooth rather than
+    # replacing an absent one — but a crown is also what finishes an implant,
+    # and one clear home beats a page filed under two.
+    'missing':      ('Missing teeth', ['missing', 'crowns', 'bridges']),
     'cases':        ('Case studies', ['case-worn', 'case-missing', 'case-newdenture',
                                       'case-loose', 'case-sameday']),
 }
@@ -1017,7 +1024,7 @@ LEAF = {
  },
 
  'crowns': {
-   'group': 'cosmetic', 'parent': 'cosmetic',
+   'group': 'missing', 'parent': 'missing',
    'hero': 'images/heroes/cosmetic.jpg',
    'sub': 'Rebuilding a tooth that has lost too much of itself.',
    'lead': 'A crown is a type of dental restoration used to fix teeth that have been broken, '
@@ -1049,7 +1056,7 @@ LEAF = {
  },
 
  'bridges': {
-   'group': 'cosmetic', 'parent': 'cosmetic',
+   'group': 'missing', 'parent': 'missing',
    'hero': 'images/heroes/cosmetic.jpg',
    'sub': 'A fixed replacement anchored to the teeth beside the gap.',
    'lead': 'Losing a tooth through dental decay, gum disease or trauma can be devastating. A '
@@ -1307,7 +1314,7 @@ CATEGORY = {
      'If you are embarrassed by your teeth it is best to speak to your dentist, who can tell you '
      'more about the options available in a non-judgemental and empathetic environment.'],
    'image': 'images/cards/family-smiles.jpg',
-   'children': ['clear-aligner', 'veneers', 'crowns', 'bridges', 'whitening', 'gum-reshaping'],
+   'children': ['clear-aligner', 'veneers', 'whitening', 'gum-reshaping'],
    'card_images': {'clear-aligner': 'images/cards/clear-aligners.jpg',
                    'veneers': 'images/cards/veneers.jpg',
                    'crowns': 'images/cards/crowns.jpg',
@@ -1389,8 +1396,10 @@ CATEGORY = {
      'set out each realistic option with its advantages, its limitations, its likely lifespan '
      'and its cost. You decide from there — there is no hard sell.'],
    'image': 'images/cards/implant-clinic-feature.jpg',
-   'children': [],
-   'card_images': {}, 'card_text': {},
+   'children': ['crowns', 'bridges'],
+   'card_images': {}, 'card_text': {
+     'crowns': 'Rebuilding a tooth that has lost too much of itself — and the finish on an implant.',
+     'bridges': 'A fixed replacement anchored to the teeth beside the gap.'},
    'process': [
      ('Assessment', 'Radiographs, and a CBCT scan where implants are being considered, to see '
       'the bone in three dimensions.'),
@@ -1420,22 +1429,25 @@ for _n in NAV:
         #
         # The titles drop the trailing "dentistry": three of the four carried
         # it, so it was the least informative word on the row.
-        _short = {'general': 'General', 'cosmetic': 'Cosmetic',
-                  'preventative': 'Preventative', 'missing': 'Missing teeth'}
+        # Missing teeth is a group like the others now — crowns and bridges
+        # moved into it — so it no longer needs the special case that gave it
+        # a heading with only its own overview underneath.
+        #
+        # One label, used in both menus. The desktop column briefly carried a
+        # shortened title ("General") to save a line; it just read as a
+        # different thing from the page it heads.
         # `label` is the full name — the mobile sheet shows the tree in full,
         # where "General" on its own reads as a different thing from the page
         # it heads. `short` is the desktop column title only, where the column
         # is four words wide and the blurb underneath says the rest.
         _n['children'] = [
-            {'key': _g, 'label': GROUPS[_g][0], 'short': _short[_g],
+            {'key': _g, 'label': GROUPS[_g][0],
              'blurb': CATEGORY[_g]['sub'],
              'children': [{'key': _g, 'label': '%s overview' % GROUPS[_g][0]}]
                          + [{'key': _k, 'label': LABELS[_k]}
                             for _k in GROUPS[_g][1] if _k != _g]}
-            for _g in ('general', 'cosmetic', 'preventative')
-        ] + [{'key': 'missing', 'label': LABELS['missing'], 'short': _short['missing'],
-              'blurb': CATEGORY['missing']['sub'],
-              'children': [{'key': 'missing', 'label': '%s overview' % LABELS['missing']}]}]
+            for _g in ('general', 'cosmetic', 'preventative', 'missing')
+        ]
 
 
 # =============================================================================
@@ -1810,7 +1822,10 @@ def r_category(key, depth, H):
 
     if d['children']:
         items = [{'key': k, 'label': LABELS[k], 'title': LABELS[k],
-                  'text': d['card_text'][k], 'image': d['card_images'][k], 'alt': LABELS[k]}
+                  # .get, not [k]: the resolved photograph (c_page_image) is
+                  # what these tiles use, so a category needs no card_images
+                  # entry at all — and [k] turned that into a KeyError.
+                  'text': d['card_text'][k], 'image': d['card_images'].get(k), 'alt': LABELS[k]}
                  for k in d['children']]
         cols = 3 if len(items) != 4 else 4
         out.append(c_strip(H, depth, 'In this section', 'What we offer', items, cols=cols))

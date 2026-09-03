@@ -320,11 +320,18 @@
    and behaves the same. */
 .nav__panel--mega .nav__col-head {
   display: block;
+  /* The .statement-text treatment, small: head font, semibold, ink, sentence
+     case. It was an uppercase micro-label, which reads as a category tag
+     rather than the name of the section it heads — and it is the same
+     treatment .menu__subhead uses in the sheet, so both menus name a section
+     the same way. */
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
-  font-size: var(--fs-label);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
+  font-size: 1rem;
+  /* The header sets uppercase for the nav labels and it inherits into the
+     panel — the same trap the blurbs hit. */
+  text-transform: none;
+  letter-spacing: var(--ls-head);
   color: var(--black);
   padding: 0 0 var(--s-2);
 }

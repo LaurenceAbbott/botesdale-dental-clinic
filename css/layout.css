@@ -470,14 +470,32 @@ body.is-locked { overflow: hidden; }
    the first item beneath it, named in full. */
 .menu__subhead {
   display: block;
-  padding: 10px 0 4px;
+  /* The gap below sets the heading apart from the list it heads; without it
+     the title read as the first row of its own list. */
+  padding: 10px 0 var(--s-4);
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
   font-size: 1.0625rem;
   color: var(--black);
 }
-.menu__subhead:not(:first-child) { margin-top: var(--s-5); }
-.menu__sub a { padding-left: var(--s-5); }
+.menu__subhead:not(:first-child) { margin-top: var(--s-6); }
+
+/* The same chevron the desktop panel uses, in the indent the tree already
+   gives these rows — so the two menus say "link" the same way. */
+.menu__sub a { position: relative; padding-left: var(--s-7); }
+.menu__sub a::before {
+  content: "";
+  position: absolute; left: var(--s-4); top: 50%;
+  width: 7px; height: 7px; margin-top: -4px;
+  border-right: 1.5px solid var(--accent);
+  border-top: 1.5px solid var(--accent);
+  transform: rotate(45deg) translateX(-2px);
+  opacity: .5;
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.menu__sub a:hover::before,
+.menu__sub a:focus-visible::before,
+.menu__sub a.is-active::before { opacity: 1; transform: rotate(45deg) translateX(1px); }
 
 .menu__cta {
   margin-top: var(--s-6);

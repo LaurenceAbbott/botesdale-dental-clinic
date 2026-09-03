@@ -682,7 +682,7 @@ p.statement-text { color: var(--black); }
   transition: background var(--t) var(--ease);
 }
 .strip__media img { width: 100%; height: 100%; object-fit: cover; }
-.strip__item:hover .strip__media { background: var(--placeholder); }
+a.strip__item:hover .strip__media { background: var(--placeholder); }
 .strip__cap { padding: var(--s-5) var(--s-5) var(--s-7); }
 .strip__cap .label { display: block; margin-bottom: var(--s-2); }
 .strip__cap h3 { font-size: 1rem; margin-bottom: var(--s-2); }
@@ -700,8 +700,11 @@ p.statement-text { color: var(--black); }
   overflow: hidden;
   transition: border-color var(--t-fast) var(--ease), transform var(--t) var(--ease-out);
 }
-.card:hover { border-color: var(--black); }
-a.card:hover { transform: translateY(-2px); }
+/* Both of these belong to the ANCHOR form only. A .card--static is an
+   <article> — nothing happens if you click it — and on iOS :hover sticks
+   after a tap, so it sat there looking selected. A hover state is a promise
+   that the thing under the cursor does something. */
+a.card:hover { border-color: var(--black); transform: translateY(-2px); }
 .card__media { display: grid; aspect-ratio: 3 / 2; overflow: hidden; background: var(--placeholder); }
 .card__media img { width: 100%; height: 100%; object-fit: cover; }
 .card__body { padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); flex: 1; }
@@ -921,7 +924,6 @@ a.card:hover { transform: translateY(-2px); }
   background: var(--paper);
   transition: border-color var(--t-fast) var(--ease);
 }
-.plan:hover { border-color: var(--black); }
 .plan--feature { background: var(--black); border-color: var(--black); color: var(--paper-soft); }
 .plan--feature h3, .plan--feature .plan__price { color: var(--paper); }
 .plan--feature .label { color: var(--paper-mute); }
@@ -971,7 +973,9 @@ a.card:hover { transform: translateY(-2px); }
 .accordion__icon { position: relative; width: 14px; height: 14px; flex: none; }
 .accordion__icon::before, .accordion__icon::after {
   content: ""; position: absolute; left: 0; top: 50%;
-  width: 14px; height: var(--hair); background: var(--black);
+  /* The +/- is the thing you press, so it carries the action colour while
+     the question stays body black. */
+  width: 14px; height: var(--hair); background: var(--accent-700);
   transition: transform var(--t) var(--ease);
 }
 .accordion__icon::after { transform: rotate(90deg); }
@@ -986,6 +990,9 @@ a.card:hover { transform: translateY(-2px); }
 .notice {
   border-left: 2px solid var(--accent);
   background: var(--accent-tint);
+  /* The radius clips the accent rule with it, so the bar takes the curve
+     rather than sitting proud of the corner. */
+  border-radius: var(--radius-panel);
   padding: var(--s-5) var(--s-6);
   font-size: var(--fs-sm);
   color: var(--ink-soft);
@@ -1094,11 +1101,10 @@ a.card:hover { transform: translateY(-2px); }
   width: 46px; height: 46px; margin: -23px 0 0 -23px;
   border-radius: var(--radius-pill);
   background: var(--paper);
-  /* A hairline ring, not a drop shadow. These were the only two drop shadows
-     on the site; everything else separates with a hairline, and they read as
-     borrowed from somewhere else. The ring still holds the grip against a
-     pale photograph. */
-  box-shadow: 0 0 0 1px rgba(var(--ink-rgb), .14);
+  /* Bare at rest — no border, no ring, no shadow. It was a drop shadow, then
+     a hairline ring; both were doing work the divider already does, since the
+     line runs through the grip and gives it its edge. The only box-shadow it
+     ever carries is the focus ring below. */
 }
 /* The two arrowheads, same rotated-border idiom as the nav chevrons. */
 .compare__grip::before, .compare__grip::after {
@@ -1153,10 +1159,10 @@ a.card:hover { transform: translateY(-2px); }
 /* A card whose media is draggable is an <article>, not an <a> — the link is
    on the heading and the arc link (c_cards). Without a.card's rules it needs
    its own hover, and its heading link should not look like body copy. */
-.card--static:hover, .strip__item--static:hover { border-color: var(--black); }
+/* Only the real links inside a static tile get a hover — the tile itself is
+   not clickable and must not suggest otherwise. */
 .card--static h3 a, .strip__item--static h3 a { color: inherit; text-decoration: none; }
 .card--static h3 a:hover, .strip__item--static h3 a:hover { color: var(--accent-700); }
-.strip__item--static:hover .strip__media { background: var(--placeholder-2); }
 
 /* Simple lightbox */
 .lightbox {
@@ -1193,7 +1199,10 @@ a.card:hover { transform: translateY(-2px); }
 }
 .pager__item:hover { background: var(--paper-2); }
 .pager__item .label { display: block; margin-bottom: var(--s-2); }
-.pager__title { display: block; font-family: var(--font-head); font-size: 1rem; font-weight: var(--fw-semi); color: var(--black); }
+/* The title IS the link — the row does nothing else — so it takes the link
+   colour rather than body black. --accent-700, not --accent: the plain accent
+   is 2.8:1 on paper and unusable for text (base.css 2.1). */
+.pager__title { display: block; font-family: var(--font-head); font-size: 1rem; font-weight: var(--fw-semi); color: var(--accent-700); }
 /* First or last in a sequence: one link, so it takes the whole row rather
    than leaving half the band as bare background. */
 .pager__item:only-child { grid-column: 1 / -1; }
@@ -1231,7 +1240,7 @@ a.card:hover { transform: translateY(-2px); }
   font-size: 1rem;
   line-height: 1.4;
   color: var(--black);
-  border-radius: 0;
+  border-radius: var(--radius-btn);
   appearance: none; -webkit-appearance: none;
   transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
   min-height: var(--control-h);

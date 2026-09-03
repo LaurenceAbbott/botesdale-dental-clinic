@@ -140,7 +140,10 @@ def build_header(active, depth):
                     if child.get('blurb'):
                         col.append('<p class="nav__col-blurb">%s</p>' % esc(child['blurb']))
                     for leaf in child.get('children', []):
-                        lcls = ' class="is-active"' if active == leaf['key'] else ''
+                        # data-current, not a class: the mobile sheet still
+                        # uses it to open the right group, but nothing paints
+                        # from it. See the note on .nav__panel below.
+                        lcls = ' data-current' if active == leaf['key'] else ''
                         col.append('<a href="%s"%s>%s</a>'
                                    % (rel(leaf['key'], depth), lcls, esc(leaf['label'])))
                     cols.append('<div class="nav__col">%s</div>' % ''.join(col))
@@ -155,7 +158,7 @@ def build_header(active, depth):
             else:
                 sub = []
                 for child in item['children']:
-                    ccls = ' class="is-active"' if active == child['key'] else ''
+                    ccls = ' data-current' if active == child['key'] else ''
                     sub.append('<a href="%s"%s>%s</a>' % (rel(child['key'], depth), ccls, esc(child['label'])))
                 links.append('<div class="nav__dd">%s<div class="nav__panel">%s</div></div>'
                              % (anchor, ''.join(sub)))
@@ -174,13 +177,13 @@ def build_header(active, depth):
                     # Its overview page is the first item in the list under it.
                     subs.append('<span class="menu__subhead">%s</span>' % esc(child['label']))
                     for leaf in child['children']:
-                        lcls = ' menu__subitem is-active' if active == leaf['key'] else ' menu__subitem'
-                        subs.append('<a class="%s" href="%s">%s</a>'
-                                    % (lcls.strip(), rel(leaf['key'], depth), esc(leaf['label'])))
+                        cur = ' data-current' if active == leaf['key'] else ''
+                        subs.append('<a class="menu__subitem"%s href="%s">%s</a>'
+                                    % (cur, rel(leaf['key'], depth), esc(leaf['label'])))
                 else:
-                    lcls = ' class="menu__subitem is-active"' if active == child['key'] else ' class="menu__subitem"'
-                    subs.append('<a%s href="%s">%s</a>'
-                                % (lcls, rel(child['key'], depth), esc(child['label'])))
+                    cur = ' data-current' if active == child['key'] else ''
+                    subs.append('<a class="menu__subitem"%s href="%s">%s</a>'
+                                % (cur, rel(child['key'], depth), esc(child['label'])))
             sheet.append(
                 '<div class="menu__group">'
                 '<button class="menu__toggle" type="button" aria-expanded="false" aria-controls="%s">'
@@ -207,7 +210,11 @@ def build_header(active, depth):
     <a class="nav__cta" href="{contact}"><span class="btn__label">Book a visit</span></a>
     <button class="nav__toggle" id="menuOpen" type="button" aria-expanded="false"
             aria-controls="mobileMenu" aria-label="Open menu">
-      <span></span><span></span><span></span>
+      <svg viewBox="0 0 22 16" width="22" height="16" fill="none" aria-hidden="true">
+        <path d="M.75 2Q11 3.6 21.25 2"/>
+        <path d="M.75 8Q11 9.6 21.25 8"/>
+        <path d="M.75 14Q11 15.6 21.25 14"/>
+      </svg>
     </button>
   </div>
 </header>

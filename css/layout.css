@@ -258,7 +258,12 @@
 .nav__panel:not(.nav__panel--mega) a:hover::before {
   opacity: 1; transform: rotate(45deg) translateX(1px);
 }
-.nav__panel a:hover, .nav__panel a.is-active { color: var(--black); background: var(--paper-2); }
+/* No current-page state. It was correct — one link, the right page — but it
+   reads as "this one is special" rather than "you are here", and a reader
+   arriving mid-scroll has no way to tell which it means. The build still
+   marks the link with data-current so the sheet opens the right group; it
+   just does not paint it. */
+.nav__panel a:hover { color: var(--black); background: var(--paper-2); }
 
 /* The Treatments panel is a CARD that floats under the header, not a band
    ruled edge to edge. Full-bleed with divider lines between the columns read
@@ -312,7 +317,6 @@
   padding: 8px 10px; margin-left: -10px;
 }
 .nav__panel--mega a:hover,
-.nav__panel--mega a.is-active { background: var(--paper-3); color: var(--black); }
 /* A TITLE, not a link. It used to be both — the category heading doubled as
    the link to its overview — and a heading that is also a link leaves the
    reader guessing which it is. The overview page is the first item in the
@@ -392,18 +396,27 @@
 @media (max-width: 1120px) { .nav__cta { display: none; } }
 
 /* Burger */
+/* Three arcs, not three bars — the same curve as the brand mark (ARC is
+   M0,1 Q50,7 100,1, a sag of 6 in 100). Held to roughly that ratio rather
+   than exaggerated: at 22px wide it is a hint of a smile, which is the
+   point. currentColor so the one rule below still flips it for the scrolled
+   and solid headers. */
 .nav__toggle {
-  display: none; flex-direction: column; gap: 5px;
+  display: none; align-items: center; justify-content: center;
   padding: 10px; cursor: pointer;
+  color: var(--paper);
+  transition: color var(--t-fast) var(--ease);
 }
 @media (max-width: 1120px) { .nav__toggle { display: flex; } }
-.nav__toggle span {
-  display: block; width: 22px; height: var(--hair);
-  background: var(--paper);
-  transition: width var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+.nav__toggle svg { display: block; overflow: visible; }
+.nav__toggle path {
+  stroke: currentColor; stroke-width: 1.25; stroke-linecap: round;
+  transition: transform var(--t-fast) var(--ease);
+  transform-origin: center;
 }
-.nav.is-scrolled .nav__toggle span, .nav--solid .nav__toggle span { background: var(--black); }
-.nav__toggle:hover span:nth-child(2) { width: 14px; }
+.nav.is-scrolled .nav__toggle, .nav--solid .nav__toggle { color: var(--black); }
+/* The middle arc draws in, as the middle bar used to. */
+.nav__toggle:hover path:nth-child(2) { transform: scaleX(.66); }
 
 /* -----------------------------------------------------------------------------
    04. MOBILE MENU — full-screen sheet
@@ -457,7 +470,7 @@ body.is-locked { overflow: hidden; }
   transition: color var(--t-fast) var(--ease);
 }
 .menu__sub a:last-child { padding-bottom: 18px; }
-.menu__sub a:hover, .menu__sub a.is-active { color: var(--black); }
+.menu__sub a:hover { color: var(--black); }
 
 /* The sheet carries the same two levels. Indented, not behind a second
    toggle: a treatment page three taps deep is the hidden-pages problem in a
@@ -501,8 +514,7 @@ body.is-locked { overflow: hidden; }
   transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 .menu__sub a:hover::before,
-.menu__sub a:focus-visible::before,
-.menu__sub a.is-active::before { opacity: 1; transform: rotate(45deg) translateX(1px); }
+.menu__sub a:focus-visible::before { opacity: 1; transform: rotate(45deg) translateX(1px); }
 
 .menu__cta {
   margin-top: var(--s-6);

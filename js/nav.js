@@ -122,7 +122,10 @@
   });
 
   /* Open the group that contains the current page */
-  var activeSub = document.querySelector('.menu__sub a.is-active');
+  /* data-current, not .is-active: the current page is no longer painted
+     anywhere in the menus, but the build still marks it so the sheet can open
+     the group you are already in. */
+  var activeSub = document.querySelector('.menu__sub a[data-current]');
   if (activeSub) {
     var group = activeSub.closest('.menu__sub');
     var toggle = document.querySelector('[aria-controls="' + group.id + '"]');

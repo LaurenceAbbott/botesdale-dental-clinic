@@ -55,6 +55,46 @@ const fail = m => { console.log('  FAIL  ' + m); failed++; };
       console.log('  PASS  ' + checked + ' images, every one inside a ' + WANT + 'px corner (' + square + ' square)');
     await ctx.close();
   }
+
+  // ---- Notices and form controls carry their own radii --------------------
+  // Photography is 32px; a notice is a block of message at 8px and a form
+  // control is 4px, the same as a button — an input is the same kind of
+  // object. Swept across every page rather than spot-checked, because these
+  // two rules are the sort that a later component quietly opts out of.
+  {
+    const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    await page.route('**://*.google*/**', r => r.abort());
+    let notices = 0, controls = 0;
+    const before = failed;
+    for (const u of pages) {
+      await page.goto('http://localhost:8931/' + u, { waitUntil: 'domcontentloaded' });
+      const r = await page.evaluate(() => {
+        const bad = [];
+        let n = 0, c = 0;
+        document.querySelectorAll('.notice').forEach(el => {
+          n++;
+          const v = getComputedStyle(el).borderTopLeftRadius;
+          if (parseFloat(v) !== 8) bad.push('.notice at ' + v);
+        });
+        document.querySelectorAll('.field input, .field select, .field textarea').forEach(el => {
+          if (el.type === 'checkbox' || el.type === 'radio' || el.type === 'hidden') return;
+          c++;
+          const v = getComputedStyle(el).borderTopLeftRadius;
+          if (parseFloat(v) !== 4) bad.push(el.tagName.toLowerCase() + '[' + (el.type || '') + '] at ' + v);
+        });
+        return { bad: [...new Set(bad)], n, c };
+      });
+      notices += r.n; controls += r.c;
+      for (const x of r.bad) fail(u + ' — ' + x);
+    }
+    if (!notices) fail('no .notice seen anywhere — the sweep is not reaching them');
+    if (!controls) fail('no form controls seen anywhere — the sweep is not reaching them');
+    if (failed === before)
+      console.log('  PASS  ' + notices + ' notices at 8px, ' + controls + ' form controls at 4px');
+    await ctx.close();
+  }
+
   await b.close();
   console.log(failed ? '\n' + failed + ' FAILED' : '\nALL PASSED');
   process.exit(failed ? 1 : 0);

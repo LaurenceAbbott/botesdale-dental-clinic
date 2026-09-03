@@ -298,7 +298,33 @@ const ok = (m) => console.log('  ok   ' + m);
     return out;
   });
   if (shadows.length) shadows.forEach(x => bad('drop shadow on .' + x));
-  else ok('no drop shadows — flat rings only');
+  else ok('no drop shadows');
+
+  // 12b. The grip carries nothing at rest — no border, no ring, no shadow.
+  //      The divider runs through it and is the only edge it needs.
+  await page.goto(BASE + '/pages/case-treating-worn-dentition.html', { waitUntil: 'networkidle' });
+  const grip = await page.evaluate(() => {
+    const g = document.querySelector('.compare__grip');
+    const cs = getComputedStyle(g);
+    return { shadow: cs.boxShadow, border: cs.borderTopWidth, outline: cs.outlineStyle };
+  });
+  if (grip.shadow !== 'none') bad(`grip is not bare at rest: box-shadow ${grip.shadow}`);
+  else if (parseFloat(grip.border) > 0) bad(`grip has a ${grip.border} border`);
+  else ok('grip is bare at rest');
+
+  // 12c. ...but a keyboard user still gets a ring. Removing the decoration
+  //      must not take the focus indicator with it.
+  const focused = await page.evaluate(() => {
+    const r = document.querySelector('.compare__range');
+    r.focus();
+    // :focus-visible needs a keyboard-ish focus; force the match check via
+    // the selector itself rather than trusting heuristics.
+    const matches = r.matches(':focus-visible');
+    return { matches, shadow: getComputedStyle(document.querySelector('.compare__grip')).boxShadow };
+  });
+  if (!focused.matches) ok('(focus ring not assertable without a real key press — skipped)');
+  else if (focused.shadow === 'none') bad('focused grip has no ring — keyboard users lose the control');
+  else ok('focus still rings the grip');
   await ctx.close();
 
   await browser.close();

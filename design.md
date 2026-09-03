@@ -423,9 +423,13 @@ Headshots side by side inside `.wrap`, two up (one up under 860px). These are po
 </ul>
 ```
 
-Name and role are white over the foot of the portrait; the biography reads underneath at full card width. The scrim (`.team__portrait::after`) is **flat at the bottom, not a plain ramp** — held solid for the bottom 26% before fading out at 52%. The overlaid text sits entirely inside that flat zone, so its contrast does not depend on what the photograph is doing; a straight linear fade would put the label at roughly 2:1 over a bright background.
+Name and role are white over the foot of the portrait; the biography reads underneath at full card width. The scrim (`.team__portrait::after`) **holds full strength behind the text, then eases away on a smoothstep curve.** The plateau is set by contrast; the shape of the falloff is set by appearance.
 
-Its opacity is **`.75`**, set from the worst case — a blown-out white photograph. There the name reads 9.6:1 and the role label 5.7:1. The label is the binding constraint, not the name: it is `--paper-soft`, a *translucent* white, so it composites onto the scrim rather than sitting on it. The floor is around `.70` (4.8:1); `.75` keeps real margin without burying the picture, which `.88` did.
+*Contrast.* The text sits inside the plateau, so its legibility never depends on what the photograph is doing. Opacity is **`.75`**, chosen against the worst case — a blown-out white image — where the name reads 9.6:1 and the role label 5.7:1. The label is the binding constraint, not the name: it is `--paper-soft`, a *translucent* white, so it composites onto the scrim rather than sitting on it. The floor is around `.70`; `.75` keeps margin without burying the picture, which `.88` did.
+
+*Appearance.* This was a flat zone meeting a **straight ramp**, and it read as a hard-edged black band. The reason is rate, not opacity: a linear ramp starts with a non-zero slope, so the junction is an abrupt change in how fast the darkness falls off, and the eye finds that instantly. **Smoothstep has zero slope at both ends**, so it leaves the plateau at the same rate the plateau was going — nothing — and the two blend invisibly. The tail runs long (to 80%) so the falloff never bunches into an edge either.
+
+The suite evaluates the declared gradient at the positions the name and role *actually* occupy, and caps how fast alpha may change per 1% of height, so neither the contrast nor the smoothness can regress unnoticed.
 
 ### 4.14 Quote & carousel — `.quote`, `[data-carousel]`
 

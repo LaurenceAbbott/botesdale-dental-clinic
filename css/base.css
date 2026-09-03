@@ -41,23 +41,26 @@
   --paper-mute:   rgba(247, 246, 243, .50);  /* Meta on black                */
 
   /* --- Accent ------------------------------------------------------------- */
-  /* NOTE: the written brief specifies #009ee3. The approved design system
-     uses #17A6DE, which reads better against the warm paper ground.
-     To revert to the brief value, change --accent only. */
-  --accent:       #17A6DE;
-  /* Primary button hover. Lifted a step from #1189BB when the ink moved to
-     #1A1A18: the button carries an ink label, and against the older, darker
-     ink #1189BB gave 4.8:1 but against #1A1A18 only 4.4:1. #128FC3 restores
-     4.8:1 and still reads clearly darker than --accent. */
-  --accent-600:   #128FC3;
-  --accent-700:   #0B6E97;
-  /* Darkest step, used for the primary button's pressed border. The fill
-     cannot go this dark: the primary carries an ink label, which needs a fill
-     of at least L 0.2 to clear AA, and --accent-600 is the last step that
-     does. See §4.1 in design.md. */
-  --accent-800:   #08506E;
-  --accent-tint:  rgba(23, 166, 222, .12);
-  --accent-line:  rgba(23, 166, 222, .35);
+  /* The brand blue, taken from the supplied logo artwork — the wordmark and
+     the icon's arc are painted in #009EE3, so this is the practice's real
+     accent rather than an approximation of it. The darker steps are the same
+     hue scaled toward black, each chosen against a hard contrast constraint
+     rather than by eye; the ratios are noted where they are load-bearing. */
+  --accent:       #009EE3;   /* ink label on it: 5.8:1                       */
+  /* Primary button hover. The button carries an INK label, so this fill has
+     to stay light enough to sit under one: 4.8:1, matching the margin the
+     previous ramp had. It cannot go much darker — #009EE3 is darker than the
+     accent it replaced, so there is less room to darken before the label
+     fails, and the hover step is correspondingly subtler. */
+  --accent-600:   #008ECC;
+  /* Text links on paper. --accent itself is 2.8:1 there and unusable for
+     body-size text; this is 5.2:1. */
+  --accent-700:   #006F9F;
+  /* Darkest step, used for the primary button's pressed border. Too dark to
+     be a fill under an ink label — see §4.1 in design.md. */
+  --accent-800:   #004F72;
+  --accent-tint:  rgba(0, 158, 227, .12);
+  --accent-line:  rgba(0, 158, 227, .35);
 
   /* --- Dark media grounds (used behind imagery and empty media panels) ---- */
   --grad-cool:    linear-gradient(160deg, #1A2420 0%, #1A1A18 100%);

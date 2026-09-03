@@ -116,16 +116,16 @@
    photographic page head. Zero slope at both ends means no edge. */
 .nav::before {
   content: "";
-  position: absolute; inset: 0 0 -90px 0;
+  position: absolute; inset: 0 0 -54px 0;
   pointer-events: none;
   background: linear-gradient(to bottom,
-    rgba(var(--ink-rgb), .550) 0%,
-    rgba(var(--ink-rgb), .550) 45%,
-    rgba(var(--ink-rgb), .509) 54%,
-    rgba(var(--ink-rgb), .407) 63%,
-    rgba(var(--ink-rgb), .275) 72%,
-    rgba(var(--ink-rgb), .143) 82%,
-    rgba(var(--ink-rgb), .041) 91%,
+    rgba(var(--ink-rgb), .560) 0%,
+    rgba(var(--ink-rgb), .560) 57%,
+    rgba(var(--ink-rgb), .518) 64%,
+    rgba(var(--ink-rgb), .415) 71%,
+    rgba(var(--ink-rgb), .280) 79%,
+    rgba(var(--ink-rgb), .145) 86%,
+    rgba(var(--ink-rgb), .042) 93%,
     rgba(var(--ink-rgb), 0)    100%);
   transition: opacity var(--t-fast) var(--ease);
 }

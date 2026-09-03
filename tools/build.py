@@ -134,7 +134,8 @@ def build_header(active, depth):
                 for child in item['children']:
                     # A title, not a link: the overview page is the first item
                     # in the list below it.
-                    col = ['<span class="nav__col-head">%s</span>' % esc(child['label'])]
+                    col = ['<span class="nav__col-head">%s</span>'
+                           % esc(child.get('short') or child['label'])]
                     # The blurb is what stops a category with no sub-pages —
                     # Missing teeth — reading as an empty column.
                     if child.get('blurb'):
@@ -169,18 +170,18 @@ def build_header(active, depth):
             gid = 'menuGroup%d' % i
             subs = []
             for child in item['children']:
-                ccls = ' menu__subhead is-active' if active == child['key'] else ' menu__subhead'
                 if child.get('children'):
-                    subs.append('<a class="%s" href="%s">%s</a>'
-                                % (ccls.strip(), rel(child['key'], depth), esc(child['label'])))
+                    # A heading, not a link — same rule as the desktop panel.
+                    # Its overview page is the first item in the list under it.
+                    subs.append('<span class="menu__subhead">%s</span>' % esc(child['label']))
                     for leaf in child['children']:
                         lcls = ' menu__subitem is-active' if active == leaf['key'] else ' menu__subitem'
                         subs.append('<a class="%s" href="%s">%s</a>'
                                     % (lcls.strip(), rel(leaf['key'], depth), esc(leaf['label'])))
                 else:
-                    lcls = ' class="is-active"' if active == child['key'] else ''
-                    subs.append('<a href="%s"%s>%s</a>'
-                                % (rel(child['key'], depth), lcls, esc(child['label'])))
+                    lcls = ' class="menu__subitem is-active"' if active == child['key'] else ' class="menu__subitem"'
+                    subs.append('<a%s href="%s">%s</a>'
+                                % (lcls, rel(child['key'], depth), esc(child['label'])))
             sheet.append(
                 '<div class="menu__group">'
                 '<button class="menu__toggle" type="button" aria-expanded="false" aria-controls="%s">'

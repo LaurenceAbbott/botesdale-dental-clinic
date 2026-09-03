@@ -259,14 +259,75 @@
   }
 
   /* --- 4b. Before/after comparison ---------------------------------------- */
-  /* The whole control is a native range input covering the frame (see
-     components.css 20), so pointer drag, touch and the arrow keys are already
-     handled. All this does is publish its value to CSS as --pos. */
+  /* The range input holds the value and gives the control its keyboard and
+     screen-reader behaviour, but it does NOT handle the pointer — CSS sets
+     pointer-events: none on it and we drive it from the frame instead.
+
+     The first version let the native range take the drag. That works with a
+     mouse, where a press on the track starts a drag, but not on iOS: there a
+     touch on the track only jumps the value, and continuous dragging means
+     grabbing the thumb — which was 2px wide, so there was nothing to grab.
+     The result was a comparison you could tap but not drag. Reading clientX
+     off the frame ourselves is exact at both ends and behaves the same on
+     every input, and the range keeps the arrow keys and the announcement. */
   Array.prototype.forEach.call(document.querySelectorAll('[data-compare]'), function (el) {
     var range = el.querySelector('.compare__range');
     if (!range) return;
-    var sync = function () { el.style.setProperty('--pos', range.value + '%'); };
+    var tagBefore = el.querySelector('.compare__tag--before');
+    var tagAfter  = el.querySelector('.compare__tag--after');
+
+    var sync = function () {
+      var pct = parseFloat(range.value);
+      el.style.setProperty('--pos', pct + '%');
+      /* A label whose side has shrunk past it would sit over the other
+         photograph and mislabel it, so it steps out of the way. Measured
+         against the label's own box rather than a fixed percentage: the
+         frame is 900px on a desktop and 334px on a phone, and the labels
+         are the same size on both. */
+      var w = el.clientWidth;
+      if (!w) return;
+      var x = w * pct / 100;
+      if (tagBefore) tagBefore.classList.toggle('is-gone', x < tagBefore.offsetLeft + tagBefore.offsetWidth + 8);
+      if (tagAfter)  tagAfter.classList.toggle('is-gone', x > tagAfter.offsetLeft - 8);
+    };
     range.addEventListener('input', sync);
+
+    var dragging = false;
+    var track = function (e) {
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var pct = ((e.clientX - r.left) / r.width) * 100;
+      range.value = Math.max(0, Math.min(100, pct));
+      sync();
+    };
+    el.addEventListener('pointerdown', function (e) {
+      dragging = true;
+      try { el.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointer */ }
+      /* preventScroll, and focus() rather than a click, so the ring only
+         appears for a keyboard user (:focus-visible). */
+      range.focus({ preventScroll: true });
+      /* A mouse press jumps the divider where you clicked, which is what a
+         mouse user expects. A touch does not: the first contact of a
+         vertical scroll would otherwise yank the divider sideways before
+         the browser had decided the gesture was a scroll. Touch waits for
+         actual movement. */
+      if (e.pointerType === 'mouse') track(e);
+    });
+    el.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      e.preventDefault();
+      track(e);
+    });
+    var release = function (e) {
+      if (!dragging) return;
+      dragging = false;
+      try { el.releasePointerCapture(e.pointerId); } catch (err) { /* already gone */ }
+    };
+    el.addEventListener('pointerup', release);
+    /* touch-action: pan-y means the browser cancels our pointer the moment it
+       decides the gesture is a vertical scroll. */
+    el.addEventListener('pointercancel', release);
+
     sync();
   });
 

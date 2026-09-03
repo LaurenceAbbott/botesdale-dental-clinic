@@ -623,17 +623,23 @@ Clinical during/detail images with a tag. Any `[data-lightbox]` figure opens ful
 
 `c_gallery()` pulls the first **Before** and the first **After** out of the list and renders them as a comparison (4.21a); everything left — a second before, the durings, the details — follows in the grid below it.
 
-Tags sit at the **bottom centre**, not in a corner. `--radius-media` is 32px, and a square tag pushed into a 32px curve leaves a wedge of image showing through behind it. They carry `--radius-btn`, so they read as part of the same family as the buttons.
+The single tag on a plain gallery shot sits at the **bottom centre**, not in a corner. `--radius-media` is 32px, and a square tag pushed into a 32px curve leaves a wedge of image showing through behind it. They carry `--radius-btn`, so they read as part of the same family as the buttons.
 
 ### 4.21a Before / after — `.compare` + `js/ui.js`
 
 Two photographs of the same mouth, one wiped over the other, with a divider the reader drags. Used on every case study and for the lead case on the home page. **Not** `[data-reveal]` — that is the scroll-in animation (4.29), and the two are unrelated.
 
-The control is a **native `<input type="range">`** laid over the whole frame at `opacity: 0`. That is the whole trick: pointer drag, touch, the arrow keys and an accessible name all come with the element, a mousedown anywhere on it jumps the divider to that point, and `js/ui.js` only has to copy `range.value` into `--pos`. A div with pointer handlers would have meant writing all four by hand. Because the input is invisible its focus ring would be too, so `:focus-visible` rings the grip instead.
+A **native `<input type="range">`** over the frame at `opacity: 0` holds the value and gives the control its keyboard behaviour and its announcement. It does **not** take the pointer — `pointer-events: none`; `js/ui.js` reads `clientX` off the frame instead, with `setPointerCapture`.
+
+**This is the part that shipped wrong once.** The first version let the range handle the drag too, which is true on a desktop — a mousedown on the track starts one. On iOS it is not: a touch on the track only jumps the value, and continuous dragging means grabbing the thumb, which had been narrowed to 2px to keep the value mapping exact. The comparison could be tapped but not dragged on a phone. Driving it from the frame is exact at both ends and identical on every input.
+
+A mouse press jumps the divider to the click; a touch waits for actual movement, so the first contact of a vertical scroll does not yank it sideways before the browser has classified the gesture. Because the input is invisible its focus ring would be too, so `:focus-visible` rings the grip instead.
 
 The before pane is **clipped** with `clip-path`, never resized. Narrowing the element would make `object-fit: cover` re-crop that photograph instead of uncovering the one beneath it — the comparison would be between two different crops.
 
-`touch-action: pan-y` on the input: a horizontal drag adjusts the comparison, a vertical swipe still scrolls the page.
+`touch-action: pan-y` on the frame: a horizontal drag adjusts the comparison, a vertical swipe still scrolls the page — and cancels our pointer, which `pointercancel` handles.
+
+**Labels go in the outer corners**, each over the half it names, 16px in. Flanking the centre put them directly under the grip, where they read as a pair of buttons and crowded the one thing you are meant to grab. 16px clears the 32px curve comfortably: the curve only reaches `√2 × (32 − d)` from the corner's centre, so anything past ~9px is inside the frame. A label whose own side has shrunk past it fades out rather than sitting over the other photograph and mislabelling it — measured against the label's own box, since the frame is 900px on a desktop and 334px on a phone while the labels are the same size on both.
 
 With JS off the divider simply stays at its CSS default of 50%, so both photographs are half visible rather than one being hidden.
 

@@ -115,37 +115,49 @@
    height, which drew a visible band straight across the sky on a
    photographic page head. Zero slope at both ends means no edge.
 
-   IT MUST NOT REACH THE BREADCRUMB. .nav is sticky with z-index 80, so it
-   is a stacking context that paints above the page head — which means this
-   scrim covers the crumb TEXT, not just the sky behind it. While its tail
-   ran to 220px the crumbs sat inside it and rendered at rgb(138,138,135)
-   against a rgb(90,102,119) ground: 1.68:1. Extending it to "help" them made
-   it worse, because a scrim above the text multiplies both sides toward the
-   same ink — no alpha can raise that ratio, only lower it.
+   Short plateau, long tail. What reads as a hard black band across the top of
+   a photograph is the FLAT part, not the fade — so the plateau covers only
+   what actually needs .56, and everything below it is falloff.
 
-   So the tail stops at the crumb row (nav-h + --s-7 = 105px) and the ground
-   under the crumbs is darkened by the page head's own scrim instead, which
-   sits BELOW the copy. See .page-head--shot .page-head__scrim.
+   Profiled against the bare photograph rather than guessed (profile-topscrim.js
+   hides both scrims, screenshots, and solves for the minimum alpha under each
+   element): the nav links need .540 and the header CTA .475, both inside
+   y 15-57. So the plateau holds .560 to 60px and smoothsteps across the
+   remaining 160px, reaching nothing at 220px.
 
-   Short plateau, long tail: the flat part is what reads as a hard band over a
-   photograph, never the fade. The plateau holds .560 across the header — the
-   nav links need .540 and the CTA .475, both measured against the bare
-   photograph by profile-topscrim.js — then smoothsteps away over the 32px
-   below it. Zero slope at both ends means no visible edge. */
+   IT IS INVISIBLE AT REST. .nav is sticky with z-index 80, so it is a
+   stacking context painting ABOVE the page head — which means this scrim
+   covers the breadcrumb TEXT, not just the sky behind it, and a scrim over
+   text drags both sides toward the same ink (the crumbs measured 1.68:1).
+   At the top of the page the page head paints this same gradient itself,
+   below its copy, so the photograph looks identical and the letters stay
+   clean. This one fades in past 24px of scroll, where its real job starts:
+   holding the wordmark legible while the h1 slides underneath it, all the
+   way to the .is-scrolled threshold at hero height minus 80.
+
+   The two never both show: .is-lifted crossfades them, and at 24px of scroll
+   they are still in the same place, so the handover is invisible. */
 .nav::before {
   content: "";
-  position: absolute; inset: 0 0 -32px 0;
+  position: absolute; inset: 0 0 -147px 0;
   pointer-events: none;
   background: linear-gradient(to bottom,
     rgba(var(--ink-rgb), .560) 0%,
-    rgba(var(--ink-rgb), .560) 70%,
-    rgba(var(--ink-rgb), .495) 76%,
-    rgba(var(--ink-rgb), .355) 82%,
-    rgba(var(--ink-rgb), .192) 88%,
-    rgba(var(--ink-rgb), .057) 94%,
+    rgba(var(--ink-rgb), .560) 27%,
+    rgba(var(--ink-rgb), .553) 32%,
+    rgba(var(--ink-rgb), .521) 39%,
+    rgba(var(--ink-rgb), .459) 47%,
+    rgba(var(--ink-rgb), .367) 56%,
+    rgba(var(--ink-rgb), .264) 65%,
+    rgba(var(--ink-rgb), .164) 74%,
+    rgba(var(--ink-rgb), .086) 82%,
+    rgba(var(--ink-rgb), .029) 90%,
+    rgba(var(--ink-rgb), .005) 96%,
     rgba(var(--ink-rgb), 0)    100%);
+  opacity: 0;
   transition: opacity var(--t-fast) var(--ease);
 }
+.is-lifted .nav::before { opacity: 1; }
 .nav.is-scrolled::before, .nav--solid::before { opacity: 0; }
 .nav__inner { position: relative; z-index: 1; }
 

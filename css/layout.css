@@ -620,6 +620,7 @@ body.is-locked { overflow: hidden; }
   width: 42px; height: 42px;
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--black); color: var(--paper);
+  border-radius: var(--radius-btn);
   cursor: pointer;
   opacity: 0; visibility: hidden; transform: translateY(8px);
   transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), visibility var(--t);

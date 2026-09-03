@@ -703,8 +703,8 @@ PAGES = {
                'unhurried and completely under your control.'),
 
  'cosmetic': _p('cosmetic', 'Cosmetic dentistry | Botesdale Dental Practice',
-                'Treatments that enhance, align, whiten and tone your teeth — veneers, crowns, '
-                'bridges, whitening, clear aligners and gum reshaping in Botesdale.'),
+                'Treatments that enhance, align, whiten and tone your teeth — veneers, '
+                'whitening, clear aligners and gum reshaping in Botesdale.'),
  'clear-aligner': _p('clear-aligner', 'Clear aligners | Botesdale Dental Practice',
                      'Invisible orthodontics — straighter teeth without metal braces, planned '
                      'digitally at our Botesdale practice.'),
@@ -1109,8 +1109,8 @@ LEAF = {
       'three weeks.'),
      ('Managing sensitivity', 'Mild, temporary sensitivity is common. We can adjust the '
       'concentration or the wear time.'),
-     ('Topping up', 'Keep the trays. A single top-up night every few months maintains the '
-      'result at very little cost.')],
+     ('Topping up', 'Keep the trays. Wearing them for one night every few months keeps the '
+      'result, at very little cost.')],
    'faqs': [
      ('Will it whiten crowns, veneers or fillings?',
       '<p>No. Whitening only works on natural tooth tissue. Existing restorations at the front '
@@ -1307,7 +1307,12 @@ CATEGORY = {
    'paras': [
      'Cosmetic dentistry is a field within general dentistry that focuses on the beauty of a '
      'smile. It covers treatments that enhance, align, and whiten or tone the teeth — porcelain '
-     'veneers, crowns, bridges, teeth whitening, gum reshaping and orthodontics.',
+     'veneers, teeth whitening, gum reshaping and orthodontics. Where a tooth is broken or '
+     'missing rather than simply unattractive, crowns and bridges are covered under '
+     # A literal sibling path, not H.rel: CATEGORY is module-level data and has
+     # no helpers. Every category page lives in pages/, so the sibling link is
+     # correct from all of them.
+     '<a class="link-inline" href="missing-teeth.html">missing teeth</a>.',
      'These treatments involve special techniques, equipment and a high level of skill from the '
      'dental team. We are proud to offer them to our patients here at the practice, and have '
      'seen many a smile transformed under our own roof.',
@@ -1943,7 +1948,7 @@ def r_home(depth, H):
 
     out.append(c_section(
         '<div class="section-head section-head--center"><span class="label">Case studies</span>'
-        '<h2>Real people, real problems, treated to the level patient allows us to treat them.</h2>'
+        '<h2>Real people, real problems — treated as far as each patient wants to go.</h2>'
         '<p>The cases on this page were published with consent and kind agreement of our happy '
         'patients.</p></div>'
         + c_cards(H, depth, [
@@ -2094,8 +2099,8 @@ def r_treatments(depth, H):
 
     specs = [('general', 'Check-ups, fillings, root canal treatment, extractions, emergencies '
                          'and support for nervous patients.', False, False),
-             ('cosmetic', 'Clear aligners, veneers, crowns, bridges, whitening and gum '
-                          'reshaping.', True, True),
+             ('cosmetic', 'Clear aligners, veneers, whitening and gum reshaping.',
+              True, True),
              ('preventative', 'Check-ups, hygiene visits and help with sensitive teeth — the '
                               'foundation of everything else.', False, False),
              ('missing', 'Crowns, bridges, dentures and implant-supported replacements.', True, True)]
@@ -2605,7 +2610,7 @@ def r_fees(depth, H):
 def r_cases(depth, H):
     out = [c_page_head(
         H, depth, 'Case studies', 'Case studies',
-        'Real people with real problems, treated to the level the patient allows us to treat them.',
+        'Real people with real problems, treated as far as each patient wants to go.',
         'images/heroes/case-studies.jpg', c_crumbs(H, depth, [], 'Case studies'))]
 
     # Two columns again. This was made single-column when the container was
@@ -2614,7 +2619,7 @@ def r_cases(depth, H):
     # column here just leaves the right half of the section empty.
     out.append(c_section('''<div class="section-split">
       <div class="prose">
-      <p class="statement-text statement-text--wide">We treat real people with real problems to the level patient allows us to treat them.</p>
+      <p class="statement-text statement-text--wide">We treat real people with real problems, and how far treatment goes is always the patient’s choice.</p>
       <p>The cases on this page were published with consent and kind agreement of our happy patients.</p>
       <p>We acknowledge that these cases may not be perfect, but just like everything in life is not ideal or perfect, neither are our teeth.</p>
       <p>We work with a range of dental laboratories across the UK and Europe, enabling us to collaborate with certified highly skilled technicians who specialise in their respective fields.</p>
@@ -2881,10 +2886,14 @@ TYPE_ROWS = [
     ('Heading 2', 'h2', '--fs-h2', '24 → 34px', 'Four areas of care.'),
     ('Heading 3', 'h3', '--fs-h3', '20 → 24px', 'What to expect at your first visit'),
     ('Heading 4', 'h4', '--fs-h4', '17px', 'Preventative care'),
-    ('Lead', 'lead', '--fs-lead', '15 → 17px',
-     'Routine dental appointments are essential to maintain good oral health.'),
+    # No Lead row: --fs-lead is gone. It ran 16→18px against 16px body and read
+    # as the scale being inconsistent rather than as a hierarchy — an intro is
+    # set apart by measure, line-height and colour instead (design.md 2.2a).
     ('Body', 'body', '--fs-body', '15px',
      'We take time to understand your concerns, respect your choices, and explain your options clearly.'),
+    ('Small', 'sm', '--fs-sm', '14px',
+     'Copy inside a narrow grid tile, where 15 would not fit the column.'),
+    ('Meta', 'xs', '--fs-xs', '13px', 'Captions, field hints and form notes.'),
     ('Label', 'label', '--fs-label', '11px / .16em', 'Preventative dentistry'),
 ]
 
@@ -2921,17 +2930,20 @@ def r_styleguide(depth, H):
             markup = '<div class="sg-sample sg-sample--display">%s</div>' % _e(sample)
         elif cls == 'label':
             markup = '<span class="label">%s</span>' % _e(sample)
-        elif cls == 'lead':
-            markup = '<p class="lead">%s</p>' % _e(sample)
+        elif cls in ('sm', 'xs'):
+            # Set from the token itself, so the specimen is the size it claims
+            # rather than inheriting body and quietly showing 15px for both.
+            markup = ('<p style="font-size:var(--fs-%s)">%s</p>' % (cls, _e(sample)))
         else:
             markup = '<p>%s</p>' % _e(sample)
         rows.append('<div class="sg-type-row"><div class="sg-type-row__meta">%s<br>var(%s) &middot; %s</div>'
                     '<div style="flex:1;min-width:min(100%%,320px)">%s</div></div>'
                     % (_e(name), var, _e(size), markup))
     body.append(_sg('Typography', '02',
-                    '<p class="lead u-mb-8">Space Grotesk for headings and micro-labels, Inter for '
-                    'body copy. The scale is fluid — every size interpolates between a mobile and '
-                    'a desktop value.</p>' + ''.join(rows)))
+                    '<p class="lead u-mb-8">Space Grotesk for headings and micro-labels, Inter '
+                    'for body copy. The headings are fluid, interpolating between a mobile and a '
+                    'desktop value; everything from body down is fixed. Running copy is one size '
+                    '— there is no separate lead.</p>' + ''.join(rows)))
 
     # Spacing
     boxes = ''.join('<div><div class="sg-scale__box" style="width:%dpx;height:%dpx"></div>'

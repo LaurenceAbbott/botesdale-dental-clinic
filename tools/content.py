@@ -186,6 +186,20 @@ def c_ph(label='', cls=''):
         (' ' + cls) if cls else '', _e(label or 'Image placeholder'), inner)
 
 
+def c_portrait(H, depth, name, image=None, size=None):
+    """A team portrait: the real photograph if there is one, else a placeholder.
+
+    alt is deliberately empty. The person's name sits in the .team__id overlay
+    inside the same container, so describing the portrait as well would have a
+    screen reader announce the name twice.
+    """
+    if not image:
+        return c_ph('Portrait \u2014 %s' % name)
+    dims = ' width="%d" height="%d"' % size if size else ''
+    return ('<img src="%s" alt=""%s loading="lazy" decoding="async">'
+            % (H.asset(image, depth), dims))
+
+
 def c_crumbs(H, depth, trail, current):
     """trail: list of page keys leading to the current page."""
     parts = ['<a href="%s">Home</a>' % H.rel('home', depth)]
@@ -1864,8 +1878,10 @@ def r_about(depth, H):
       </li>
     </ul>
   </div>
-</section>'''.format(martin=c_ph('Portrait — Dr Martin Sulo'),
-                     eve=c_ph('Portrait — Mrs Eve Sulo')))
+</section>'''.format(
+        martin=c_portrait(H, depth, 'Dr Martin Sulo',
+                          'images/brand/martin-botesdale-dental.png', (1200, 1554)),
+        eve=c_portrait(H, depth, 'Mrs Eve Sulo')))
 
     out.append(c_process(H, depth, 'The practice', 'Practical details', [
         ('Purpose-built since 2024', 'A state-of-the-art facility in the heart of Botesdale, '

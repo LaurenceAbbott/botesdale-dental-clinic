@@ -315,6 +315,10 @@ The mark is **three colours** — icon in `--black-2`, wordmark in `--black`, ar
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 
+**The header scrim extends past the header, and eases.** It covers the nav plus 90px below it, holding a plateau across the whole header so the falloff happens *below* the links rather than across them — the same reason the team scrim holds a plateau behind its text. And it is smoothstep: it used to be `.88 → .55 at 60% → 0`, where the slope more than doubled at 60% of the header's height and drew a visible band straight across the sky on a photographic page head.
+
+It is also lighter than it was, `.55` rather than `.88`. That is measured, not eased off by feel: the nav links land at 5.0:1 over the brightest sky, and where the page title scrolls under the wordmark the mark still reads at 3.8:1 against the 3:1 a graphic needs. A photographic page head carries no second top gradient — two overlapping curves of different shapes are what made the junction visible.
+
 **A scrim sits behind the transparent header.** `.is-scrolled` does not arrive until the hero has almost passed, so hero copy scrolls underneath the transparent header well before it goes solid — the page title collided with the wordmark, white on white. `.nav::before` is a top-down gradient in `--ink-rgb` that keeps the transparent-over-hero look while guaranteeing anything sliding under the header is darkened before it reaches the logo; it fades out as the solid state fades in, and `.nav__inner` takes `position: relative; z-index: 1` so the header's own content paints above it.
 
 **The header CTA's label follows its border.** `.nav__cta` is paper-on-transparent over the hero. When `.is-scrolled` swaps in the paper background, the rule that flips the border to `--black` has to flip `color` with it — otherwise the label stays paper on paper and the button reads as an empty box.

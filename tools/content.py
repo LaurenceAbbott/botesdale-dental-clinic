@@ -393,14 +393,18 @@ def c_intro_center(H, depth, eyebrow, heading, paras):
     the fourth centred moment on the site, and deliberate for the same reason
     as the other three: one idea, read at a glance, not a passage worked
     through (design.md 1.5).
+
+    The arc closes it, where the photograph used to be — the motif in place of
+    a picture, on the same reasoning as the leaf pages (r_leaf).
     """
     return '''<section class="section intro-center" data-reveal>
   <div class="wrap wrap--narrow">
     <span class="label">{eyebrow}</span>
     <h2>{heading}</h2>
     {body}
+    {arc}
   </div>
-</section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading),
+</section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading), arc=BAND_ARC,
                    body=''.join('<p>%s</p>' % t for t in paras))
 
 

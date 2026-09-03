@@ -38,12 +38,48 @@ const fail = m => { console.log('  FAIL  ' + m); failed++; };
     const p = await ctx.newPage();
     await p.route('**://*.google*/**', r => r.abort());
     await p.goto('http://127.0.0.1:8931/index.html', { waitUntil: 'networkidle' });
-    const hrefs = await p.evaluate(sel => [...document.querySelectorAll(sel)]
-      .map(a => (a.getAttribute('href') || '').split('/').pop()), w > 1120 ? '.nav__links a' : '.menu a');
-    const missing = treatments.filter(f => !hrefs.includes(f));
-    if (missing.length) fail(name + ' — not linked: ' + JSON.stringify(missing));
+
+    // Open the menu for real. Being in the DOM is NOT reachable: the sheet's
+    // sub-panel is `overflow: hidden` with a max-height, so a link past the cap
+    // is present, findable by querySelectorAll, and invisible on the phone.
+    // That is exactly how Crowns onwards went missing while this passed.
+    if (w <= 1120) {
+      await p.click('#menuOpen'); await p.waitForTimeout(400);
+      for (const t of await p.$$('.menu__toggle')) {
+        for (let i = 0; i < 3; i++) {
+          if (await t.getAttribute('aria-expanded') === 'true') break;
+          await t.click(); await p.waitForTimeout(300);
+        }
+      }
+      await p.waitForTimeout(400);
+    } else {
+      await p.hover('.nav__dd--mega .nav__link'); await p.waitForTimeout(300);
+    }
+
+    const seen = await p.evaluate(sel => {
+      const out = [];
+      for (const a of document.querySelectorAll(sel)) {
+        const r = a.getBoundingClientRect();
+        if (r.width < 1 || r.height < 1) continue;
+        // Not clipped away by an ancestor that hides its overflow.
+        let n = a.parentElement, clipped = false;
+        while (n && n !== document.body) {
+          const cs = getComputedStyle(n);
+          if (cs.overflow === 'hidden' || cs.overflowY === 'hidden') {
+            const b = n.getBoundingClientRect();
+            if (r.bottom > b.bottom + 1 || r.top < b.top - 1) { clipped = true; break; }
+          }
+          n = n.parentElement;
+        }
+        if (!clipped) out.push((a.getAttribute('href') || '').split('/').pop());
+      }
+      return out;
+    }, w > 1120 ? '.nav__links a' : '.menu a');
+
+    const missing = treatments.filter(f => !seen.includes(f));
+    if (missing.length) fail(name + ' — present but not actually visible: ' + JSON.stringify(missing));
     else if (failed === before)
-      console.log('  PASS  ' + name + ': all ' + treatments.length + ' reachable');
+      console.log('  PASS  ' + name + ': all ' + treatments.length + ' visible and unclipped');
     await ctx.close();
   }
 

@@ -76,12 +76,21 @@
   }
 
   /* --- mobile submenu groups ---------------------------------------------- */
+  /* The open height is MEASURED, never a number in the stylesheet. It used to
+     be `max-height: 460px`, sized by hand for a four-item list; when the panel
+     grew to every treatment page the overflow simply clipped it and Crowns
+     onwards vanished with no error anywhere. scrollHeight cannot go stale. */
+  function setSubHeight(sub) {
+    sub.style.maxHeight = sub.classList.contains('is-open') ? sub.scrollHeight + 'px' : '';
+  }
+
   Array.prototype.forEach.call(document.querySelectorAll('.menu__toggle'), function (btn) {
     btn.addEventListener('click', function () {
       var sub = document.getElementById(btn.getAttribute('aria-controls'));
       if (!sub) return;
       var isOpen = sub.classList.toggle('is-open');
       btn.setAttribute('aria-expanded', String(isOpen));
+      setSubHeight(sub);
     });
   });
 
@@ -92,5 +101,11 @@
     var toggle = document.querySelector('[aria-controls="' + group.id + '"]');
     group.classList.add('is-open');
     if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    setSubHeight(group);
   }
+
+  /* A resize changes the wrapped height of the labels inside. */
+  window.addEventListener('resize', function () {
+    Array.prototype.forEach.call(document.querySelectorAll('.menu__sub.is-open'), setSubHeight);
+  });
 }());

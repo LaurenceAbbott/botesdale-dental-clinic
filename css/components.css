@@ -363,32 +363,9 @@
    There is no second gradient at the top: .nav::before already covers the
    header — and the crumbs riding under it — and two overlapping curves with
    different shapes are what made the junction visible. */
+/* FOOT — the ground behind the label, h1 and sub. */
 .page-head--shot .page-head__scrim {
-  background:
-    /* TOP — the ground under the header and the crumb row. This layer exists
-       because .nav::before cannot do the job: .nav is a stacking context above
-       the page head, so its scrim covers the crumb TEXT as well as the sky and
-       drags both toward the same ink (1.68:1 when it reached them). This one
-       sits below the copy, so the letters stay full --paper.
-       Stops are in PIXELS, not per cent: the crumb row is at a fixed offset
-       from the top, while the head is 660px on desktop and 620px on mobile —
-       percentages would slide it off the row on one of them.
-       It rises under the header, where .nav::before is still at full strength,
-       so the handover is invisible; combined the two run .560 -> .500 with no
-       step. */
-    linear-gradient(to bottom,
-      rgba(var(--ink-rgb), 0)    73px,
-      rgba(var(--ink-rgb), .083) 80px,
-      rgba(var(--ink-rgb), .236) 86px,
-      rgba(var(--ink-rgb), .417) 93px,
-      rgba(var(--ink-rgb), .500) 100px,
-      rgba(var(--ink-rgb), .500) 132px,
-      rgba(var(--ink-rgb), .413) 150px,
-      rgba(var(--ink-rgb), .228) 168px,
-      rgba(var(--ink-rgb), .062) 185px,
-      rgba(var(--ink-rgb), 0)    200px),
-    /* FOOT — the label, h1 and sub. */
-    linear-gradient(to top,
+  background: linear-gradient(to top,
     rgba(var(--ink-rgb), .680) 0%,
     rgba(var(--ink-rgb), .680) 32%,
     rgba(var(--ink-rgb), .630) 36%,
@@ -398,6 +375,40 @@
     rgba(var(--ink-rgb), .050) 52%,
     rgba(var(--ink-rgb), 0)    56%);
 }
+/* TOP — the SAME gradient .nav::before carries, in the same place, but painted
+   HERE: below the copy instead of above it. That is the whole point. .nav is a
+   stacking context above the page head, so its scrim covers the breadcrumb
+   TEXT as well as the sky and drags both toward the same ink (1.68:1). This
+   one only ever touches the photograph.
+
+   Stops in PIXELS, not per cent: the nav scrim is 220px tall in absolute
+   terms, while the head is 660px on desktop and 620px on mobile, so
+   percentages would land it in a different place on each.
+
+   Its own element so it can crossfade with .nav::before — the two must never
+   both paint, or the overlap doubles the ink and the head's copy slides
+   through a second, moving band. At 24px of scroll they are still in the same
+   place, so the handover is invisible. */
+.page-head--shot .page-head__scrim::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(var(--ink-rgb), .560) 0px,
+    rgba(var(--ink-rgb), .560) 60px,
+    rgba(var(--ink-rgb), .553) 70px,
+    rgba(var(--ink-rgb), .521) 86px,
+    rgba(var(--ink-rgb), .459) 103px,
+    rgba(var(--ink-rgb), .367) 123px,
+    rgba(var(--ink-rgb), .264) 143px,
+    rgba(var(--ink-rgb), .164) 163px,
+    rgba(var(--ink-rgb), .086) 180px,
+    rgba(var(--ink-rgb), .029) 198px,
+    rgba(var(--ink-rgb), .005) 211px,
+    rgba(var(--ink-rgb), 0)    220px);
+  transition: opacity var(--t-fast) var(--ease);
+}
+.is-lifted .page-head--shot .page-head__scrim::before { opacity: 0; }
 
 /* The crumbs sit at the top of the head, directly under the header, not on
    the title block at the foot. They answer where-am-I; the label, h1 and sub
@@ -413,10 +424,7 @@
 .page-head__inner {
   position: relative;
   display: flex; flex-direction: column;
-  /* --s-7, not --s-3: the header scrim has to reach nothing before the
-     crumb row starts, or it paints over the crumb text (see .nav::before).
-     32px is the room that fade needs. */
-  padding-top: calc(var(--nav-h) + var(--s-7));
+  padding-top: calc(var(--nav-h) + var(--s-3));
   padding-bottom: var(--s-9);   /* clears the arc — see .hero__inner */
 }
 .page-head__top { margin-bottom: var(--s-6); }

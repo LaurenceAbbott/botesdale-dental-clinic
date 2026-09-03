@@ -19,6 +19,13 @@
 
     var onScroll = function () {
       nav.classList.toggle('is-scrolled', window.scrollY > threshold);
+      /* The header scrim paints ABOVE the page head, so at rest it would
+         cover the breadcrumb text as well as the sky. At rest the page head
+         paints the same gradient itself, below its copy; past a few pixels of
+         scroll the crumbs have gone under the header anyway and the scrim
+         takes over, which is when it is actually needed — holding the
+         wordmark legible while the h1 slides beneath it. */
+      document.documentElement.classList.toggle('is-lifted', window.scrollY > 24);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', function () {

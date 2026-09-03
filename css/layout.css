@@ -222,18 +222,42 @@
 .nav__dd:hover > .nav__panel,
 .nav__dd:focus-within > .nav__panel,
 .nav__dd.is-open > .nav__panel { display: flex; }
+/* The single-level dropdown — Implant clinic — is the same card, smaller.
+   It was still the old stack of bordered rows, which sat oddly next to the
+   Treatments panel now that one is a rounded surface. */
+.nav__panel:not(.nav__panel--mega) {
+  background: var(--paper-2);
+  border: var(--hair) solid var(--line);
+  /* The corner is proportional to the surface: 32px on a 1180px card reads
+     as a soft edge, on a 232px one it reads as a pill. */
+  border-radius: calc(var(--radius-media) * .625);
+  padding: var(--s-4);
+  margin-top: 12px;
+  min-width: 232px;
+}
 .nav__panel a {
   display: block;
-  background: rgba(247, 246, 243, .97);
-  backdrop-filter: blur(10px);
   color: var(--ink-soft);
-  font-size: .75rem; letter-spacing: .02em; text-transform: none;
-  padding: 11px 16px;
-  border-bottom: var(--hair) solid var(--line);
+  font-size: .8125rem; letter-spacing: .01em; text-transform: none;
+  padding: 9px 12px 9px 26px;
+  border-radius: var(--radius-btn);
   white-space: nowrap;
+  position: relative;
   transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
-.nav__panel a:first-child { border-top: var(--hair) solid var(--line); }
+.nav__panel:not(.nav__panel--mega) a::before {
+  content: "";
+  position: absolute; left: 12px; top: 50%;
+  width: 7px; height: 7px; margin-top: -4px;
+  border-right: 1.5px solid var(--accent);
+  border-top: 1.5px solid var(--accent);
+  transform: rotate(45deg) translateX(-2px);
+  opacity: .45;
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.nav__panel:not(.nav__panel--mega) a:hover::before {
+  opacity: 1; transform: rotate(45deg) translateX(1px);
+}
 .nav__panel a:hover, .nav__panel a.is-active { color: var(--black); background: var(--paper-2); }
 
 /* The Treatments panel is a CARD that floats under the header, not a band
@@ -289,11 +313,40 @@
 }
 .nav__panel--mega a:hover,
 .nav__panel--mega a.is-active { background: var(--paper-3); color: var(--black); }
+/* A TITLE, not a link. It used to be both — the category heading doubled as
+   the link to its overview — and a heading that is also a link leaves the
+   reader guessing which it is. The overview page is the first item in the
+   list instead, named in full, so every clickable thing in the panel looks
+   and behaves the same. */
 .nav__panel--mega .nav__col-head {
+  display: block;
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
-  font-size: .8125rem;
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
   color: var(--black);
+  padding: 0 0 var(--s-2);
+}
+
+/* Sub-links get an arrow that steps out on hover. It sits in a fixed gutter
+   so the labels stay on one line whether or not it has moved. */
+.nav__panel--mega .nav__col > a {
+  position: relative;
+  padding-left: 24px; margin-left: -10px;
+}
+.nav__panel--mega .nav__col > a::before {
+  content: "";
+  position: absolute; left: 10px; top: 50%;
+  width: 7px; height: 7px; margin-top: -4px;
+  border-right: 1.5px solid var(--accent);
+  border-top: 1.5px solid var(--accent);
+  transform: rotate(45deg) translateX(-2px);
+  opacity: .45;
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.nav__panel--mega .nav__col > a:hover::before {
+  opacity: 1; transform: rotate(45deg) translateX(1px);
 }
 .nav__col-blurb {
   /* The header sets uppercase for the nav labels and it inherits down into
@@ -307,7 +360,14 @@
   background: var(--paper);
   border-top: var(--hair) solid var(--line);
 }
-.nav__panel-foot .arc-link { font-size: var(--fs-xs); }
+/* Same accent underline as the column headings, so the panel has one link
+   language rather than three. */
+.nav__panel-foot .arc-link {
+  font-size: var(--fs-xs);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
 
 /* Header CTA */
 .nav__cta {
@@ -395,7 +455,10 @@ body.is-locked { overflow: hidden; }
 /* The sheet carries the same two levels. Indented, not behind a second
    toggle: a treatment page three taps deep is the hidden-pages problem in a
    different shape. */
-.menu__subhead {
+/* .menu__sub a is (0,1,1) and beat a bare .menu__subhead at (0,1,0), so the
+   section headings rendered --ink-soft like the items under them. Same
+   specificity trap as .team__bio p over .team__gdc (2.2a). */
+.menu__sub a.menu__subhead {
   font-family: var(--font-head);
   font-weight: var(--fw-semi);
   color: var(--black);

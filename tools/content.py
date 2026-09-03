@@ -285,7 +285,7 @@ def c_page_head(H, depth, eyebrow, heading, sub='', image=None, crumbs='', short
 
 
 def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
-         warm=False, alt='', media_wide=False, image_size=None):
+         warm=False, alt='', media_wide=False, image_size=None, key=None):
     wrap_cls = 'ed'
     if rev:
         wrap_cls += ' ed--rev'
@@ -302,7 +302,10 @@ def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
         body_cls, ''.join('<p>%s</p>' % p for p in paras))
     link_html = c_arc_link(link[0], link[1]) if link else ''
     return c_ed_shell(
-        c_media(H, depth, image, alt or heading, image_size),
+        # A block that links to a page shows that page's photograph. One file
+        # per subject, wherever the subject appears — the card, the row and
+        # the page's own hero are never three different pictures.
+        c_media(H, depth, c_page_image(H, key) or image, alt or heading, image_size),
         '<span class="label">%s</span>\n    <h2>%s</h2>\n    %s\n    %s'
         % (_e(eyebrow), _e(heading), body, link_html),
         wrap_cls)
@@ -326,20 +329,31 @@ def c_ed_shell(media_html, text_html, wrap_cls='ed'):
 </section>'''.format(wrap_cls=wrap_cls, media=media_html, text=text_html)
 
 
-def c_hero_src(H, key, fallback=None):
-    """The page's own hero photograph, by naming convention.
+def c_page_image(H, key):
+    """The ONE photograph for a page, by naming convention, or None.
 
-    Files arrive named after the page slug —
-    assets/images/brand/<slug>-botesdale-dental-hero.png — so resolving them
-    here means dropping one in wires it up, with no data edit. Four had been
-    sitting in the repo unreferenced because the CATEGORY entries still
-    pointed at images/heroes/*.jpg placeholders that do not exist;
-    verify-assets.js is what noticed.
+    assets/images/brand/<page-slug>-botesdale-dental-hero.png. One file per
+    treatment, used wherever that treatment is pictured — its own hero and the
+    card that links to it — so a single upload lights up both and there is
+    never a card showing a different photograph from the page behind it.
+
+    Resolving from the slug means dropping a file in wires it up with no data
+    edit. It also means the filename has to match: three arrived as
+    crown- (the page is crowns), bridges-reshaping- and teeth-whitening-dental-
+    (missing "botesdale") and resolved to nothing at all, silently.
+    verify-assets.js now fails on a hero-named file no page claims.
     """
     route = ROUTES.get(key, '')
     slug = route.rsplit('/', 1)[-1][:-5] if route.endswith('.html') else ''
-    by_convention = 'images/brand/%s-botesdale-dental-hero.png' % slug
-    return by_convention if slug and H.asset_exists(by_convention) else fallback
+    if not slug:
+        return None
+    path = 'images/brand/%s-botesdale-dental-hero.png' % slug
+    return path if H.asset_exists(path) else None
+
+
+def c_hero_src(H, key, fallback=None):
+    """The page head's photograph — the same file c_page_image resolves."""
+    return c_page_image(H, key) or fallback
 
 
 def c_split_card(H, depth, eyebrow, heading, paras, link=None, image=None,
@@ -412,7 +426,11 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
           <p>{text}</p>
           <span class="arc-link">Read more</span>
         </div>
-      </a>'''.format(href=href, d=min(i, 3), ph=c_ph(it.get('alt') or it['title']),
+      </a>'''.format(href=href, d=min(i, 3),
+                     ph=c_media(H, depth,
+                                (c_page_image(H, it['key']) if it.get('key') else None)
+                                or it.get('image'),
+                                it.get('alt') or it['title']),
                      label=_e(it.get('label', '')), title=_e(it['title']),
                      text=_e(it['text']), arc=ARC))
 
@@ -1394,13 +1412,25 @@ CATEGORY = {
 # belongs where.
 for _n in NAV:
     if _n['key'] == 'treatments':
+        # The column heading is a TITLE, not a link — a heading that was also a
+        # link left the reader guessing which of the two it was. The overview
+        # page is the first item in the list instead, spelled out, which is
+        # also what the mobile sheet already did and what fills the Missing
+        # teeth column rather than leaving it a heading over nothing.
+        #
+        # The titles drop the trailing "dentistry": three of the four carried
+        # it, so it was the least informative word on the row.
+        _short = {'general': 'General', 'cosmetic': 'Cosmetic',
+                  'preventative': 'Preventative', 'missing': 'Missing teeth'}
         _n['children'] = [
-            {'key': _g, 'label': GROUPS[_g][0], 'blurb': CATEGORY[_g]['sub'],
-             'children': [{'key': _k, 'label': LABELS[_k]}
-                          for _k in GROUPS[_g][1] if _k != _g]}
+            {'key': _g, 'label': _short[_g], 'blurb': CATEGORY[_g]['sub'],
+             'children': [{'key': _g, 'label': '%s overview' % GROUPS[_g][0]}]
+                         + [{'key': _k, 'label': LABELS[_k]}
+                            for _k in GROUPS[_g][1] if _k != _g]}
             for _g in ('general', 'cosmetic', 'preventative')
-        ] + [{'key': 'missing', 'label': LABELS['missing'],
-              'blurb': CATEGORY['missing']['sub']}]
+        ] + [{'key': 'missing', 'label': _short['missing'],
+              'blurb': CATEGORY['missing']['sub'],
+              'children': [{'key': 'missing', 'label': '%s overview' % LABELS['missing']}]}]
 
 
 # =============================================================================
@@ -2056,7 +2086,7 @@ def r_treatments(depth, H):
     for i, (k, text, rev, warm) in enumerate(specs, 1):
         out.append(c_ed(H, depth, '%02d — %s' % (i, LABELS[k]), CATEGORY[k]['lead'],
                         [text], link=('Learn more', H.rel(k, depth)),
-                        image=imgs[k], alt=LABELS[k], rev=rev, warm=warm))
+                        key=k, image=imgs[k], alt=LABELS[k], rev=rev, warm=warm))
 
     out.append(c_statement(
         H, depth, '05 — Implant clinic',

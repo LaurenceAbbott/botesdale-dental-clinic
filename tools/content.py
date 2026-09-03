@@ -229,18 +229,27 @@ def c_hero(H, depth, eyebrow, heading, sub, image, actions=''):
 def c_page_head(H, depth, eyebrow, heading, sub='', image=None, crumbs='', short=False):
     if eyebrow.strip().lower() == heading.strip().lower():
         eyebrow = ''
-    return '''<section class="page-head{short}">
-  <!-- Background photograph goes here:
-       <img class="page-head__media" src="../assets/images/heroes/NAME.jpg" alt=""> -->
+    if image and H.asset_exists(image):
+        media = ('<img class="page-head__media" src="%s" alt="" fetchpriority="high" '
+                 'decoding="async">' % H.asset(image, depth))
+        note = ''
+    else:
+        media = ('<!-- Background photograph goes here:\n'
+                 '       <img class="page-head__media" src="../assets/images/heroes/NAME.jpg" alt=""> -->')
+        note = '<span class="ph-note" aria-hidden="true">Header photograph</span>'
+    return '''<section class="page-head{short}{shot}">
+  {media}
   <div class="page-head__scrim"></div>
-  <span class="ph-note" aria-hidden="true">Header photograph</span>
+  {note}
   <div class="page-head__inner wrap">
     {crumbs}
     {eyebrow}
     <h1>{heading}</h1>
     {sub}
   </div>
-</section>'''.format(short=' page-head--short' if short else '', crumbs=crumbs,
+</section>'''.format(short=' page-head--short' if short else '',
+                     shot=' page-head--shot' if (image and H.asset_exists(image)) else '',
+                     media=media, note=note, crumbs=crumbs,
                      eyebrow=('<span class="label">%s</span>' % _e(eyebrow)) if eyebrow else '',
                      heading=_e(heading),
                      sub=('<p>%s</p>' % _e(sub)) if sub else '')
@@ -1785,7 +1794,8 @@ def r_about(depth, H):
     out = [c_page_head(
         H, depth, 'About the practice', 'About us',
         'Trusted, personalised care in a brand-new setting.',
-        'images/heroes/about.jpg', c_crumbs(H, depth, [], 'About us'))]
+        'images/brand/about-us-botesdale-dental-hero.png',
+        c_crumbs(H, depth, [], 'About us'))]
 
     out.append(c_section('''<div class="home-intro__grid">
       <div>

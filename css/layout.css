@@ -108,24 +108,34 @@
    darkened before it reaches the logo. It fades out as the solid state fades
    in.
 
-   Two things about its shape. It EXTENDS 90px past the header, so the falloff
+   Two things about its shape. It EXTENDS past the header, so the falloff
    happens below the links rather than across them — the whole header sits in
    the plateau. And it is smoothstep, not the piecewise ramp it was: that ran
    .88 -> .55 -> 0 with the slope more than doubling at 60% of the header's
    height, which drew a visible band straight across the sky on a
-   photographic page head. Zero slope at both ends means no edge. */
+   photographic page head. Zero slope at both ends means no edge.
+
+   The 88px tail is set by the breadcrumb, not by the header. The crumbs now
+   ride at the top of the page head (§4.6) and land at 85-104px, so the
+   plateau has to hold to 66% to cover them — at the 54px tail it had already
+   fallen to .24 by the time it reached them, against the .56 they need over
+   bright sky. One gradient stretched, not a second one added underneath:
+   two overlapping curves of different shapes are what made the junction
+   visible in the first place. */
 .nav::before {
   content: "";
-  position: absolute; inset: 0 0 -54px 0;
+  position: absolute; inset: 0 0 -88px 0;
   pointer-events: none;
   background: linear-gradient(to bottom,
     rgba(var(--ink-rgb), .560) 0%,
-    rgba(var(--ink-rgb), .560) 57%,
-    rgba(var(--ink-rgb), .518) 64%,
-    rgba(var(--ink-rgb), .415) 71%,
-    rgba(var(--ink-rgb), .280) 79%,
-    rgba(var(--ink-rgb), .145) 86%,
-    rgba(var(--ink-rgb), .042) 93%,
+    rgba(var(--ink-rgb), .560) 66%,
+    rgba(var(--ink-rgb), .536) 70%,
+    rgba(var(--ink-rgb), .473) 74%,
+    rgba(var(--ink-rgb), .383) 79%,
+    rgba(var(--ink-rgb), .280) 83%,
+    rgba(var(--ink-rgb), .177) 87%,
+    rgba(var(--ink-rgb), .088) 92%,
+    rgba(var(--ink-rgb), .024) 96%,
     rgba(var(--ink-rgb), 0)    100%);
   transition: opacity var(--t-fast) var(--ease);
 }

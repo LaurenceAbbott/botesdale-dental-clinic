@@ -619,7 +619,25 @@ Uppercase micro-label header row, hairline separators. The wrapper scrolls horiz
 
 ### 4.21 Gallery & lightbox — `.gallery`, `.shot`, `#lightbox`
 
-Clinical before/during/after images with a corner tag. Any `[data-lightbox]` figure opens full-screen; Escape or a click closes it.
+Clinical during/detail images with a tag. Any `[data-lightbox]` figure opens full-screen; Escape or a click closes it.
+
+`c_gallery()` pulls the first **Before** and the first **After** out of the list and renders them as a comparison (4.21a); everything left — a second before, the durings, the details — follows in the grid below it.
+
+Tags sit at the **bottom centre**, not in a corner. `--radius-media` is 32px, and a square tag pushed into a 32px curve leaves a wedge of image showing through behind it. They carry `--radius-btn`, so they read as part of the same family as the buttons.
+
+### 4.21a Before / after — `.compare` + `js/ui.js`
+
+Two photographs of the same mouth, one wiped over the other, with a divider the reader drags. Used on every case study and for the lead case on the home page. **Not** `[data-reveal]` — that is the scroll-in animation (4.29), and the two are unrelated.
+
+The control is a **native `<input type="range">`** laid over the whole frame at `opacity: 0`. That is the whole trick: pointer drag, touch, the arrow keys and an accessible name all come with the element, a mousedown anywhere on it jumps the divider to that point, and `js/ui.js` only has to copy `range.value` into `--pos`. A div with pointer handlers would have meant writing all four by hand. Because the input is invisible its focus ring would be too, so `:focus-visible` rings the grip instead.
+
+The before pane is **clipped** with `clip-path`, never resized. Narrowing the element would make `object-fit: cover` re-crop that photograph instead of uncovering the one beneath it — the comparison would be between two different crops.
+
+`touch-action: pan-y` on the input: a horizontal drag adjusts the comparison, a vertical swipe still scrolls the page.
+
+With JS off the divider simply stays at its CSS default of 50%, so both photographs are half visible rather than one being hidden.
+
+Guarded by `tools/verify-compare.js`.
 
 ### 4.22 Prev / next pager — `.pager`
 

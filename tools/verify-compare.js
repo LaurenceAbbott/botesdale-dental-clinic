@@ -59,7 +59,21 @@ const ok = (m) => console.log('  ok   ' + m);
       if (Math.abs(geo.bw - geo.fw) > 1) bad(`before pane resized (${geo.bw} vs frame ${geo.fw})`);
       else ok('before pane is full width, clipped not resized');
       if (!/inset/.test(geo.clip)) bad('no clip-path on the before pane: ' + geo.clip);
-      if (geo.r !== '32px') bad('frame radius is ' + geo.r); else ok('frame radius 32px');
+      // Inside a card or a strip tile the CONTAINER clips and carries the
+      // radius, so assert whatever actually rounds the visible corner rather
+      // than demanding it on the comparison itself.
+      const round = await c.evaluate(el => {
+        for (let n = el; n && n !== document.body; n = n.parentElement) {
+          const cs = getComputedStyle(n);
+          if (parseFloat(cs.borderTopLeftRadius) > 0 && cs.overflow !== 'visible') {
+            return { by: n.className.toString().split(' ')[0], r: cs.borderTopLeftRadius };
+          }
+        }
+        return null;
+      });
+      if (!round) bad('nothing rounds the comparison — a square corner in a rounded system');
+      else if (parseFloat(round.r) !== 32) bad(`rounded at ${round.r} by .${round.by}`);
+      else ok(`rounded at 32px by .${round.by}`);
 
       // 3. Mouse: press and drag moves the divider and the clip with it.
       const box = await c.boundingBox();
@@ -212,10 +226,46 @@ const ok = (m) => console.log('  ok   ' + m);
     }
   }
 
-  // 10. The old corner tag is gone everywhere.
+  // 10. Every case that HAS a before and an after gets a comparison wherever
+  //     it is listed — not just the first one. The home page shipped with a
+  //     comparison on the lead case and flat placeholders on the rest, which
+  //     is exactly the kind of thing a spot-check on one element misses.
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
   await page.route('**://*.google*/**', r => r.abort());
+
+  for (const [path, sel, want, label] of [
+    ['/index.html', '.cols-3 > *', 3, 'home page case cards'],
+    ['/pages/case-studies.html', '.strip__row > *', 5, 'case studies index tiles'],
+  ]) {
+    await page.goto(BASE + path, { waitUntil: 'networkidle' });
+    console.log('\n' + label);
+    const counts = await page.evaluate(sel => {
+      const tiles = [...document.querySelectorAll(sel)];
+      return { tiles: tiles.length, withCompare: tiles.filter(t => t.querySelector('.compare')).length };
+    }, sel);
+    if (counts.tiles !== want) bad(`expected ${want} tiles, found ${counts.tiles}`);
+    else if (counts.withCompare !== want) bad(`only ${counts.withCompare} of ${want} have a comparison`);
+    else ok(`all ${want} have a comparison`);
+
+    // 10b. A comparison inside a link is unusable: the drag navigates. Those
+    //      tiles must not be anchors, and the link must live in the caption.
+    const links = await page.evaluate(() => {
+      const cs = [...document.querySelectorAll('.compare')];
+      return { inAnchor: cs.filter(c => c.closest('a')).length,
+               reachable: cs.filter(c => {
+                 const tile = c.closest('.card, .strip__item');
+                 return tile && tile.querySelector('a[href]');
+               }).length,
+               total: cs.length };
+    });
+    if (links.inAnchor) bad(`${links.inAnchor} comparison(s) inside a link — the drag would navigate`);
+    else ok('no comparison sits inside a link');
+    if (links.reachable !== links.total) bad(`${links.total - links.reachable} tile(s) have no link to the case`);
+    else ok('every tile still links to its case');
+  }
+
+  // 11. Shot tags stay centred on a plain gallery figure.
   await page.goto(BASE + '/pages/case-same-day-teeth.html', { waitUntil: 'networkidle' });
   console.log('\nshot tags');
   const shots = await page.evaluate(() => [...document.querySelectorAll('.shot__tag')].map(t => {
@@ -224,12 +274,31 @@ const ok = (m) => console.log('  ok   ' + m);
              rad: getComputedStyle(t).borderTopLeftRadius };
   }));
   if (!shots.length) bad('no .shot__tag to check');
-  shots.forEach((s, i) => {
-    if (Math.abs(s.off) > 1.5) bad(`shot tag ${i} not centred (${s.off.toFixed(1)}px off)`);
-    if (s.b < 8) bad(`shot tag ${i} flush to the bottom (${s.b}px)`);
-    if (s.rad !== '4px') bad(`shot tag ${i} radius ${s.rad}`);
+  shots.forEach((sh, i) => {
+    if (Math.abs(sh.off) > 1.5) bad(`shot tag ${i} not centred (${sh.off.toFixed(1)}px off)`);
+    if (sh.b < 8) bad(`shot tag ${i} flush to the bottom (${sh.b}px)`);
+    if (sh.rad !== '4px') bad(`shot tag ${i} radius ${sh.rad}`);
   });
   if (shots.length) ok(`${shots.length} shot tag(s) centred, off the edge, 4px`);
+
+  // 12. No drop shadows. The site separates with hairlines; the only legal
+  //     box-shadows are flat rings (0 0 0 Npx) — a blur radius means a drop
+  //     shadow borrowed from another design language.
+  console.log('\nshadows');
+  const shadows = await page.evaluate(() => {
+    const out = [];
+    document.querySelectorAll('.compare, .compare *').forEach(el => {
+      const sh = getComputedStyle(el).boxShadow;
+      if (!sh || sh === 'none') return;
+      // "rgba(...) 0px 2px 12px 0px" — offsets/blur follow the colour.
+      const nums = sh.replace(/rgba?\([^)]*\)/g, '').match(/-?[\d.]+px/g) || [];
+      const [x, y, blur] = nums.map(parseFloat);
+      if (blur > 0 || x !== 0 || y !== 0) out.push(el.className.toString().split(' ')[0] + ': ' + sh);
+    });
+    return out;
+  });
+  if (shadows.length) shadows.forEach(x => bad('drop shadow on .' + x));
+  else ok('no drop shadows — flat rings only');
   await ctx.close();
 
   await browser.close();

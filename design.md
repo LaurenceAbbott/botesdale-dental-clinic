@@ -423,7 +423,9 @@ Headshots side by side inside `.wrap`, two up (one up under 860px). These are po
 </ul>
 ```
 
-Name and role are white over the foot of the portrait; the biography reads underneath at full card width. The scrim (`.team__portrait::after`) is **flat at the bottom, not a plain ramp** — `rgba(0,0,0,.88)` held solid for the bottom 26% before fading out at 52%. The overlaid text sits entirely inside that flat zone, so it keeps 6.2:1 whatever the photograph does behind it; a straight linear fade would put the label at roughly 2:1 over a bright background.
+Name and role are white over the foot of the portrait; the biography reads underneath at full card width. The scrim (`.team__portrait::after`) is **flat at the bottom, not a plain ramp** — held solid for the bottom 26% before fading out at 52%. The overlaid text sits entirely inside that flat zone, so its contrast does not depend on what the photograph is doing; a straight linear fade would put the label at roughly 2:1 over a bright background.
+
+Its opacity is **`.75`**, set from the worst case — a blown-out white photograph. There the name reads 9.6:1 and the role label 5.7:1. The label is the binding constraint, not the name: it is `--paper-soft`, a *translucent* white, so it composites onto the scrim rather than sitting on it. The floor is around `.70` (4.8:1); `.75` keeps real margin without burying the picture, which `.88` did.
 
 ### 4.14 Quote & carousel — `.quote`, `[data-carousel]`
 

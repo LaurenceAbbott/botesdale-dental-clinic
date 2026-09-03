@@ -1881,7 +1881,8 @@ def r_about(depth, H):
 </section>'''.format(
         martin=c_portrait(H, depth, 'Dr Martin Sulo',
                           'images/brand/martin-botesdale-dental.png', (1200, 1554)),
-        eve=c_portrait(H, depth, 'Mrs Eve Sulo')))
+        eve=c_portrait(H, depth, 'Mrs Eve Sulo',
+                       'images/brand/eve-botsdale-dental.png', (1200, 1554))))
 
     out.append(c_process(H, depth, 'The practice', 'Practical details', [
         ('Purpose-built since 2024', 'A state-of-the-art facility in the heart of Botesdale, '

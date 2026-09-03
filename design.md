@@ -315,9 +315,11 @@ The mark is **three colours** — icon in `--black-2`, wordmark in `--black`, ar
 
 Transparent over the hero, then `.is-scrolled` swaps in a translucent paper background once the hero has passed. Desktop dropdowns open on hover and focus (`:focus-within`), so they are keyboard-reachable. Below 1080px the burger opens `.menu`, a full-screen sheet with focus trapping, Escape-to-close and expandable groups.
 
-**The header scrim extends past the header, and eases.** It covers the nav plus 54px below it, holding its plateau to 57% — across the whole header — so the falloff happens *below* the links rather than across them, the same reason the team scrim holds a plateau behind its text. And it is smoothstep: it used to be `.88 → .55 at 60% → 0`, where the slope more than doubled at 60% of the header's height and drew a visible band straight across the sky on a photographic page head.
+**The header scrim extends past the header, and eases.** It covers the nav plus 88px below it, holding its plateau to 66% so the falloff happens *below* everything it protects rather than across it — the same reason the team scrim holds a plateau behind its text. And it is smoothstep: it used to be `.88 → .55 at 60% → 0`, where the slope more than doubled at 60% of the header's height and drew a visible band straight across the sky on a photographic page head.
 
-It is also lighter than it was, `.56` rather than `.88`, and the tail is short — 54px, not 90px. Both are measured, not eased off by feel: the nav links land at 4.65:1 over the brightest sky, the header CTA at 5.29:1, and where the page title scrolls under the wordmark the mark still reads at 3.91:1 against the 3:1 a graphic needs. It cannot go to zero: with no top scrim at all the nav links measure **1.44:1** over that sky and the burger 2.70:1. A photographic page head carries no second top gradient — two overlapping curves of different shapes are what made the junction visible.
+**The tail is sized by the breadcrumb, not by the header.** The crumbs ride at the top of the page head (§4.6) and land at 85–104px, so the plateau has to reach them; at the 54px tail it had already fallen to `.24` by then, against the `.56` they need over bright sky. One gradient stretched, not a second one added underneath — two overlapping curves of different shapes are what made the junction visible in the first place, and a photographic page head still carries no top gradient of its own.
+
+It is also lighter than it was, `.56` rather than `.88`. That is measured, not eased off by feel: the nav links land at 4.65:1 over the brightest sky, the header CTA at 5.29:1, the crumbs at 6.36:1, and where the page title scrolls under the wordmark the mark still reads at 3.91:1 against the 3:1 a graphic needs. It cannot go to zero: with no top scrim at all the nav links measure **1.44:1** over that sky and the burger 2.70:1.
 
 **A scrim sits behind the transparent header.** `.is-scrolled` does not arrive until the hero has almost passed, so hero copy scrolls underneath the transparent header well before it goes solid — the page title collided with the wordmark, white on white. `.nav::before` is a top-down gradient in `--ink-rgb` that keeps the transparent-over-hero look while guaranteeing anything sliding under the header is darkened before it reaches the logo; it fades out as the solid state fades in, and `.nav__inner` takes `position: relative; z-index: 1` so the header's own content paints above it.
 
@@ -361,19 +363,32 @@ The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The pat
 
 **With a photograph (`.page-head--shot`).** `c_page_head()` renders the `<img>` only when the file is actually on disk — every page head is written with an `image` argument, but the hero photography mostly does not exist yet, so rendering it unconditionally would give 34 pages a broken reference. Without a file it keeps the commented placeholder.
 
-**The dark belongs at the bottom, and nowhere else.** A photographic head carries one scrim of its own, rising from the foot behind the crumbs, heading and sub; the top is left to `.nav::before` (§4.3), which is already there for every page. The single `.62 → .28 → .86` ramp it replaced muted the whole image *and* reversed slope at 40%, which creases visibly over a photograph. It is smoothstep, for the reason given in §4.13.
+**The dark belongs at the bottom, and nowhere else.** A photographic head carries one scrim of its own, rising from the foot behind the label, heading and sub; the top is left to `.nav::before` (§4.3), which is already there for every page and now covers the crumbs with it. The single `.62 → .28 → .86` ramp it replaced muted the whole image *and* reversed slope at 40%, which creases visibly over a photograph. It is smoothstep, for the reason given in §4.13.
 
 **A photograph needs room to be a photograph.** The scrims are sized by the content they protect, and that content is a fixed pixel height — so on the 396px head the header scrim took the top 41% and the copy plateau the bottom 58%, leaving **1% of the picture untouched**. That, not the opacities, is what was muting the image. `.page-head--shot` is therefore `min(74vh, 660px)`, and `min(80vh, 620px)` below 720px: same content, same protection, far more picture. And `saturate(.85) contrast(1.02)` now applies only to heads *without* a photograph — it was there to tame the placeholder gradients, and a real image does not want it.
 
-**The values are measured, not guessed.** Against the lightest pixel actually behind each element on the about-us photograph, the minimum scrim needed is `.56` for the crumbs, `.54` for the h1, `.69` for the sub and `.50` for the nav links. The plateau is `.68` and holds to 38% of the head, reaching nothing by 62%.
+**The values are measured, not guessed.** Against the lightest pixel actually behind each element on the about-us photograph, the minimum scrim needed is `.56` for the crumbs, `.54` for the h1, `.69` for the sub and `.50` for the nav links. The plateau is `.68` and holds to 32% of the head, reaching nothing by 56%. It came down from 38% when the crumbs moved to the top: they had been the topmost thing the foot had to protect. What the header scrim gained in tail, the foot gave back.
 
-**`--paper-mute` cannot be used over a photograph.** At 50% white on a bright pixel it needs a `.92` scrim to reach AA — effectively blacking the picture out — against `.56` at full paper, and every point of scrim is a point of picture lost. So on `--shot` the crumbs, label **and sub** go to `--paper`; taking the sub with them is what let the plateau drop from `.75` to `.68` and stop at 38% of the height instead of 58%. The soft tones exist for a flat dark ground; over a photograph the hierarchy comes from size and weight instead, and legibility wins.
+**`--paper-mute` cannot be used over a photograph.** At 50% white on a bright pixel it needs a `.92` scrim to reach AA — effectively blacking the picture out — against `.56` at full paper, and every point of scrim is a point of picture lost. So on `--shot` the crumbs, label **and sub** go to `--paper`; taking the sub with them is what let the plateau drop from `.75` to `.68` and stop well short of the 58% it used to reach. The soft tones exist for a flat dark ground; over a photograph the hierarchy comes from size and weight instead, and legibility wins.
 
 That override block has to sit **after** the base `.page-head .label` / `.page-head p` rules, not before them: `.page-head--shot p` and `.page-head p` are the same specificity, so on the earlier source position the sub silently kept `--paper-soft` and measured 3.80:1.
 
 The suite hides the text, screenshots the head, decodes the PNG and samples the pixels where each element sat — so contrast is checked against the real composite of photograph plus both scrims, not against an assumption.
 
 The compact hero used on every inner page. Same structure as `.hero`; add `--short` for legal pages. Carries the breadcrumb and, where it is not simply a repeat of the `h1`, a micro-label.
+
+**The crumbs sit at the top of the head, not on the title block.** They answer where-am-I; the label, `h1` and sub are one unit and read better without a line of meta above them.
+
+```html
+<div class="page-head__inner wrap">
+  <div class="page-head__top">…crumbs…</div>
+  <div class="page-head__title">…label, h1, sub…</div>
+</div>
+```
+
+`.page-head` is `align-items: stretch` so the inner spans the head; the inner is a flex column, and `.page-head__title` takes `margin-top: auto` to fall to the foot. **In flow, not absolute.** An absolute crumb row is outside the box model, so the title below cannot see it: on a `--short` legal head the label rode straight through the crumbs, and a four-level trail wrapping to three lines at 390px did the same on eight treatment pages. `margin-top: auto` costs nothing when there is slack above and yields when there is not.
+
+`verify-crumbs.js` sweeps all 33 page heads at 390 / 768 / 1440 and asserts three things: the crumbs are above the title block with no overlap, both start on the same rail, and no `.crumbs` is left inside `.page-head__title`. The overlap check is the one that earns its place — it is what caught both collisions.
 
 ### 4.7 Breadcrumb — `.crumbs`
 

@@ -280,7 +280,9 @@
    -------------------------------------------------------------------------- */
 .page-head {
   position: relative; overflow: hidden;
-  display: flex; align-items: flex-end;
+  /* stretch, not flex-end: the inner spans the head so it can pin the crumbs
+     to the top and the title to the foot in one flow. See .page-head__inner. */
+  display: flex; align-items: stretch;
   min-height: 44vh;
   margin-top: calc(-1 * var(--nav-h));
   background: var(--grad-hero);
@@ -321,27 +323,45 @@
    is .56 for the crumbs, .54 for the h1, .69 for the sub, and .50 for the
    nav links. The plateaus clear all four.
 
+   The plateau holds to 32%, not 38%: the crumbs used to be the topmost thing
+   the foot had to protect, and they have moved to the top of the head. What
+   the top gained in tail, the foot gives back.
+
    There is no second gradient at the top: .nav::before already covers the
-   header, and two overlapping curves with different shapes are what made the
-   junction visible. The header's own scrim now extends past it and holds a
-   plateau across the links, so it does the whole job. */
+   header — and the crumbs riding under it — and two overlapping curves with
+   different shapes are what made the junction visible. */
 .page-head--shot .page-head__scrim {
   background: linear-gradient(to top,
     rgba(var(--ink-rgb), .680) 0%,
-    rgba(var(--ink-rgb), .680) 38%,
-    rgba(var(--ink-rgb), .630) 42%,
-    rgba(var(--ink-rgb), .504) 46%,
-    rgba(var(--ink-rgb), .340) 50%,
-    rgba(var(--ink-rgb), .176) 54%,
-    rgba(var(--ink-rgb), .050) 58%,
-    rgba(var(--ink-rgb), 0)    62%);
+    rgba(var(--ink-rgb), .680) 32%,
+    rgba(var(--ink-rgb), .630) 36%,
+    rgba(var(--ink-rgb), .504) 40%,
+    rgba(var(--ink-rgb), .340) 44%,
+    rgba(var(--ink-rgb), .176) 48%,
+    rgba(var(--ink-rgb), .050) 52%,
+    rgba(var(--ink-rgb), 0)    56%);
 }
 
+/* The crumbs sit at the top of the head, directly under the header, not on
+   the title block at the foot. They answer where-am-I; the label, h1 and sub
+   are one unit and read better without a line of meta above them. Absolute
+   rather than in flow because the head is bottom-aligned — and on its own
+   .wrap, so it still starts on the rail (§2.3). */
+/* The inner spans the head and splits it: crumbs pinned to the top, title
+   block pushed to the foot by its own auto margin. In flow, not absolute —
+   an absolute crumb row is outside the box model, so the title below could
+   not see it, and a four-level trail wrapping to three lines at 390px ran
+   straight through the label. margin-top: auto costs nothing when there is
+   slack and yields when there is not. */
 .page-head__inner {
   position: relative;
-  padding-top: calc(var(--nav-h) + var(--s-6));
+  display: flex; flex-direction: column;
+  padding-top: calc(var(--nav-h) + var(--s-3));
   padding-bottom: var(--s-9);   /* clears the arc — see .hero__inner */
 }
+.page-head__top { margin-bottom: var(--s-6); }
+.page-head__top .crumbs { margin-bottom: 0; }
+.page-head__title { margin-top: auto; }
 .page-head .label { display: block; color: var(--paper-mute); margin-bottom: var(--s-4); }
 .page-head h1 { color: var(--paper); max-width: 20ch; overflow-wrap: break-word; }
 .page-head p { margin-top: var(--s-4); max-width: 46ch; color: var(--paper-soft); }

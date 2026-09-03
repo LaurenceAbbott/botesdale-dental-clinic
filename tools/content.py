@@ -237,19 +237,26 @@ def c_page_head(H, depth, eyebrow, heading, sub='', image=None, crumbs='', short
         media = ('<!-- Background photograph goes here:\n'
                  '       <img class="page-head__media" src="../assets/images/heroes/NAME.jpg" alt=""> -->')
         note = '<span class="ph-note" aria-hidden="true">Header photograph</span>'
+    # The crumbs ride at the top of the head, tucked under the header, rather
+    # than stacked on the title block at the foot. They are where-am-I, not
+    # part of the heading, and putting them there frees the foot for the
+    # label / h1 / sub to read as one unit.
+    top = ('<div class="page-head__top">%s</div>' % crumbs) if crumbs else ''
     return '''<section class="page-head{short}{shot}">
   {media}
   <div class="page-head__scrim"></div>
   {note}
   <div class="page-head__inner wrap">
-    {crumbs}
-    {eyebrow}
-    <h1>{heading}</h1>
-    {sub}
+    {top}
+    <div class="page-head__title">
+      {eyebrow}
+      <h1>{heading}</h1>
+      {sub}
+    </div>
   </div>
 </section>'''.format(short=' page-head--short' if short else '',
                      shot=' page-head--shot' if (image and H.asset_exists(image)) else '',
-                     media=media, note=note, crumbs=crumbs,
+                     media=media, note=note, top=top,
                      eyebrow=('<span class="label">%s</span>' % _e(eyebrow)) if eyebrow else '',
                      heading=_e(heading),
                      sub=('<p>%s</p>' % _e(sub)) if sub else '')

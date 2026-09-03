@@ -127,8 +127,7 @@ Every size is fluid, interpolating between a mobile and a desktop value with `cl
 | `--fs-h2` | 24 → 34px | `h2` |
 | `--fs-h3` | 20 → 24px | `h3`, `.statement-text` |
 | `--fs-h4` | 17px | `h4` |
-| `--fs-lead` | 15 → 17px | `.lead`, `.prose p` |
-| `--fs-body` | 15px | `body` |
+| `--fs-body` | 15px | `body`, and **all running copy** — see §2.2a |
 | `--fs-sm` / `--fs-xs` | 14 / 13px | secondary copy, meta |
 | `--fs-label` | 11px, `.16em` tracking | `.label` |
 
@@ -138,17 +137,22 @@ Tracking tightens as size increases (`--ls-tight: -.02em` on `h1` and `.display`
 
 ### 2.2a One size for running copy
 
-Body copy had drifted to **seven** sizes across components doing the same job — 17px in `.prose`, 16px on bare paragraphs with no rule at all, 15px in `.ed`, 14px in `.p-row`, accordion panels, plan lists and team bios, 13px in strip captions. Same job, five different sizes.
+Body copy had drifted to **seven** sizes across components doing the same job — 17px in `.prose`, 16px on bare paragraphs with no rule at all, 15px in `.ed`, 14px in `.p-row`, accordion panels, plan lists and team bios, 13px in strip captions. Same job, five different sizes. Collapsing them left one straggler, the lead size, which took a second pass to remove.
 
 The ladder is now:
 
 | Token | px | Use |
 |---|---|---|
-| `--fs-lead` | 16 → 18 | An intro paragraph under a heading; the hero sub |
-| `--fs-body` | 16 | **All running copy**, everywhere |
-| `--fs-sm` | 14 | Copy inside a narrow grid tile (3–4 up), where 16 would not fit the column |
+| `--fs-body` | 15 | **All running copy**, everywhere |
+| `--fs-sm` | 14 | Copy inside a narrow grid tile (3–4 up), where 15 would not fit the column |
 | `--fs-xs` | 13 | Meta, captions, field hints, form notes |
 | `--fs-label` | 11 | Uppercase micro-labels |
+
+**There is no lead size.** There was — `--fs-lead`, 16→18px, on the hero sub, the paragraph under a section head and `.lead`. Against 16px body it did not read as a hierarchy, it read as the scale being inconsistent: two paragraphs a few hundred pixels apart, one 18px and one 16px, doing the same job. An intro is now distinguished by measure, line-height and colour — which is what was actually carrying it. One size for anything you read *through*.
+
+**15px, not 16.** The head font is a wide geometric sans and sets large for its nominal size; at 16 the copy crowded a laptop viewport. The only paragraphs allowed above 15 are the display voices — `.statement`, `.quote`, `.statement-text` — which are set in the head font at heading sizes and are looked at rather than read through.
+
+`verify-type.js` sweeps every page at 390 / 1024 / 1600 and fails on any `p`, `li`, `dd` or `dt` over 15px outside those three, and on any button that is not 48px tall. It also fails on a non-200 response: `audit-type.js` had been loading `pages/contact.html`, which does not exist, and quietly measuring the *server's* 404 page as if it were the site.
 
 If you are adding a component with a paragraph in it, it takes `--fs-body` unless it is a tile in a grid. Two specificity traps caught this: `.team__bio p` (0,0,1,1) silently beat `.team__gdc` (0,0,1,0), so the GDC line rendered as body copy rather than meta; and `.form__step-intro` had no rule of its own and borrowed `.field__hint`, so a step's intro rendered as a 13px grey hint.
 
@@ -231,6 +235,8 @@ Each entry lists the file it lives in, the markup, and the modifiers available. 
 ```html
 <a class="btn btn--solid" href="#"><span class="btn__label">Book a visit</span></a>
 ```
+
+**48px tall** — `12px` of vertical padding, a 22px line box on the 13px label, and 2px of border. It was 56 (54.1 as rendered), which is a lot of chrome around a 13px word, and two of them side by side dominated a page. 48 still clears the 44px tap-target minimum with margin, and matches `--control-h`, so a button beside a form field lines up.
 
 **There is no sweep.** A fill clipped to the arc used to slide across on hover. It was driven entirely by `:hover`, so on a touch screen it never ran — and iOS keeps `:hover` after a tap, which left the arc frozen part-way across the button. Buttons change colour now. `#smileClip` had no other user and has gone from the shared defs.
 
@@ -358,6 +364,8 @@ The hero and page heads are dark panels rather than placeholders; each carries a
 ```
 
 `margin-top: calc(-1 * var(--nav-h))` pulls it under the transparent header. The scrim is a three-stop gradient that keeps text legible whatever the photograph does.
+
+**Height: `88vh`, floor 460, cap 780.** It was `78vh` capped at 660. A browser's own chrome — tab strip, address bar, bookmarks — comes out of the viewport before the page gets any, so a hero sized to look generous in a bare window arrives short on a real laptop. The cap is what keeps it honest: at 780 on a 900px viewport the tab strip below the hero (`.tabs`, §4.9) still shows, so the page reads as scrollable rather than as a full-screen splash with nothing under it. If you raise the cap further, check that strip is still visible at 900px — it is the only affordance saying there is more.
 
 The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The path lifts the two bottom corners to `0.955` of the panel height and holds full height at the centre, so the curve only ever eats into the corners — and `.hero__inner` / `.page-head__inner` carry one extra step of bottom padding because the copy sits in a corner the arc lifts.
 

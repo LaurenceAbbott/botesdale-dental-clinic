@@ -88,7 +88,8 @@
    every usage has it. */
 .btn {
   position: relative; display: inline-block;
-  padding: 15px 30px;
+  /* 48px tall: 12 + 12 padding, 22px of 13px label, 2px of border. */
+  padding: 12px 30px;
   font-size: var(--fs-xs); letter-spacing: var(--ls-cta); text-transform: uppercase;
   font-weight: var(--fw-medium);
   border: var(--hair) solid var(--black);
@@ -237,7 +238,12 @@
 .hero {
   position: relative; overflow: hidden;
   display: flex; align-items: flex-end;
-  min-height: 420px; max-height: 660px; height: 78vh;
+  /* Deeper than it was (78vh capped at 660). A browser's own chrome — tab
+     strip, address bar, bookmarks — comes out of the viewport before the page
+     gets any, so a hero sized to look generous in a bare window arrives short
+     on a real laptop. 88vh with a 780px cap: still under a full screen, so
+     the section below stays visible and the page still reads as scrollable. */
+  min-height: 460px; max-height: 780px; height: 88vh;
   margin-top: calc(-1 * var(--nav-h));
   background: var(--grad-hero);
   clip-path: url(#heroArc);
@@ -256,7 +262,7 @@
 .hero__inner { position: relative; width: 100%; padding-bottom: var(--s-10); color: var(--paper); }
 .hero__inner .label { color: var(--paper-mute); display: block; margin-bottom: var(--s-4); }
 .hero h1 { color: var(--paper); max-width: 18ch; }
-.hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); font-size: var(--fs-lead); }
+.hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); }
 .hero__actions { margin-top: var(--s-7); }
 
 /* Marks the dark panels that are built to take a background photograph.

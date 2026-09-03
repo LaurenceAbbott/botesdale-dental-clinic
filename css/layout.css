@@ -82,7 +82,7 @@
 .section-head { max-width: 40rem; margin-bottom: var(--s-8); }
 .section-head--center { margin-inline: auto; text-align: center; }
 .section-head .label { display: block; margin-bottom: var(--s-3); }
-.section-head p { margin-top: var(--s-4); color: var(--ink-soft); font-size: var(--fs-lead); }
+.section-head p { margin-top: var(--s-4); color: var(--ink-soft); }
 .section--dark .section-head p { color: var(--paper-soft); }
 
 /* Hairlines */

@@ -703,8 +703,8 @@ PAGES = {
                'unhurried and completely under your control.'),
 
  'cosmetic': _p('cosmetic', 'Cosmetic dentistry | Botesdale Dental Practice',
-                'Treatments that enhance, align, whiten and tone your teeth — veneers, crowns, '
-                'bridges, whitening, clear aligners and gum reshaping in Botesdale.'),
+                'Treatments that enhance, align, whiten and tone your teeth — veneers, '
+                'whitening, clear aligners and gum reshaping in Botesdale.'),
  'clear-aligner': _p('clear-aligner', 'Clear aligners | Botesdale Dental Practice',
                      'Invisible orthodontics — straighter teeth without metal braces, planned '
                      'digitally at our Botesdale practice.'),
@@ -1307,7 +1307,12 @@ CATEGORY = {
    'paras': [
      'Cosmetic dentistry is a field within general dentistry that focuses on the beauty of a '
      'smile. It covers treatments that enhance, align, and whiten or tone the teeth — porcelain '
-     'veneers, crowns, bridges, teeth whitening, gum reshaping and orthodontics.',
+     'veneers, teeth whitening, gum reshaping and orthodontics. Where a tooth is broken or '
+     'missing rather than simply unattractive, crowns and bridges are covered under '
+     # A literal sibling path, not H.rel: CATEGORY is module-level data and has
+     # no helpers. Every category page lives in pages/, so the sibling link is
+     # correct from all of them.
+     '<a class="link-inline" href="missing-teeth.html">missing teeth</a>.',
      'These treatments involve special techniques, equipment and a high level of skill from the '
      'dental team. We are proud to offer them to our patients here at the practice, and have '
      'seen many a smile transformed under our own roof.',
@@ -2094,8 +2099,8 @@ def r_treatments(depth, H):
 
     specs = [('general', 'Check-ups, fillings, root canal treatment, extractions, emergencies '
                          'and support for nervous patients.', False, False),
-             ('cosmetic', 'Clear aligners, veneers, crowns, bridges, whitening and gum '
-                          'reshaping.', True, True),
+             ('cosmetic', 'Clear aligners, veneers, whitening and gum reshaping.',
+              True, True),
              ('preventative', 'Check-ups, hygiene visits and help with sensitive teeth — the '
                               'foundation of everything else.', False, False),
              ('missing', 'Crowns, bridges, dentures and implant-supported replacements.', True, True)]

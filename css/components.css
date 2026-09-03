@@ -555,6 +555,11 @@
 /* .ed__text p is (0,1,1) and .statement-text is (0,1,0), so inside an .ed the
    body rule silently won and the statement voice rendered --ink-soft grey at a
    46ch measure. Same trap as .team__bio p over .team__gdc (2.2a). */
+/* p.statement-text is (0,1,1), the same weight as .prose p and .ed__text p,
+   and components.css loads after base.css — so the lead statement keeps its
+   ink in every container rather than needing a new override each time one of
+   those containers colours its paragraphs. */
+p.statement-text { color: var(--black); }
 .ed__text .statement-text { color: var(--black); max-width: 28ch; }
 .ed__text .arc-link { margin-top: var(--s-2); }
 
@@ -875,6 +880,7 @@ a.card:hover { transform: translateY(-2px); }
 .carousel__btn {
   width: 38px; height: 38px; cursor: pointer;
   border: var(--hair) solid var(--line);
+  border-radius: var(--radius-btn);
   display: inline-flex; align-items: center; justify-content: center;
   color: var(--ink-soft);
   transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);

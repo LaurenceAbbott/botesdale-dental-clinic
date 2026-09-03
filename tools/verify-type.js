@@ -13,6 +13,7 @@ const pages = ['index.html', '404.html'].concat(
 
 const BODY_MAX = 15;      // px
 const BTN_H    = 48;      // px, +/- 1 for the border and line-box rounding
+const BTN_R    = 4;       // px corner radius
 let failed = 0;
 const fail = m => { console.log('  FAIL  ' + m); failed++; };
 
@@ -48,7 +49,15 @@ const fail = m => { console.log('  FAIL  ' + m); failed++; };
           if (e.offsetParent === null) continue;
           bh.push({ h: +e.getBoundingClientRect().height.toFixed(1), t: e.textContent.trim().slice(0, 20) });
         }
-        return { over, n, bh };
+        // Buttons are just off square at 4px — softened, not rounded. Every
+        // button-shaped control shares it: .btn, the header CTA, the sheet CTA.
+        const br = [];
+        for (const e of document.querySelectorAll('.btn, .nav__cta, .menu__cta')) {
+          if (e.offsetParent === null) continue;
+          br.push({ r: parseFloat(getComputedStyle(e).borderTopLeftRadius),
+                    t: (e.className || '') + ' ' + e.textContent.trim().slice(0, 16) });
+        }
+        return { over, n, bh, br };
       }, BODY_MAX);
       paras += r.n; btns += r.bh.length;
       for (const o of r.over)
@@ -56,6 +65,9 @@ const fail = m => { console.log('  FAIL  ' + m); failed++; };
       for (const x of r.bh)
         if (Math.abs(x.h - BTN_H) > 1)
           fail(u + ' — button "' + x.t + '" is ' + x.h + 'px tall (want ' + BTN_H + ')');
+      for (const x of r.br)
+        if (Math.abs(x.r - BTN_R) > 0.5)
+          fail(u + ' — button "' + x.t.trim() + '" has a ' + x.r + 'px radius (want ' + BTN_R + ')');
     }
     if (paras < 300) fail('only ' + paras + ' paragraphs seen at ' + w + 'px — the sweep is not reaching them');
     else if (btns < 20) fail('only ' + btns + ' buttons seen at ' + w + 'px');

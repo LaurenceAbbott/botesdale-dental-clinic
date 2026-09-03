@@ -300,16 +300,29 @@ def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
     body = '<div class="%s">%s</div>' % (
         body_cls, ''.join('<p>%s</p>' % p for p in paras))
     link_html = c_arc_link(link[0], link[1]) if link else ''
+    return c_ed_shell(
+        c_media(H, depth, image, alt or heading, image_size),
+        '<span class="label">%s</span>\n    <h2>%s</h2>\n    %s\n    %s'
+        % (_e(eyebrow), _e(heading), body, link_html),
+        wrap_cls)
+
+
+def c_ed_shell(media_html, text_html, wrap_cls='ed'):
+    """The .ed grid on its own, for a block whose copy is not label/h2/paras.
+
+    About us opens with a statement voice rather than a heading, and it was
+    built on its own two-column grid — so its picture came out a different
+    size from the .ed block directly below it, on the same page, doing the
+    same job. Sharing the grid is what makes them match; nothing else does,
+    because the .ed media column is a half-column plus the overhang (2.3)
+    rather than a fraction of the container.
+    """
     return '''<section class="{wrap_cls}" data-reveal>
-  <div class="ed__media">{ph}</div>
+  <div class="ed__media">{media}</div>
   <div class="ed__text">
-    <span class="label">{eyebrow}</span>
-    <h2>{heading}</h2>
-    {body}
-    {link}
+    {text}
   </div>
-</section>'''.format(wrap_cls=wrap_cls, ph=c_media(H, depth, image, alt or heading, image_size),
-                     eyebrow=_e(eyebrow), heading=_e(heading), body=body, link=link_html)
+</section>'''.format(wrap_cls=wrap_cls, media=media_html, text=text_html)
 
 
 def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
@@ -1827,19 +1840,19 @@ def r_about(depth, H):
         'images/brand/about-us-botesdale-dental-hero.png',
         c_crumbs(H, depth, [], 'About us'))]
 
-    out.append(c_section('''<div class="home-intro__grid">
-      <div>
-        <p class="statement-text">We believe in dentistry that’s honest, ethical, and kind — where every patient is treated with the same care we’d want for our own family.</p>
-        <div class="home-intro__body u-mt-6">
-          <p>We take time to understand your concerns, respect your choices, and explain your options clearly — so you always feel informed, in control, and confident in your care.</p>
-          <p>From your first visit to your final follow-up, our experienced and compassionate team is here to support you through every step of your dental journey. Whether you’re visiting for a routine check-up, advanced implant treatment, or a complete smile transformation, you’ll receive personalised care rooted in trust, transparency, and clinical excellence.</p>
-          <p>Our goal is to help you achieve and maintain a healthy, beautiful smile for life.</p>
-        </div>
-      </div>
-      <div class="home-intro__media">
-        {ph}
-      </div>
-    </div>'''.format(ph=c_ph('The practice entrance sign'))))
+    # On the .ed grid, not its own: this and the block below it are two
+    # editorial rows on one page, and they only read as a pair if the pictures
+    # are the same size. --rev puts this one's media right and the next one's
+    # left, so the page checkerboards down.
+    out.append(c_ed_shell(
+        c_media(H, depth, 'images/cards/practice-2.jpg', 'The practice entrance sign'),
+        '''<p class="statement-text">We believe in dentistry that’s honest, ethical, and kind — where every patient is treated with the same care we’d want for our own family.</p>
+    <div class="home-intro__body u-mt-6">
+      <p>We take time to understand your concerns, respect your choices, and explain your options clearly — so you always feel informed, in control, and confident in your care.</p>
+      <p>From your first visit to your final follow-up, our experienced and compassionate team is here to support you through every step of your dental journey. Whether you’re visiting for a routine check-up, advanced implant treatment, or a complete smile transformation, you’ll receive personalised care rooted in trust, transparency, and clinical excellence.</p>
+      <p>Our goal is to help you achieve and maintain a healthy, beautiful smile for life.</p>
+    </div>''',
+        'ed ed--rev'))
 
     out.append(c_ed(
         H, depth, 'September 2024', 'A new smile in a purpose-built home.',
@@ -1853,7 +1866,7 @@ def r_about(depth, H):
          'Together with our dedicated professional team, we’ve created a warm, friendly '
          'environment that’s also fully accessible, thoughtfully designed, and equipped with the '
          'latest in dental technology.'],
-        image='images/cards/practice-3.jpg', alt='Inside the new practice', rev=True))
+        image='images/cards/practice-3.jpg', alt='Inside the new practice'))
 
     out.append(c_section('''<div class="section-split">
       <div class="section-head"><span class="label">Our mission</span>

@@ -41,7 +41,7 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--black-2` | `#22292F` | Secondary dark ground — a second dark band, dark media panels |
 | `--ink-rgb` | `26, 26, 24` | `--black` as channels, for `rgba()` scrims and shadows |
 | `--paper` | `#F7F6F3` | The page ground |
-| `--paper-2` | `#FFFFFF` | Pure white, used sparingly for lift |
+| `--paper-2` | `#FFFFFF` | Pure white — a band, via `.section--paper-2`, and small lifts |
 | `--paper-3` | `#EFEDE8` | Alternating section band |
 | `--placeholder` | `#E5E3DC` | Image placeholder ground |
 | `--placeholder-2` | `#DCDAD2` | Image placeholder on a tinted band |
@@ -99,13 +99,15 @@ Hashing the content means any edit changes the URL, so the HTML and the CSS can 
 | Container | Width | Use |
 |---|---|---|
 | `.wrap` | 1440 | **Only** where text and images sit side by side |
-| `.wrap--narrow` | 900 | Text-only sections: numbered steps, FAQs, benefit lists, the team grid |
+| `.wrap--narrow` | 900 | **All** text-only sections: prose, numbered steps, FAQs, benefit and price lists, the team grid |
 | `.u-form-col` / `.form` | 680 | A form, and any copy directly above one |
 | `.prose` / `.u-measure` | 640 | A single column of running prose |
 
 1440 is a *side-by-side* width. A section that is only text — a run of numbered steps, an FAQ, a list of membership benefits — reads badly stretched across it.
 
 The failure mode to avoid is capping the inner element while its heading stays on the 1440 line. That is what produced the ragged look on the fees page: `Your benefits include the following:` sat on the wide line while its list was centred at a 640 measure below, so the two had different left edges and the section read as two mismatched columns. **Cap the container, not the content** — then the heading and its content share one left edge, and centring the container is what moves the block, never centring the copy inside it.
+
+**Do not cap twice.** Inside `.wrap--narrow` the container *is* the cap, so a `.prose` or `.u-measure` must not centre itself again — that was putting the copy 192px right of its own heading and reading as two mismatched columns. Those elements uncap inside a narrow container and line length is held by a measure on the paragraphs instead, so the block starts on the container's left edge, level with the heading. A `.form-block` is the same idea: it *is* the form column, so its heading sits on the same edge as its fields.
 
 Copy that sits directly above a form is the same trap at smaller scale: a `--measure` intro above a `--form-col` form is centred to a different width, so the two start 20px apart. Use `.u-form-col`.
 

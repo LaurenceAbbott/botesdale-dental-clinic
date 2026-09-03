@@ -261,8 +261,12 @@ def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
                      eyebrow=_e(eyebrow), heading=_e(heading), body=body, link=link_html)
 
 
-def c_strip(H, depth, eyebrow, heading, items, cols=3):
-    """items: list of dicts {key|href, label, title, text, alt}"""
+def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
+    """items: list of dicts {key|href, label, title, text, alt}
+
+    cls takes a band class (e.g. 'section--paper-3') so a strip can carry its
+    own ground rather than needing a wrapper element.
+    """
     tiles = []
     for i, it in enumerate(items):
         href = it.get('href') or H.rel(it['key'], depth)
@@ -282,14 +286,15 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3):
     if heading:
         head = ('<div class="strip__head"><span class="label">%s</span><h2>%s</h2></div>'
                 % (_e(eyebrow), _e(heading)))
-    return '''<section class="strip">
+    return '''<section class="strip{cls}">
   <div class="wrap">
     {head}
     <div class="strip__row strip__row--{cols}">
       {tiles}
     </div>
   </div>
-</section>'''.format(head=head, cols=cols, tiles='\n      '.join(tiles))
+</section>'''.format(head=head, cols=cols, tiles='\n      '.join(tiles),
+                     cls=(' ' + cls) if cls else '')
 
 
 def c_cards(H, depth, items, cols=3):
@@ -1595,7 +1600,7 @@ def r_leaf(key, depth, H):
         prose.append('<figure class="figure u-mt-8">%s<figcaption>%s</figcaption></figure>'
                      % (c_ph(LABELS[key], 'ar-3-2'), _e(LABELS[key])))
 
-    out.append(c_section('<div class="prose">%s</div>' % ''.join(prose)))
+    out.append(c_section('<div class="prose">%s</div>' % ''.join(prose), narrow=True))
 
     out.append(c_process(H, depth, 'What to expect', 'How it works', d['process']))
 
@@ -1952,7 +1957,7 @@ def r_implant(depth, H):
           <strong>Referring a patient?</strong>
           We accept implant referrals from patients and dental professionals alike, with a £0 referral fee for members of Our Plan.
         </div>
-      </div>'''))
+      </div>''', narrow=True))
 
     out.append(c_process(H, depth, 'The pathway', 'From consultation to aftercare', [
         ('Consultation and assessment', 'A full examination and a discussion of what you want to '
@@ -2217,7 +2222,7 @@ def r_referrals(depth, H):
         ], intro='Someone able to sign for the practice should complete this step.'),
     ]
 
-    out.append(c_section('''<div class="notice u-mb-8">
+    out.append(c_section('''<div class="notice u-mb-8 u-form-col">
       <strong>These forms are for dental practices, not patients</strong>
       If you are a patient looking for a scan, your own dentist refers you to us — please ask them. To enquire about implant treatment for yourself, use the <a class="link-inline" href="implant-referrals.html#patient">implant self-referral form</a>.
     </div>
@@ -2258,7 +2263,7 @@ def r_referrals(depth, H):
             ('Address', 'The Drift, Botesdale, Suffolk IP22 1DH'),
             ('Phone', '<a href="tel:%s">%s</a>' % (SITE['phone_href'], SITE['phone'])),
             ('Email', '<a href="mailto:%s">%s</a>' % (SITE['email'], SITE['email'])),
-            ('Clinical lead', 'Dr Martin Sulo')]))))
+            ('Clinical lead', 'Dr Martin Sulo')])), cls='section--paper-2'))
 
     out.append(c_cta(H, depth, 'Referring for implants instead?',
                      'We accept implant referrals from patients and dental professionals alike.',
@@ -2295,7 +2300,7 @@ def r_fees(depth, H):
       </ul>
       <p>Please be aware that the prices below are a guide only. We really do try to give a good idea, but we don’t waste your time — treatment for each patient is tailored to suit the needs and choices of the individual. Specific treatments vary on different patients and our fees reflect this.</p>
       <p>We always prepare written treatment plans and proposals and a clear outline of the fees involved for our complex cases.</p>
-    </div>'''))
+    </div>''', narrow=True))
 
     # --- 2. The plan, on its own band so the cards get real width ----------
     out.append(c_section('''<div class="section-head">
@@ -2355,7 +2360,7 @@ def r_fees(depth, H):
       </div>
       <h3 class="u-mt-8 u-mb-4">Finance</h3>
       <p class="muted">Payment plans are available for dental treatment. Please ask during your next visit for more details.</p>
-    </div>'''))
+    </div>''', narrow=True))
 
     # --- 5. Terms and questions -------------------------------------------
     out.append(c_section('''<div class="section-head">
@@ -2383,7 +2388,7 @@ def r_fees(depth, H):
              'treatment is charged separately, with a 10% member discount applied.</p>'),
         ], idbase='fees'),
         cta=c_btn('Book a consultation', H.rel('contact', depth), 'solid')),
-        cls='section--paper-3'))
+        cls='section--paper-3', narrow=True))
 
     out.append(c_statement(
         H, depth, 'What to do next?',
@@ -2421,7 +2426,7 @@ def r_cases(depth, H):
     items = [{'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
               'text': c['teaser'], 'image': c['thumb'], 'alt': LABELS[c['key']]} for c in CASES]
     out.append('<h2 class="visually-hidden">Our case studies</h2>')
-    out.append(c_strip(H, depth, '', '', items, cols=3))
+    out.append(c_strip(H, depth, '', '', items, cols=3, cls='section--paper-3'))
 
     out.append(c_cta(H, depth, 'Could we help with something similar?',
                      'Every mouth is different. Book an assessment and we will tell you honestly '
@@ -2452,7 +2457,7 @@ def r_case(key, depth, H):
     out.append(c_section(
         '<div class="case-body prose">'
         '<div class="case-meta"><span class="badge badge--accent">%s</span></div>'
-        '%s</div>' % (_e(c['label']), ''.join(body))))
+        '%s</div>' % (_e(c['label']), ''.join(body)), narrow=True))
 
     out.append(c_section(
         '<div class="section-head"><span class="label">The case</span><h2>Before, during and after</h2>'
@@ -2549,7 +2554,7 @@ def r_privacy(depth, H):
     out = [c_page_head(
         H, depth, 'Legal', 'Privacy Policy', '', 'images/heroes/privacy.jpg',
         c_crumbs(H, depth, [], 'Privacy Policy'), short=True)]
-    out.append('''<section class="legal"><div class="wrap">
+    out.append('''<section class="legal section--paper-2"><div class="wrap">
   <p class="legal__updated">Last updated 15 May 2026 &middot; Effective 15 May 2026</p>
   <div class="prose">
     <p>This Privacy Policy describes the policies of Botesdale Dental Practice &amp; Implant Clinic, Holly Close, The Drift, Botesdale, Suffolk IP22 1DH, United Kingdom of Great Britain and Northern Ireland; email: <a href="mailto:reception@botesdaledental.co.uk">reception@botesdaledental.co.uk</a>; phone: <a href="tel:+441379897176">01379 897176</a>, on the collection, use and disclosure of your information that we collect when you use our website (<a href="https://botesdaledental.co.uk">https://botesdaledental.co.uk</a>) (the “Service”). By accessing or using the Service, you are consenting to the collection, use and disclosure of your information in accordance with this Privacy Policy. If you do not consent to the same, please do not access or use the Service.</p>
@@ -2627,7 +2632,7 @@ def r_cookies(depth, H):
     out = [c_page_head(
         H, depth, 'Legal', 'Cookie Policy', '', 'images/heroes/cookie.jpg',
         c_crumbs(H, depth, [], 'Cookie Policy'), short=True)]
-    out.append('''<section class="legal"><div class="wrap">
+    out.append('''<section class="legal section--paper-2"><div class="wrap">
   <p class="legal__updated">Last updated 15 May 2026</p>
   <div class="prose">
     <p>This page provides comprehensive information about how we use cookies on our website to enhance your browsing experience, improve website performance, and deliver personalised content. Cookies are small text files that are stored on your device when you visit our site. They help us understand how visitors interact with our website, allowing us to offer a smoother and more efficient user experience.</p>

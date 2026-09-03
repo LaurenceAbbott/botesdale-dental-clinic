@@ -631,13 +631,72 @@ def c_group_pager(H, depth, current, group_key):
     return c_pager(H, depth, prev, nxt, label=title)
 
 
+def c_compare(H, depth, before, after, cls=''):
+    """A before/after the reader drags a divider across.
+
+    before / after: (image, tag, alt).
+
+    The control is a real <input type="range">. A div with pointer handlers
+    would need keyboard support, touch handling and an accessible name written
+    from scratch; the range has all three for free, and CSS can hide its
+    chrome while keeping the behaviour. Its value drives --pos, which the
+    before pane is clipped to; with JS off the pane simply stays at its
+    initial 50%, so both photographs are still half visible.
+
+    Named `compare`, not `reveal`: [data-reveal] is already the scroll-in
+    animation (base.css 12), and two unrelated things called reveal in one
+    codebase is a trap for whoever reads it next.
+
+    The two tags sit at the bottom centre, flanking the divider's rest
+    position, rather than in the corners: --radius-media is 32px, and a
+    square tag tucked into a 32px curve leaves a wedge of image showing
+    through its corner. They are children of the frame rather than of the
+    panes so the before tag is not clipped away with its pane.
+    """
+    bimg, btag, balt = before
+    aimg, atag, aalt = after
+    return (
+        '<div class="compare%s" data-compare>\n'
+        '  <input class="compare__range" type="range" min="0" max="100" value="50" step="1"\n'
+        '         aria-label="Drag to compare the before and after photographs">\n'
+        '  <div class="compare__pane compare__pane--after">%s</div>\n'
+        '  <div class="compare__pane compare__pane--before">%s</div>\n'
+        '  <span class="compare__line" aria-hidden="true"><span class="compare__grip"></span></span>\n'
+        '  <span class="compare__tag compare__tag--before">%s</span>\n'
+        '  <span class="compare__tag compare__tag--after">%s</span>\n'
+        '</div>'
+        % (' ' + cls if cls else '',
+           c_media(H, depth, aimg, aalt), c_media(H, depth, bimg, balt),
+           _e(btag), _e(atag)))
+
+
 def c_gallery(H, depth, shots):
-    """shots: list of (image, tag, alt) — rendered as placeholders for now."""
+    """shots: list of (image, tag, alt).
+
+    The first Before and the first After become a comparison the reader drags
+    through; everything else — the second Before, During, Detail — follows in
+    the grid below. Two states of one mouth side by side is a poorer way to
+    see a change than one wiped over the other.
+
+    This used to render c_ph(alt) unconditionally and ignore `image`, so
+    dropping the case photography into assets/ would have changed nothing
+    (the same bug c_media's docstring describes for c_ed).
+    """
+    rest = list(shots)
+    before = next((s for s in rest if s[1].lower() == 'before'), None)
+    after = next((s for s in rest if s[1].lower() == 'after'), None)
+    head = ''
+    if before and after:
+        rest = [s for s in rest if s is not before and s is not after]
+        head = c_compare(H, depth, before, after)
     out = []
-    for img, tag, alt in shots:
+    for img, tag, alt in rest:
         tag_html = '<span class="shot__tag">%s</span>' % _e(tag) if tag else ''
-        out.append('<figure class="shot">%s%s</figure>' % (c_ph(alt), tag_html))
-    return '<div class="gallery">%s</div>' % ''.join(out)
+        out.append('<figure class="shot" data-lightbox>%s%s</figure>'
+                   % (c_media(H, depth, img, alt), tag_html))
+    grid = ('<div class="gallery%s">%s</div>'
+            % (' u-mt-8' if head else '', ''.join(out))) if out else ''
+    return head + grid
 
 
 def c_tel(cls='link-inline'):
@@ -1946,15 +2005,27 @@ def r_home(depth, H):
 
     out.append(c_quote(TESTIMONIALS))
 
+    # The lead case is shown as a comparison the reader can drag rather than as
+    # a fourth card: a card row of before/after thumbnails asks you to hold two
+    # images in your head at once, and the whole point of these photographs is
+    # the difference between them.
+    lead = CASES[0]
+    b = next(s for s in lead['shots'] if s[1].lower() == 'before')
+    a = next(s for s in lead['shots'] if s[1].lower() == 'after')
     out.append(c_section(
         '<div class="section-head section-head--center"><span class="label">Case studies</span>'
         '<h2>Real people, real problems — treated as far as each patient wants to go.</h2>'
         '<p>The cases on this page were published with consent and kind agreement of our happy '
         'patients.</p></div>'
-        + c_cards(H, depth, [
+        + '<figure class="feature-case" data-reveal>%s'
+          '<figcaption class="feature-case__cap"><h3>%s</h3><p>%s</p>%s</figcaption></figure>'
+          % (c_compare(H, depth, b, a), _e(LABELS[lead['key']]),
+             _e(_trim(lead['teaser'], 190)),
+             c_arc_link('Read the case', H.rel(lead['key'], depth)))
+        + '<div class="u-mt-8">%s</div>' % c_cards(H, depth, [
             {'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
              'text': _trim(c['teaser'], 150), 'image': c['thumb'], 'alt': LABELS[c['key']]}
-            for c in CASES[:3]], cols=3)
+            for c in CASES[1:4]], cols=3)
         + '<div class="cluster u-mt-8">%s</div>'
           % c_btn('All case studies', H.rel('cases', depth), 'outline'),
         cls='section--paper-3'))
@@ -2668,7 +2739,8 @@ def r_case(key, depth, H):
 
     out.append(c_section(
         '<div class="section-head"><span class="label">The case</span><h2>Before, during and after</h2>'
-        '<p>Click any image to view it larger.</p></div>' + c_gallery(H, depth, c['shots']),
+        '<p>Drag the divider to compare the before and after. Click any other image to view '
+        'it larger.</p></div>' + c_gallery(H, depth, c['shots']),
         cls='section--paper-3'))
 
     out.append('<div class="wrap section--tight case-consent"><p class="meta">These images are '
@@ -3120,7 +3192,7 @@ def r_styleguide(depth, H):
     ])))
 
     # Gallery
-    body.append(_sg('Gallery & lightbox', '13', c_gallery(H, depth, [
+    body.append(_sg('Before / after & gallery', '13', c_gallery(H, depth, [
         ('images/cases/case-worn-1.jpg', 'Before', 'Before treatment'),
         ('images/cases/case-worn-2.jpg', 'After', 'After treatment'),
         ('images/cases/case-worn-3.jpg', 'Detail', 'Detail of the finished work')])))

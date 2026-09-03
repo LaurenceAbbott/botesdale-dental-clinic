@@ -258,6 +258,18 @@
     }
   }
 
+  /* --- 4b. Before/after comparison ---------------------------------------- */
+  /* The whole control is a native range input covering the frame (see
+     components.css 20), so pointer drag, touch and the arrow keys are already
+     handled. All this does is publish its value to CSS as --pos. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-compare]'), function (el) {
+    var range = el.querySelector('.compare__range');
+    if (!range) return;
+    var sync = function () { el.style.setProperty('--pos', range.value + '%'); };
+    range.addEventListener('input', sync);
+    sync();
+  });
+
   /* --- 5. Back to top ----------------------------------------------------- */
   var toTop = document.querySelector('[data-to-top]');
   if (toTop) {

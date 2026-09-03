@@ -227,7 +227,7 @@
    card, not to the tile inside it. */
 .ed__media > .ph, .shot > .ph, .team__portrait > .ph,
 .strip__media > .ph, .card__media > .ph,
-.split-card__media > .ph { --ph-radius: 0; }
+.split-card__media > .ph, .compare__pane > .ph { --ph-radius: 0; }
 .ph::after {
   content: "";
   position: absolute;
@@ -1037,15 +1037,108 @@ a.card:hover { transform: translateY(-2px); }
   background: var(--placeholder); aspect-ratio: 3 / 2;
 }
 .shot img { width: 100%; height: 100%; object-fit: cover; }
-.shot__tag {
-  position: absolute; left: 0; bottom: 0;
-  padding: 6px 12px;
+.shot--wide { grid-column: span 2; }
+@media (max-width: 620px) { .shot--wide { grid-column: span 1; } }
+
+/* Tags sit at the bottom CENTRE, not tucked into a corner: --radius-media is
+   32px, and a square tag in a 32px curve leaves a wedge of image showing
+   through behind it. --radius-btn keeps them in the same language as the
+   buttons. */
+.shot__tag, .compare__tag {
+  position: absolute; bottom: 14px; z-index: 5;
+  padding: 5px 12px;
+  border-radius: var(--radius-btn);
   background: rgba(var(--ink-rgb), .78);
   color: var(--paper);
   font-size: var(--fs-label); letter-spacing: .12em; text-transform: uppercase;
+  pointer-events: none;
 }
-.shot--wide { grid-column: span 2; }
-@media (max-width: 620px) { .shot--wide { grid-column: span 1; } }
+.shot__tag { left: 50%; transform: translateX(-50%); }
+
+/* Before/after comparison ----------------------------------------------------
+   One photograph wiped over the other, --pos wide. Not to be confused with
+   [data-reveal] (base.css 12), which is the scroll-in animation.
+
+   The control is a native range input laid over the whole frame at opacity 0:
+   it brings pointer drag, touch, keyboard and an accessible name with it, and
+   a mousedown anywhere on the track jumps the divider there. Everything else
+   here is the visible half of that one input. */
+.compare {
+  --pos: 50%;
+  position: relative; overflow: hidden;
+  border-radius: var(--radius-media);
+  background: var(--placeholder); aspect-ratio: 3 / 2;
+}
+.compare__pane { position: absolute; inset: 0; }
+.compare__pane > img, .compare__pane > .ph { width: 100%; height: 100%; object-fit: cover; }
+/* Clipped, not resized: narrowing the element would make object-fit: cover
+   re-crop the photograph instead of uncovering the one underneath. */
+.compare__pane--before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+
+.compare__line {
+  position: absolute; top: 0; bottom: 0; left: var(--pos);
+  width: 2px; margin-left: -1px; z-index: 3;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px rgba(var(--ink-rgb), .16);
+  pointer-events: none;
+}
+.compare__grip {
+  position: absolute; top: 50%; left: 50%;
+  width: 46px; height: 46px; margin: -23px 0 0 -23px;
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  box-shadow: 0 2px 12px rgba(var(--ink-rgb), .3);
+}
+/* The two arrowheads, same rotated-border idiom as the nav chevrons. */
+.compare__grip::before, .compare__grip::after {
+  content: ''; position: absolute; top: 50%;
+  width: 7px; height: 7px; margin-top: -4px;
+  border: 2px solid var(--accent);
+  border-width: 2px 2px 0 0;
+}
+.compare__grip::before { left: 13px; transform: rotate(-135deg); }
+.compare__grip::after  { right: 13px; transform: rotate(45deg); }
+
+.compare__range {
+  position: absolute; inset: 0; z-index: 4;
+  width: 100%; height: 100%; margin: 0; padding: 0;
+  -webkit-appearance: none; appearance: none;
+  background: none; border: 0; opacity: 0;
+  cursor: ew-resize;
+  touch-action: pan-y; /* a vertical swipe still scrolls the page */
+}
+.compare__range::-webkit-slider-thumb { -webkit-appearance: none; width: 2px; height: 100%; }
+.compare__range::-moz-range-thumb { width: 2px; height: 100%; border: 0; }
+/* The input is invisible, so its own focus ring would be too. */
+.compare__range:focus-visible ~ .compare__line .compare__grip {
+  box-shadow: 0 0 0 3px var(--accent), 0 2px 12px rgba(var(--ink-rgb), .3);
+}
+
+.compare__tag--before { right: calc(50% + 5px); }
+.compare__tag--after  { left:  calc(50% + 5px); }
+
+/* Until the case photography lands both panes are placeholders, and a
+   placeholder centres its label — so the two captions would print on top of
+   each other down the middle. Push each into the half of the frame it owns
+   at rest. Purely a pre-photography courtesy; harmless once <img>s replace
+   the placeholders. */
+.compare__pane--before .ph__label { margin-right: 50%; }
+.compare__pane--after  .ph__label { margin-left: 50%; }
+
+/* Homepage: the lead case, shown as a comparison rather than a fourth card.
+   Capped narrower than the container: at the full 1180px a 3:2 frame is ~790px
+   tall, which is more than the viewport and pushes the three cards under it
+   out of sight. The case study page, where this IS the subject, keeps the
+   full width. */
+.feature-case { margin: 0; }
+.feature-case .compare { max-width: 900px; margin-inline: auto; }
+.feature-case__cap {
+  display: flex; flex-direction: column; gap: var(--s-2);
+  align-items: center; text-align: center;
+  max-width: 62ch; margin: var(--s-5) auto 0;
+}
+.feature-case__cap > * { margin: 0; }
+.feature-case__cap p { color: var(--ink-soft); }
 
 /* Simple lightbox */
 .lightbox {

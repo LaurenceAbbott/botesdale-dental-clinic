@@ -407,7 +407,7 @@ That override block has to sit **after** the base `.page-head .label` / `.page-h
 
 The suite hides the text, screenshots the head, decodes the PNG and samples the pixels where each element sat — so contrast is checked against the real composite of photograph plus both scrims, not against an assumption.
 
-The arc closes the prose on a leaf treatment page, where the second picture used to sit — the motif in its place, rather than another photograph.
+The arc closes the copy on every page whose second picture was removed — the leaf treatment pages (`r_leaf`) and the category pages, where the copy became one centred block (`c_intro_center`). The motif in place of a photograph, not another photograph.
 
 The compact hero used on every inner page. Same structure as `.hero`; add `--short` for legal pages. Carries the breadcrumb and, where it is not simply a repeat of the `h1`, a micro-label.
 
@@ -465,7 +465,9 @@ That makes it the **fourth** centred moment on the site, and it earns it the sam
 
 **The Treatments dropdown carries every treatment page.** It listed only the four categories, so thirteen leaf pages were in neither menu — reachable from a category page or the previous/next pager, which is to say findable only if you already knew they existed. The panel is now a column per category: the category is its own heading *and* a link to its overview, with its treatments beneath. It anchors to `.nav__inner` rather than to the link that opens it (`.nav__dd--mega` drops out of the positioning chain for exactly that) — anchored to a link two thirds along the header, a four-column panel runs off the right edge at 1120px, which is where this menu still shows. The mobile sheet carries the same two levels indented, not behind a second toggle: a treatment three taps deep is the same problem in a different shape.
 
-The panel's children are built **from `GROUPS`**, the same ordering the pager walks, so the menu and the pager cannot disagree about what belongs to a category. `verify-reach.js` asserts all 17 treatment pages are linked from the header at 1440 and from the sheet at 390.
+The panel's children are built **from `GROUPS`**, the same ordering the pager walks, so the menu and the pager cannot disagree about what belongs to a category. **The sheet's open height is measured, never written down.** It was `max-height: 460px`, sized by hand for a four-item list; when the panel grew to hold every treatment page the overflow simply clipped it and Crowns onwards disappeared with no error anywhere. `nav.js` sets it from `scrollHeight` on open and on resize, so it cannot go stale again.
+
+`verify-reach.js` asserts all 17 treatment pages are linked from the header at 1440 and from the sheet at 390 — and that each one is **actually visible**: it opens the menu, expands every group, and rejects a link with no box or one clipped by an ancestor that hides its overflow. Being in the DOM is not reachable, and checking only the DOM is exactly why the first version of this suite passed while nine links were invisible on the phone.
 
 **Previous / next walks siblings, never up to the parent.** A group's first key is its overview page, and leaving it in the sequence made *previous* on Clear aligner read "Cosmetic dentistry" — a level up rather than a step sideways, from inside Cosmetic dentistry. `c_group_pager` drops the group's own key. `verify-pager.js` checks the rule directly across all 19 pagers rather than inferring it from one page.
 

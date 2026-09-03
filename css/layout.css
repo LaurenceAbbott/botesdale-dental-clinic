@@ -347,8 +347,11 @@ body.is-locked { overflow: hidden; }
 }
 .menu__toggle svg { width: 13px; height: 13px; flex: none; transition: transform var(--t-fast) var(--ease); }
 .menu__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+/* No open height here. nav.js sets it from scrollHeight — a hand-written cap
+   (it was 460px, sized for a four-item list) silently clips the panel the
+   moment the menu grows, with nothing to signal it. Without JS the group stays
+   collapsed but every link is still in the sheet's DOM and in the footer. */
 .menu__sub { max-height: 0; overflow: hidden; transition: max-height var(--t) var(--ease); }
-.menu__sub.is-open { max-height: 460px; }
 .menu__sub a {
   display: block; padding: 10px 0 10px var(--s-5);
   font-size: 1rem; color: var(--ink-soft);

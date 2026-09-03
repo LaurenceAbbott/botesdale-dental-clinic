@@ -479,6 +479,12 @@ The panel's children are built **from `GROUPS`**, the same ordering the pager wa
 
 **A treatment page gets one picture, and it is the header hero.** This came up twice — first the `.ed` under the head on the category pages, then a `<figure>` in the prose on the leaf pages. Both showed the same subject the hero had already shown, a screen further down, captioned with the page title the `h1` had already said. Navigational thumbnails are not a second picture: a category page's strip of child treatments is a menu, not a photograph of the subject, so those stay. `verify-onepicture.js` sweeps all 17 pages a level below *Treatments* and fails on any `.ph` or `img` outside the head that is not inside `.strip__media` or `.card__media`. `treatments.html` itself is exempt by trail depth, not by filename — it is the hub, and its four rows are its content.
 
+**One photograph per subject, resolved from the page slug.** `c_page_image()` returns `assets/images/brand/<page-slug>-botesdale-dental-hero.png` if it is on disk, and it feeds *everything* that pictures that subject: the page's own hero, the strip tile that links to it, and the editorial row that introduces it. A card and the page behind it are therefore never two different pictures, and one upload lights up all of them.
+
+It also means **the filename is the wiring**. Three arrived as `crown-` (the page is `crowns`), `bridges-reshaping-` and `teeth-whitening-dental-` (missing `botesdale`); each resolved to nothing and fell back to a grey placeholder with no error anywhere. `verify-assets.js` now fails on any `*-hero.*` file no page references, so a misnamed upload is caught rather than silently ignored.
+
+`c_strip` and `c_ed` both used to accept an `image` and ignore it or prefer a dead declared path over the resolved one — the resolved image wins, and a declared path is the fallback.
+
 **Hero photographs resolve by naming convention.** `c_hero_src()` looks for `assets/images/brand/<page-slug>-botesdale-dental-hero.png` and falls back to the declared path, so dropping a file in wires it up with no data edit. Four heroes had been sitting in the repo unreferenced because the `CATEGORY` entries still pointed at `images/heroes/*.jpg` placeholders that do not exist — `verify-assets.js` is what noticed, and it now checks the built HTML rather than grepping `content.py`, since these paths are assembled at runtime and never appear in the source.
 
 ### 4.8 Editorial block — `.ed`

@@ -64,6 +64,21 @@ for (const m of content.matchAll(/image(?:_src)?\s*=\s*'(images\/[^']+)'/g)) {
 ok('a photograph on disk reaches the page', unrendered.length === 0,
    JSON.stringify([...new Set(unrendered)]));
 
+// A hero photograph is resolved from the page slug, so the FILENAME is the
+// wiring. Three arrived as crown- (the page is crowns), bridges-reshaping-,
+// and teeth-whitening-dental- (missing "botesdale") — each resolved to
+// nothing and fell back to a grey placeholder with no error anywhere. If a
+// file is named like a hero, some page has to be using it.
+console.log('\n== every hero-named file is claimed by a page ==');
+{
+  const dir = path.join(ROOT, 'assets/images/brand');
+  const heroes = fs.readdirSync(dir).filter(f => /-hero\.(png|jpe?g|webp)$/.test(f));
+  const unclaimed = heroes.filter(f => !allHtml.includes('brand/' + f));
+  ok(heroes.length + ' hero files, all referenced', unclaimed.length === 0,
+     JSON.stringify(unclaimed));
+  ok('enough hero files to be worth checking', heroes.length >= 5, heroes.length);
+}
+
 console.log(`\n(${[...new Set(commented)].length} pages carry commented-out photo placeholders — expected)`);
 console.log(fail === 0 ? '\nALL PASSED' : `\n${fail} FAILED`);
 process.exit(fail ? 1 : 0);

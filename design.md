@@ -627,7 +627,7 @@ The single tag on a plain gallery shot sits at the **bottom centre**, not in a c
 
 ### 4.21a Before / after — `.compare` + `js/ui.js`
 
-Two photographs of the same mouth, one wiped over the other, with a divider the reader drags. Used on every case study and for the lead case on the home page. **Not** `[data-reveal]` — that is the scroll-in animation (4.29), and the two are unrelated.
+Two photographs of the same mouth, one wiped over the other, with a divider the reader drags. Used at the head of every case study's gallery, and on **every** case tile wherever cases are listed — the three cards on the home page and all five tiles on the case studies index. It first shipped on the lead case only, with flat placeholders beside it, which read as an oversight rather than a hierarchy. **Not** `[data-reveal]` — that is the scroll-in animation (4.29), and the two are unrelated.
 
 A **native `<input type="range">`** over the frame at `opacity: 0` holds the value and gives the control its keyboard behaviour and its announcement. It does **not** take the pointer — `pointer-events: none`; `js/ui.js` reads `clientX` off the frame instead, with `setPointerCapture`.
 
@@ -643,7 +643,13 @@ The before pane is **clipped** with `clip-path`, never resized. Narrowing the el
 
 With JS off the divider simply stays at its CSS default of 50%, so both photographs are half visible rather than one being hidden.
 
-Guarded by `tools/verify-compare.js`.
+**A tile carrying one cannot be a link.** `.card` and `.strip__item` are normally an `<a>` around the whole tile; a drag inside that navigates instead of dragging — measurably, not in theory: wrapping it back up leaves `--pos` stuck part-way through a drag. So `c_cards()` and `c_strip()` switch to an `<article>` / `<div>` when an item carries `media`, and put the link on the heading and the arc link, which is where a reader aims anyway. `.card--static` / `.strip__item--static` restore the hover the anchor rules were providing.
+
+Inside a card or strip tile the container already clips and sets the ratio, so the comparison drops its own radius and ratio — the same division of labour as `--ph-radius` (4.4).
+
+**No drop shadows.** The grip is held against a pale photograph by a hairline ring, not a shadow. The first version used `0 2px 12px`, which were the only two drop shadows on the site — everything else separates with a hairline, and they read as borrowed from another design language.
+
+Guarded by `tools/verify-compare.js`, which also asserts every case tile has one, that none sits inside a link while every tile still links to its case, and that nothing inside a comparison casts a blurred shadow.
 
 ### 4.22 Prev / next pager — `.pager`
 

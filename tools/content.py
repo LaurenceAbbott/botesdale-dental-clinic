@@ -425,15 +425,30 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
     tiles = []
     for i, it in enumerate(items):
         href = it.get('href') or H.rel(it['key'], depth)
+        if it.get('media'):
+            # Draggable media cannot sit inside a link — see c_cards.
+            tiles.append('''<div class="strip__item strip__item--static" data-reveal data-reveal-delay="{d}">
+        <div class="strip__media">{media}</div>
+        <div class="strip__cap">
+          <span class="label">{label}</span>
+          <h3><a href="{href}">{title}</a></h3>
+          <p>{text}</p>
+          <a class="arc-link" href="{href}">{cta}</a>
+        </div>
+      </div>'''.format(href=href, d=min(i, 3), media=it['media'],
+                         cta=_e(it.get('cta', 'Read more')),
+                         label=_e(it.get('label', '')), title=_e(it['title']),
+                         text=_e(it['text'])))
+            continue
         tiles.append('''<a class="strip__item" href="{href}" data-reveal data-reveal-delay="{d}">
         <div class="strip__media">{ph}</div>
         <div class="strip__cap">
           <span class="label">{label}</span>
           <h3>{title}</h3>
           <p>{text}</p>
-          <span class="arc-link">Read more</span>
+          <span class="arc-link">{cta}</span>
         </div>
-      </a>'''.format(href=href, d=min(i, 3),
+      </a>'''.format(href=href, d=min(i, 3), cta=_e(it.get('cta', 'Read more')),
                      ph=c_media(H, depth,
                                 (c_page_image(H, it['key']) if it.get('key') else None)
                                 or it.get('image'),
@@ -457,20 +472,42 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
 
 
 def c_cards(H, depth, items, cols=3):
+    """items: {key|href, label, title, text, alt, media?, cta?}
+
+    `media` replaces the card's placeholder with arbitrary markup — a
+    before/after comparison, in practice. A card carrying one CANNOT be an
+    <a> around the whole tile: dragging the divider inside a link navigates
+    instead of dragging. Those cards become an <article> and put the link on
+    the heading and the arc link, which is where a reader aims anyway.
+    """
     out = []
     for it in items:
         href = it.get('href') or H.rel(it['key'], depth)
-        out.append('''<a class="card" href="{href}" data-reveal>
+        cta = _e(it.get('cta', 'Read more'))
+        if it.get('media'):
+            out.append('''<article class="card card--static" data-reveal>
+      <div class="card__media">{media}</div>
+      <div class="card__body">
+        <span class="label">{label}</span>
+        <h3><a href="{href}">{title}</a></h3>
+        <p>{text}</p>
+        <a class="arc-link" href="{href}">{cta}</a>
+      </div>
+    </article>'''.format(href=href, media=it['media'], cta=cta,
+                       label=_e(it.get('label', '')), title=_e(it['title']),
+                       text=_e(it['text'])))
+        else:
+            out.append('''<a class="card" href="{href}" data-reveal>
       <div class="card__media">{ph}</div>
       <div class="card__body">
         <span class="label">{label}</span>
         <h3>{title}</h3>
         <p>{text}</p>
-        <span class="arc-link">Read more</span>
+        <span class="arc-link">{cta}</span>
       </div>
-    </a>'''.format(href=href, ph=c_ph(it.get('alt') or it['title']),
-                   label=_e(it.get('label', '')), title=_e(it['title']),
-                   text=_e(it['text']), arc=ARC))
+    </a>'''.format(href=href, ph=c_ph(it.get('alt') or it['title']), cta=cta,
+                       label=_e(it.get('label', '')), title=_e(it['title']),
+                       text=_e(it['text'])))
     return '<div class="cols-%d">%s</div>' % (cols, '\n    '.join(out))
 
 
@@ -668,6 +705,20 @@ def c_compare(H, depth, before, after, cls=''):
         % (' ' + cls if cls else '',
            c_media(H, depth, aimg, aalt), c_media(H, depth, bimg, balt),
            _e(btag), _e(atag)))
+
+
+def c_case_compare(H, depth, case, cls=''):
+    """The before/after for a case, wherever that case is listed.
+
+    Returns '' if the case has no Before and After pair, so a caller can fall
+    back to its own media rather than rendering half a comparison.
+    """
+    shots = case.get('shots') or []
+    before = next((x for x in shots if x[1].lower() == 'before'), None)
+    after = next((x for x in shots if x[1].lower() == 'after'), None)
+    if not before or not after:
+        return ''
+    return c_compare(H, depth, before, after, cls=cls)
 
 
 def c_gallery(H, depth, shots):
@@ -2005,27 +2056,17 @@ def r_home(depth, H):
 
     out.append(c_quote(TESTIMONIALS))
 
-    # The lead case is shown as a comparison the reader can drag rather than as
-    # a fourth card: a card row of before/after thumbnails asks you to hold two
-    # images in your head at once, and the whole point of these photographs is
-    # the difference between them.
-    lead = CASES[0]
-    b = next(s for s in lead['shots'] if s[1].lower() == 'before')
-    a = next(s for s in lead['shots'] if s[1].lower() == 'after')
     out.append(c_section(
         '<div class="section-head section-head--center"><span class="label">Case studies</span>'
         '<h2>Real people, real problems — treated as far as each patient wants to go.</h2>'
         '<p>The cases on this page were published with consent and kind agreement of our happy '
-        'patients.</p></div>'
-        + '<figure class="feature-case" data-reveal>%s'
-          '<figcaption class="feature-case__cap"><h3>%s</h3><p>%s</p>%s</figcaption></figure>'
-          % (c_compare(H, depth, b, a), _e(LABELS[lead['key']]),
-             _e(_trim(lead['teaser'], 190)),
-             c_arc_link('Read the case', H.rel(lead['key'], depth)))
-        + '<div class="u-mt-8">%s</div>' % c_cards(H, depth, [
+        'patients. Drag any divider to see the change.</p></div>'
+        + c_cards(H, depth, [
             {'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
-             'text': _trim(c['teaser'], 150), 'image': c['thumb'], 'alt': LABELS[c['key']]}
-            for c in CASES[1:4]], cols=3)
+             'text': _trim(c['teaser'], 150), 'alt': LABELS[c['key']],
+             'cta': 'Read the case',
+             'media': c_case_compare(H, depth, c)}
+            for c in CASES[:3]], cols=3)
         + '<div class="cluster u-mt-8">%s</div>'
           % c_btn('All case studies', H.rel('cases', depth), 'outline'),
         cls='section--paper-3'))
@@ -2702,7 +2743,8 @@ def r_cases(depth, H):
               % (_e(TESTIMONIALS[1][0]), _e(TESTIMONIALS[1][1])))))
 
     items = [{'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
-              'text': c['teaser'], 'image': c['thumb'], 'alt': LABELS[c['key']]} for c in CASES]
+              'text': c['teaser'], 'image': c['thumb'], 'alt': LABELS[c['key']],
+              'cta': 'Read the case', 'media': c_case_compare(H, depth, c)} for c in CASES]
     out.append('<h2 class="visually-hidden">Our case studies</h2>')
     out.append(c_strip(H, depth, '', '', items, cols=3, cls='section--paper-3'))
 

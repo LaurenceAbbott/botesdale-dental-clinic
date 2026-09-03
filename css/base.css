@@ -233,12 +233,42 @@ p + p { margin-top: var(--s-4); }
 
 a { color: inherit; text-decoration: none; }
 
-.link-inline {
+/* A link inside running copy always looks like one. This is the default for
+   an unclassed link in a copy container rather than something .link-inline
+   has to be remembered for — it was missed on a tel: link inside a .notice,
+   which then rendered in body colour with no underline and no border, i.e.
+   invisible as a link. .link-inline stays for links outside these
+   containers, and any classed link keeps its own component styling. */
+.link-inline,
+.prose a:not([class]),
+.legal a:not([class]),
+.notice a:not([class]),
+.specs a:not([class]),
+.table a:not([class]),
+.cta p a:not([class]),
+.statement p a:not([class]),
+.section-head p a:not([class]),
+.form__note a:not([class]),
+.field__hint a:not([class]) {
   color: var(--black);
   border-bottom: var(--hair) solid var(--accent-line);
   transition: border-color var(--t-fast) var(--ease);
 }
-.link-inline:hover { border-bottom-color: var(--accent); }
+.link-inline:hover,
+.prose a:not([class]):hover,
+.legal a:not([class]):hover,
+.notice a:not([class]):hover,
+.specs a:not([class]):hover,
+.table a:not([class]):hover,
+.cta p a:not([class]):hover,
+.statement p a:not([class]):hover,
+.section-head p a:not([class]):hover,
+.form__note a:not([class]):hover,
+.field__hint a:not([class]):hover { border-bottom-color: var(--accent); }
+
+/* On a dark ground the ink colour would disappear. */
+.section--dark .link-inline, .statement .link-inline, .cta--dark .link-inline,
+.statement p a:not([class]), .cta--dark p a:not([class]) { color: var(--paper); }
 
 strong, b { font-weight: var(--fw-semi); color: var(--black); }
 em { font-style: italic; }
@@ -300,8 +330,6 @@ code, kbd, samp {
 .prose h2 { margin-top: var(--s-9); font-size: var(--fs-h3); color: var(--black); }
 .prose h3 { margin-top: var(--s-7); font-size: var(--fs-h4); color: var(--black); }
 .prose h2 + *, .prose h3 + * { margin-top: var(--s-4); }
-.prose a { color: var(--black); border-bottom: var(--hair) solid var(--accent-line); }
-.prose a:hover { border-bottom-color: var(--accent); }
 .prose ul, .prose ol { padding-left: 0; list-style: none; }
 .prose li + li { margin-top: var(--s-3); }
 .prose ul > li { position: relative; padding-left: var(--s-6); }

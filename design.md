@@ -295,6 +295,16 @@ In practice the wait only happens on touch and keyboard, where it doubles as fee
 
 Set by adding `.is-arcing` to the link, which draws the arc the same way `:hover` does.
 
+### 4.2a Inline links in copy
+
+A link sitting in running copy is always distinguishable from the text around it: ink, with a hairline `--accent-line` underline that goes full accent on hover.
+
+**This is the default, not an opt-in.** `.link-inline` had to be remembered, and it was missed — a `tel:` link inside a `.notice` on the contact page fell through to the bare `a { color: inherit; text-decoration: none }` reset and rendered in body colour with no underline and no border, i.e. invisible as a link. The treatment now applies to any unclassed `<a>` inside a copy container (`.prose`, `.legal`, `.notice`, `.specs`, `.table`, a `.cta`/`.statement`/`.section-head` paragraph, a form note or hint). `:not([class])` keeps classed links on their own component styling, and `.link-inline` stays for links outside those containers.
+
+On a dark ground the ink colour would disappear, so it flips to `--paper` there.
+
+**The phone number is always a real link.** Left as plain text it is still tappable on iOS — Safari auto-detects phone numbers — but Safari styles it as a *native* link, which does not match the site and is why the number in a closing CTA looked wrong. `_linkify_phone()` turns the number in already-escaped copy into a proper `tel:` link, and `<meta name="format-detection" content="telephone=no">` stops iOS auto-linking anything else we have not linked deliberately.
+
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
 
 **The brand mark.** `assets/images/brand/` holds the supplied artwork: `-logo-` (wordmark plus icon, 648×77) and `-icon-` (the mark alone, 63×77), each in a black and a white cut, plus the favicon derived from the icon.

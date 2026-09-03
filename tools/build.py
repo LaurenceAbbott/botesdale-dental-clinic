@@ -275,7 +275,7 @@ def build_footer(depth):
     <p>We use a small number of essential cookies to make this site work. See our
       <a href="{cookies}">Cookie Policy</a> for details.</p>
     <div class="cookie__actions">
-      <button class="btn btn--light btn--sm" type="button" data-cookie-choice="accepted">
+      <button class="btn btn--solid btn--sm" type="button" data-cookie-choice="accepted">
         <span class="btn__label">Accept</span></button>
       <button class="btn btn--light btn--sm" type="button" data-cookie-choice="essential">
         <span class="btn__label">Essential only</span></button>

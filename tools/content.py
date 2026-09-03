@@ -137,6 +137,20 @@ LABELS = {
     'styleguide': 'Style guide', '404': 'Page not found',
 }
 
+# The Treatments dropdown carries every treatment page, not just the four
+# category pages. Thirteen leaf pages were reachable only from a category page
+# or the previous/next pager — findable if you already knew they existed.
+# Built from GROUPS so the menu and the pager cannot disagree about what
+# belongs where.
+for _n in NAV:
+    if _n['key'] == 'treatments':
+        _n['children'] = [
+            {'key': _g, 'label': GROUPS[_g][0],
+             'children': [{'key': _k, 'label': LABELS[_k]}
+                          for _k in GROUPS[_g][1] if _k != _g]}
+            for _g in ('general', 'cosmetic', 'preventative')
+        ] + [{'key': 'missing', 'label': LABELS['missing']}]
+
 
 # =============================================================================
 # COMPONENT BUILDERS
@@ -589,6 +603,10 @@ def c_group_pager(H, depth, current, group_key):
     thing once the reader has finished, which is when it is useful.
     """
     title, keys = GROUPS[group_key]
+    # The group's first key is its overview page — the PARENT. Leaving it in
+    # the sequence made "previous" on Clear aligner read "Cosmetic dentistry",
+    # which is a level up, not a step sideways. Previous/next walks siblings.
+    keys = [k for k in keys if k != group_key]
     if current not in keys:
         return ''
     i = keys.index(current)
@@ -1715,7 +1733,9 @@ def r_leaf(key, depth, H):
     prose += ['<p>%s</p>' % p for p in d['paras']]
     # No second picture. The page head already carries this page's photograph;
     # a figure in the prose repeated the same subject a screen further down and
-    # captioned it with the page title, which the h1 has already said.
+    # captioned it with the page title, which the h1 has already said. The arc
+    # closes the section in its place — the motif, not another photograph.
+    prose.append(BAND_ARC)
 
     out.append(c_section('<div class="prose">%s</div>' % ''.join(prose), narrow=True))
 

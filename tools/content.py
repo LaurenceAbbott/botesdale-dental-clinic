@@ -2663,8 +2663,8 @@ SWATCHES = [
     ('Ink', '--black', '#1A1A18'), ('Ink 2', '--black-2', '#22292F'),
     ('Paper', '--paper', '#F7F6F3'), ('Paper 3', '--paper-3', '#EFEDE8'),
     ('Ink soft', '--ink-soft', '#5B615F'), ('Ink mute', '--ink-mute', '#8A8F8C'),
-    ('Line', '--line', '#D9D7D0'), ('Accent', '--accent', '#17A6DE'),
-    ('Accent 600', '--accent-600', '#128FC3'), ('Success', '--ok', '#1D7A57'),
+    ('Line', '--line', '#D9D7D0'), ('Accent', '--accent', '#009EE3'),
+    ('Accent 600', '--accent-600', '#008ECC'), ('Success', '--ok', '#1D7A57'),
     ('Warning', '--warn', '#8A5A00'), ('Error', '--error', '#A93226'),
 ]
 

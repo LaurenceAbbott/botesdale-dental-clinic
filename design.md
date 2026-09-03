@@ -51,16 +51,16 @@ All tokens live in **`css/base.css`** under `:root`. Nothing below that block ha
 | `--line-dark` | `rgba(247,246,243,.18)` | Hairline on black |
 | `--paper-soft` | `rgba(247,246,243,.70)` | Body copy on black |
 | `--paper-mute` | `rgba(247,246,243,.50)` | Micro-labels on black |
-| `--accent` | `#17A6DE` | Arc motif, markers, focus, validation |
-| `--accent-600` / `--accent-700` | `#128FC3` / `#0B6E97` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
-| `--accent-800` | `#08506E` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
+| `--accent` | `#009EE3` | Arc motif, markers, focus, validation — from the logo artwork |
+| `--accent-600` / `--accent-700` | `#008ECC` / `#006F9F` | `--accent-600` is the primary button's hover fill; `--accent-700` is the colour of a text link on paper |
+| `--accent-800` | `#004F72` | The primary button's pressed border. Too dark to be a fill under an ink label — see §4.1 |
 | `--ok` `--warn` `--error` | `#1D7A57` `#8A5A00` `#A93226` | Notices and form validation |
 
-> **Note on the brand blue — now evidenced.** The written brief specified `#009EE3`; the design system chose `#17A6DE` for the warm paper ground. The supplied logo files settle it: they paint their accent in **`#009EE3`**, so that is the practice's real blue, and the site accent currently differs from the mark in its own header.
+> **The brand blue is `#009EE3`, and it comes from the artwork.** The supplied logo files paint their accent in `#009EE3` — the wordmark and the icon's arc — so that is the practice's real blue, not the `#17A6DE` the design system previously approximated it with. The two differed by ΔE 8.7, well past the point of being distinguishable, and they sat inches apart in the header: the logo's own blue beside the accent on the nav arc and tab underline.
 >
-> The two blacks in those files match the palette exactly — the icon is `#22292F` and the wordmark `#1A1A18` — so the ink is right and only the blue is open.
+> The darker steps are the same hue scaled toward black, each picked against a constraint rather than by eye. **`--accent-600`** is the primary button's hover fill and must stay light enough to sit under an ink label (4.8:1, the same margin the old ramp had). **`--accent-700`** is a text link on paper, where `--accent` itself is only 2.8:1 (5.2:1). **`--accent-800`** is the pressed border only.
 >
-> Switching is a single-token change in `css/base.css` and safe for the primary button: an ink label on `#009EE3` measures 5.8:1 (against 6.3:1 today), clearing AA. It is *not* usable as small text on paper at 2.8:1 — but neither is the current accent at 2.6:1, which is exactly why `--accent-700` exists for links, so nothing else moves. The derived `--accent-600/700/800` steps would want re-deriving from the new hue.
+> One consequence worth knowing: `#009EE3` is *darker* than the accent it replaced (5.8:1 under an ink label against 6.3:1), so there is less room to darken before the label fails AA, and the primary button's hover step is correspondingly subtler than before.
 
 **Dark grounds** for the hero and page heads: `--grad-hero`, plus `--grad-cool`, `--grad-warm`, `--grad-slate` if a gradient panel is ever needed. Media panels awaiting photography use `--placeholder` (see §4.4).
 

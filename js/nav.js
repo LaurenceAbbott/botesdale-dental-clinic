@@ -75,6 +75,33 @@
     });
   }
 
+  /* --- desktop dropdown: hover intent -------------------------------------
+     Pure :hover loses the panel the moment the pointer leaves the link, and
+     the panel hangs off the HEADER's bottom edge rather than the link's — so
+     there is a band of dead space between them, and any diagonal move toward
+     a far column crosses it and closes the menu. A short close delay makes
+     that crossing survivable; entering the panel cancels it. :hover and
+     :focus-within stay in the stylesheet, so this degrades to the old
+     behaviour rather than breaking without JS. */
+  Array.prototype.forEach.call(document.querySelectorAll('.nav__dd'), function (dd) {
+    var shut;
+    var open = function () { clearTimeout(shut); dd.classList.add('is-open'); };
+    var close = function () { shut = setTimeout(function () { dd.classList.remove('is-open'); }, 260); };
+    dd.addEventListener('mouseenter', open);
+    dd.addEventListener('mouseleave', close);
+    dd.addEventListener('focusin', open);
+    dd.addEventListener('focusout', function (e) {
+      if (!dd.contains(e.relatedTarget)) dd.classList.remove('is-open');
+    });
+    dd.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        dd.classList.remove('is-open');
+        var link = dd.querySelector('.nav__link');
+        if (link) link.focus();
+      }
+    });
+  });
+
   /* --- mobile submenu groups ---------------------------------------------- */
   /* The open height is MEASURED, never a number in the stylesheet. It used to
      be `max-height: 460px`, sized by hand for a four-item list; when the panel

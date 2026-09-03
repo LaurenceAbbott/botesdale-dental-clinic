@@ -159,6 +159,17 @@
   transition: stroke-dashoffset 1.1s var(--ease-out) .12s;
 }
 .band-arc.is-in path { stroke-dashoffset: 0; }
+/* Inside prose the arc centres on the MEASURE, not the container. The
+   paragraphs are capped at 68ch — 567px inside a 900px .wrap--narrow — so an
+   arc centred on the container sat 118px right of the text it belongs to and
+   read as misaligned. Dropping the cap instead would put the line at ~108
+   characters, which is well past readable. */
+.prose .band-arc {
+  width: 68ch; max-width: 100%;
+  margin-inline: 0;
+  display: flex; justify-content: center;
+}
+.prose .band-arc svg { width: min(320px, 48%); }
 @media (prefers-reduced-motion: reduce) {
   .band-arc path { transition: none; stroke-dashoffset: 0; }
 }

@@ -132,17 +132,26 @@ def build_header(active, depth):
             if nested:
                 cols = []
                 for child in item['children']:
-                    ccls = ' nav__col-head is-active' if active == child['key'] else ' nav__col-head'
+                    ccls = 'nav__col-head is-active' if active == child['key'] else 'nav__col-head'
                     col = ['<a class="%s" href="%s">%s</a>'
-                           % (ccls.strip(), rel(child['key'], depth), esc(child['label']))]
+                           % (ccls, rel(child['key'], depth), esc(child['label']))]
+                    # The blurb is what stops a category with no sub-pages —
+                    # Missing teeth — reading as an empty column.
+                    if child.get('blurb'):
+                        col.append('<p class="nav__col-blurb">%s</p>' % esc(child['blurb']))
                     for leaf in child.get('children', []):
                         lcls = ' class="is-active"' if active == leaf['key'] else ''
                         col.append('<a href="%s"%s>%s</a>'
                                    % (rel(leaf['key'], depth), lcls, esc(leaf['label'])))
                     cols.append('<div class="nav__col">%s</div>' % ''.join(col))
                 links.append('<div class="nav__dd nav__dd--mega">%s'
-                             '<div class="nav__panel nav__panel--mega">%s</div></div>'
-                             % (anchor, ''.join(cols)))
+                             '<div class="nav__panel nav__panel--mega">'
+                             '<div class="nav__card">'
+                             '<div class="nav__cols">%s</div>'
+                             '<div class="nav__panel-foot">%s</div>'
+                             '</div></div></div>'
+                             % (anchor, ''.join(cols),
+                                arc_link('All treatments', rel(item['key'], depth))))
             else:
                 sub = []
                 for child in item['children']:

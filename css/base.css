@@ -152,8 +152,15 @@
 
   /* --- Geometry: square by default. The system's precision comes from
          hairlines and alignment, not rounded corners. ---------------------- */
-  --radius:      0;
-  --radius-pill: 999px;
+  /* Structure keeps square corners (principle 2) — buttons, fields, bands.
+     PHOTOGRAPHY does not: a picture is an object sitting on the page rather
+     than part of its structure, and 32px softens it without turning the
+     system into a rounded one. The radius goes on the outermost object: a
+     lone image, a standalone card, or — where tiles are hairline-joined into
+     one block, as in .strip__row — the whole block, not each tile. */
+  --radius:       0;
+  --radius-media: 32px;
+  --radius-pill:  999px;
   --hair:        1px;
 
   /* --- Elevation (used sparingly — this system prefers lines to shadows) -- */

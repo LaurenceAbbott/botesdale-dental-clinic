@@ -346,7 +346,8 @@ def c_statement(H, depth, eyebrow, heading, para, facts=None, link=None):
     {link}
     {arc}
   </div>
-</section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading), para=_e(para),
+</section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading),
+                     para=_linkify_phone(_e(para)),
                      facts=facts_html, link=link_html, arc=BAND_ARC)
 
 
@@ -426,7 +427,7 @@ def c_cta(H, depth, heading, para='', primary=('Book an appointment', 'contact')
     {arc}
   </div>
 </section>'''.format(dark=' cta--dark' if dark else '', heading=_e(heading),
-                     para=('<p>%s</p>' % _e(para)) if para else '',
+                     para=('<p>%s</p>' % _linkify_phone(_e(para))) if para else '',
                      buttons=''.join(buttons), arc=BAND_ARC)
 
 
@@ -469,6 +470,21 @@ def c_gallery(H, depth, shots):
         tag_html = '<span class="shot__tag">%s</span>' % _e(tag) if tag else ''
         out.append('<figure class="shot">%s%s</figure>' % (c_ph(alt), tag_html))
     return '<div class="gallery">%s</div>' % ''.join(out)
+
+
+def c_tel(cls='link-inline'):
+    """The practice number as a real, styled link."""
+    return '<a class="%s" href="tel:%s">%s</a>' % (cls, SITE['phone_href'], _e(SITE['phone']))
+
+
+def _linkify_phone(html, cls='link-inline'):
+    """Turn the number in already-escaped copy into a tel: link.
+
+    Left as plain text it still becomes tappable on iOS — Safari auto-detects
+    phone numbers — but with Safari's own native link styling, which does not
+    match the site's. Making it a real link is what stops that.
+    """
+    return html.replace(_e(SITE['phone']), c_tel(cls))
 
 
 def c_section(inner, cls='', wrap=True, narrow=False):

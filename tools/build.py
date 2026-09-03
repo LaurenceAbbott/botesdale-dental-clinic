@@ -307,6 +307,10 @@ def document(page, body, depth):
 <meta property="og:url" content="{canonical}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1A1A18">
+<!-- We link the practice number ourselves, styled to match the site. Without
+     this, iOS also auto-detects any other number-like string and applies its
+     own native link styling. -->
+<meta name="format-detection" content="telephone=no">
 
 <link rel="icon" href="{favicon}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">

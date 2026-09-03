@@ -283,9 +283,15 @@ a { color: inherit; text-decoration: none; }
 .form__note a:not([class]):hover,
 .field__hint a:not([class]):hover { border-bottom-color: var(--accent); }
 
-/* On a dark ground the ink colour would disappear. */
+/* On a dark ground the ink colour would disappear — --accent-700 is 2.4:1 on
+   --black, which renders as an underline with nothing legible above it. This
+   list is a standing trap: every new dark surface has to be added to it, and
+   .split-card__copy was missed exactly that way. verify-links.js now measures
+   every inline link against its real background rather than trusting it. */
 .section--dark .link-inline, .statement .link-inline, .cta--dark .link-inline,
-.statement p a:not([class]), .cta--dark p a:not([class]) { color: var(--paper); }
+.split-card__copy .link-inline,
+.statement p a:not([class]), .cta--dark p a:not([class]),
+.split-card__copy p a:not([class]) { color: var(--paper); }
 
 strong, b { font-weight: var(--fw-semi); color: var(--black); }
 em { font-style: italic; }

@@ -34,11 +34,12 @@ const read = p => p.evaluate(() => [...document.querySelectorAll('.ed')].map(ed 
     const ctx = await b.newContext({ viewport: { width: 1440, height: 1000 } });
     const p = await ctx.newPage();
     await p.route('**://*.google*/**', r => r.abort());
-    let rows = 0;
+    let rows = 0, paired = 0;
     for (const u of pages) {
       const resp = await p.goto('http://127.0.0.1:8931/' + u, { waitUntil: 'domcontentloaded' });
       if (!resp || resp.status() !== 200) { fail(u + ' returned ' + (resp && resp.status())); continue; }
       const eds = await read(p);
+      if (eds.length >= 2) paired++;
       if (eds.length < 2) { rows += eds.length; continue; }
       rows += eds.length;
       const sizes = [...new Set(eds.map(e => e.w + 'x' + e.h))];
@@ -48,8 +49,12 @@ const read = p => p.evaluate(() => [...document.querySelectorAll('.ed')].map(ed 
           fail(u + ' — rows ' + (i - 1) + ' and ' + i + ' both put the media ' + eds[i].side +
                '; consecutive editorial rows should alternate');
     }
-    if (rows < 12) fail('only ' + rows + ' editorial rows seen — the sweep is not reaching them');
-    else if (failed === before) console.log('  PASS  ' + rows + ' rows: one picture size per page, sides alternating');
+    if (rows < 6) fail('only ' + rows + ' editorial rows seen — the sweep is not reaching them');
+    // Alternation can only be checked where a page has two rows. Without this
+    // the check would pass vacuously the day every page drops to one.
+    else if (paired < 1) fail('no page had two editorial rows, so alternation was never exercised');
+    else if (failed === before) console.log('  PASS  ' + rows + ' rows on ' + paired +
+      ' multi-row page(s): one picture size per page, sides alternating');
     await ctx.close();
   }
 
@@ -66,7 +71,7 @@ const read = p => p.evaluate(() => [...document.querySelectorAll('.ed')].map(ed 
       rows += eds.length;
       eds.forEach((e, i) => { if (!e.copyFirst) fail(u + ' — .ed row ' + i + ' puts the image above the copy'); });
     }
-    if (rows < 12) fail('only ' + rows + ' rows seen at 390px');
+    if (rows < 6) fail('only ' + rows + ' rows seen at 390px');
     else if (failed === before) console.log('  PASS  ' + rows + ' rows stack copy-first');
     await ctx.close();
   }

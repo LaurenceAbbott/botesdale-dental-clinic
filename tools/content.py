@@ -788,7 +788,6 @@ LEAF = {
      'The treatment removes the infected tissue, cleans and shapes the canals inside the root, '
      'and seals them. The tooth stays where it is. In most cases it is then restored with a crown '
      'so that it can take the full force of biting again.'],
-   'image': 'images/cards/root-canal-therapy.jpg',
    'process': [
      ('Assessment and X-rays', 'We take radiographs to see the shape of the roots and the extent '
       'of the infection, and explain what we find before anything is agreed.'),
@@ -828,7 +827,6 @@ LEAF = {
      'it.',
      'We will always talk through what happens next before the tooth comes out, so you know '
      'whether the gap needs filling and what the options are.'],
-   'image': 'images/cards/extractions.jpg',
    'process': [
      ('Assessment', 'X-rays show the root shape and its relationship to the nerve and sinus. We '
       'discuss whether the tooth can be saved.'),
@@ -866,7 +864,6 @@ LEAF = {
      'We do our very best to provide same-day emergency services for all of our regular '
      'patients, and will also try to accommodate others where we can. Members of Our Plan pay no '
      'emergency access fee and have worldwide dental injury and emergency cover.'],
-   'image': 'images/cards/emergency-dental-treatment.jpg',
    'process': [
      ('Call us first', 'Phone <a class="link-inline" href="tel:+441379897176">01379 897176</a> '
       'rather than emailing. We can often give advice over the phone that helps straight away.'),
@@ -904,7 +901,6 @@ LEAF = {
      'explain each step before it happens and stop the moment you ask. For many nervous patients '
      'the first visit is nothing more than a conversation and a look — no instruments, no '
      'treatment, no pressure.'],
-   'image': 'images/cards/nervous-patients.jpg',
    'process': [
      ('Tell us in advance', 'Mention it when you book. It changes how we plan the appointment, '
       'not how we treat you.'),
@@ -939,7 +935,6 @@ LEAF = {
      'a simulation of the expected finishing position. Not every case suits aligners, and we '
      'will tell you honestly if fixed braces or a different approach would give a better '
      'result.'],
-   'image': 'images/cards/clear-aligners.jpg',
    'process': [
      ('Consultation', 'We assess the position of your teeth, your bite and the health of the '
       'gums. Aligners only work on a healthy foundation.'),
@@ -973,7 +968,6 @@ LEAF = {
      'Veneers involve special techniques, equipment and a high level of skill from the dental '
      'team. We work with certified technicians in the UK and Europe who specialise in this kind '
      'of work, and we plan the result with you before any tooth is prepared.'],
-   'image': 'images/cards/veneers.jpg',
    'process': [
      ('Smile assessment', 'We photograph and assess your smile: tooth proportion, lip line, '
       'colour and the way your teeth meet.'),
@@ -1008,7 +1002,6 @@ LEAF = {
      'We offer same-day crowns crafted on site as well as laboratory-made crowns, and we will '
      'recommend the material — all-ceramic, eMax or metal-based — that suits the position, the '
      'load and the appearance you want.'],
-   'image': 'images/cards/crowns.jpg',
    'process': [
      ('Assessment', 'We check whether a crown is the right answer, or whether a smaller '
       'restoration would do.'),
@@ -1041,7 +1034,6 @@ LEAF = {
      'Bridges suit some gaps better than others. Where the adjacent teeth are healthy and '
      'untouched, a dental implant may be the kinder long-term option, because it does not '
      'involve preparing them. We will set out both before you decide.'],
-   'image': 'images/cards/bridges.jpg',
    'process': [
      ('Assessment', 'We check the health and position of the teeth either side of the gap, and '
       'the bone underneath.'),
@@ -1074,7 +1066,6 @@ LEAF = {
      'In the UK, tooth whitening is a dental procedure and it is illegal for anyone who is not a '
      'registered dental professional to provide it. Beauty-salon whitening and unregulated '
      'online kits carry a real risk of chemical burns and permanent sensitivity.'],
-   'image': 'images/cards/teeth-whitening.jpg',
    'process': [
      ('Check-up first', 'Whitening goes on top of healthy teeth and gums. Any decay or gum '
       'problems are treated first.'),
@@ -1108,7 +1099,6 @@ LEAF = {
      'It is also a health treatment, not only a cosmetic one. Periodontal disease destroys the '
      'bone that holds teeth in place, and it is the most common reason adults lose teeth. '
      'Treating and stabilising the gums always comes before any cosmetic reshaping.'],
-   'image': 'images/cards/gum-reshaping.jpg',
    'process': [
      ('Periodontal assessment', 'We measure the gum pockets around every tooth and take '
       'radiographs to check the bone level.'),
@@ -1141,7 +1131,6 @@ LEAF = {
      'Most problems we find at a check-up are small, cheap and painless to deal with. The same '
      'problems found two years later are often none of those things. That is the whole argument '
      'for coming regularly.'],
-   'image': 'images/cards/check-up.jpg',
    'process': [
      ('Medical history', 'We check what has changed — medication, health conditions, anything '
       'that affects your mouth.'),
@@ -1177,7 +1166,6 @@ LEAF = {
      'A hygiene visit removes that build-up above and below the gum line, polishes the teeth, '
      'and — just as importantly — shows you where your own cleaning is missing. Most people are '
      'brushing well; almost everyone is missing the same two or three places.'],
-   'image': 'images/cards/dental-hygiene.jpg',
    'process': [
      ('Gum assessment', 'Pocket depths and bleeding points are recorded so progress can be '
       'measured objectively.'),
@@ -1210,7 +1198,6 @@ LEAF = {
      'Desensitising toothpaste helps a good many people and it is a sensible first step. But '
      'sensitivity that is getting worse, is confined to one tooth, or lingers after the '
      'stimulus has gone is worth investigating properly rather than masking.'],
-   'image': 'images/cards/sensitive-teeth.jpg',
    'process': [
      ('Find the cause', 'We test individual teeth to identify whether the problem is generalised '
       'or coming from one place.'),
@@ -1726,9 +1713,9 @@ def r_leaf(key, depth, H):
 
     prose = ['<p class="statement-text statement-text--wide">%s</p>' % _e(d['lead'])]
     prose += ['<p>%s</p>' % p for p in d['paras']]
-    if d.get('image'):
-        prose.append('<figure class="figure u-mt-8">%s<figcaption>%s</figcaption></figure>'
-                     % (c_ph(LABELS[key], 'ar-3-2'), _e(LABELS[key])))
+    # No second picture. The page head already carries this page's photograph;
+    # a figure in the prose repeated the same subject a screen further down and
+    # captioned it with the page title, which the h1 has already said.
 
     out.append(c_section('<div class="prose">%s</div>' % ''.join(prose), narrow=True))
 

@@ -1011,12 +1011,6 @@ a.card:hover { transform: translateY(-2px); }
 /* -----------------------------------------------------------------------------
    20. FIGURE, GALLERY & BEFORE/AFTER
    -------------------------------------------------------------------------- */
-/* No `margin: 0` here. The reset already zeroes it, and this rule loads after
-   base.css — so it was overriding the u-mt-8 the markup asks for and letting
-   the picture butt straight against the paragraph above it. */
-.figure img { width: 100%; }
-.figure figcaption { margin-top: var(--s-3); font-size: var(--fs-xs); color: var(--ink-mute); }
-
 .gallery { display: grid; gap: var(--s-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .gallery { grid-template-columns: minmax(0, 1fr); } }

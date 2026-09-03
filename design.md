@@ -477,6 +477,8 @@ Two links share the row evenly at every width, titles wrapping inside their own 
 
 ### 4.24 Forms — `.form`, `.field` + `js/forms.js`
 
+**The submit needs more room than a field.** `.form__actions` sits outside `.form__grid`, so the grid's own `--s-6` row gap does not reach it. It carried only `--s-2`, which put the button 8px under the consent checkbox while every field above was separated by 24 — the action looked attached to the last field rather than being the end of the form. It now takes `--s-8`. The note below keeps a tighter `--s-4`: it belongs to the button rather than standing apart from it, so the spacing groups them.
+
 Bordered fields on `--paper-2`, uppercase micro-labels above, and a `.field__error` element that fills in on validation failure.
 
 Fields are boxes, not underlines. An underline leaves the start and the end of the input implicit, and a column of them reads as a stack of rules with text floating between — you cannot tell at a glance where a field begins, or that it is a field at all. Boxes also mean the form carries **one** horizontal rule (above the action row) instead of one per field, so the remaining lines actually mean something. Hover darkens the border; focus turns it accent with a 3px `--accent-tint` ring; `.has-error` and `.is-valid` recolour the whole border rather than one edge.

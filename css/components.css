@@ -890,7 +890,13 @@ a.card:hover { transform: translateY(-2px); }
 .choice input { flex: none; width: 16px; height: 16px; margin-top: 3px; accent-color: var(--accent); }
 .choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: var(--s-3); }
 
-.form__actions { grid-column: 1 / -1; margin-top: var(--s-2); }
+/* The action row sits outside .form__grid, so the grid's own --s-6 row gap
+   does not apply to it — it had only --s-2, which put the submit button 8px
+   under the consent checkbox while every field above it was separated by 24.
+   A submit is a different kind of thing from a field and wants more room than
+   the rows, not less. The note below keeps a tighter --s-4: it belongs to the
+   button rather than standing apart from it. */
+.form__actions { grid-column: 1 / -1; margin-top: var(--s-8); }
 .form__note { font-size: var(--fs-xs); color: var(--ink-soft); margin-top: var(--s-4); max-width: 52ch; line-height: 1.6; }
 .form__success { border-left: 2px solid var(--ok); background: var(--ok-bg); padding: var(--s-6); }
 .form__success h3 { font-size: 1.25rem; margin-bottom: var(--s-2); }

@@ -202,13 +202,25 @@
   width: 100%;
   height: 100%;
   min-height: inherit;
+  /* Rounded by default, because a placeholder standing on its own — .figure
+     in prose, .home-intro__media, the .ar-* demos — IS the image object and
+     nothing above it clips. Where it fills a container that already clips
+     (below), the container owns the corner and this has to get out of the
+     way, or a rounded box appears inside a square one. */
+  border-radius: var(--radius-media);
   background: var(--placeholder);
 }
+/* Containers that already provide the clip. .strip__media and .card__media
+   are square on purpose: the radius belongs to the whole row / the whole
+   card, not to the tile inside it. */
+.ed__media > .ph, .shot > .ph, .team__portrait > .ph,
+.strip__media > .ph, .card__media > .ph { border-radius: 0; }
 .ph::after {
   content: "";
   position: absolute;
   inset: clamp(8px, 1.4vw, 16px);
   border: var(--hair) solid rgba(var(--ink-rgb), .07);
+  border-radius: calc(var(--radius-media) - clamp(8px, 1.4vw, 16px));
   pointer-events: none;
 }
 .ph__label {
@@ -446,6 +458,7 @@
 
 .ed__media {
   position: relative; display: grid; overflow: hidden;
+  border-radius: var(--radius-media);
   min-height: 440px;
   background: var(--placeholder);
 }
@@ -514,6 +527,8 @@
   grid-template-columns: repeat(var(--strip-cols, 4), minmax(0, 1fr));
   background: var(--line);
   border: var(--hair) solid var(--line);
+  border-radius: var(--radius-media);
+  overflow: hidden;                  /* so the corner tiles clip to the curve */
 }
 .strip__row--3 { --strip-cols: 3; }
 .strip__row--2 { --strip-cols: 2; }
@@ -541,6 +556,8 @@
   display: flex; flex-direction: column;
   background: var(--paper);
   border: var(--hair) solid var(--line);
+  border-radius: var(--radius-media);
+  overflow: hidden;
   transition: border-color var(--t-fast) var(--ease), transform var(--t) var(--ease-out);
 }
 .card:hover { border-color: var(--black); }
@@ -637,6 +654,7 @@ a.card:hover { transform: translateY(-2px); }
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
+  border-radius: var(--radius-media);
   background: var(--placeholder);
 }
 .team__portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
@@ -877,7 +895,11 @@ a.card:hover { transform: translateY(-2px); }
 .gallery { display: grid; gap: var(--s-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .gallery { grid-template-columns: minmax(0, 1fr); } }
-.shot { position: relative; display: grid; overflow: hidden; background: var(--placeholder); aspect-ratio: 3 / 2; }
+.shot {
+  position: relative; display: grid; overflow: hidden;
+  border-radius: var(--radius-media);
+  background: var(--placeholder); aspect-ratio: 3 / 2;
+}
 .shot img { width: 100%; height: 100%; object-fit: cover; }
 .shot__tag {
   position: absolute; left: 0; bottom: 0;
@@ -897,7 +919,7 @@ a.card:hover { transform: translateY(-2px); }
   background: rgba(var(--ink-rgb), .92);
 }
 .lightbox.is-open { display: flex; }
-.lightbox img { max-width: min(1100px, 100%); max-height: 88vh; object-fit: contain; }
+.lightbox img { max-width: min(1100px, 100%); max-height: 88vh; object-fit: contain; border-radius: var(--radius-media); }
 .lightbox__close {
   position: absolute; top: var(--s-6); right: var(--s-6);
   color: var(--paper); font-size: var(--fs-label);

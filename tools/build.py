@@ -132,9 +132,9 @@ def build_header(active, depth):
             if nested:
                 cols = []
                 for child in item['children']:
-                    ccls = 'nav__col-head is-active' if active == child['key'] else 'nav__col-head'
-                    col = ['<a class="%s" href="%s">%s</a>'
-                           % (ccls, rel(child['key'], depth), esc(child['label']))]
+                    # A title, not a link: the overview page is the first item
+                    # in the list below it.
+                    col = ['<span class="nav__col-head">%s</span>' % esc(child['label'])]
                     # The blurb is what stops a category with no sub-pages —
                     # Missing teeth — reading as an empty column.
                     if child.get('blurb'):

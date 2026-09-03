@@ -1412,13 +1412,25 @@ CATEGORY = {
 # belongs where.
 for _n in NAV:
     if _n['key'] == 'treatments':
+        # The column heading is a TITLE, not a link — a heading that was also a
+        # link left the reader guessing which of the two it was. The overview
+        # page is the first item in the list instead, spelled out, which is
+        # also what the mobile sheet already did and what fills the Missing
+        # teeth column rather than leaving it a heading over nothing.
+        #
+        # The titles drop the trailing "dentistry": three of the four carried
+        # it, so it was the least informative word on the row.
+        _short = {'general': 'General', 'cosmetic': 'Cosmetic',
+                  'preventative': 'Preventative', 'missing': 'Missing teeth'}
         _n['children'] = [
-            {'key': _g, 'label': GROUPS[_g][0], 'blurb': CATEGORY[_g]['sub'],
-             'children': [{'key': _k, 'label': LABELS[_k]}
-                          for _k in GROUPS[_g][1] if _k != _g]}
+            {'key': _g, 'label': _short[_g], 'blurb': CATEGORY[_g]['sub'],
+             'children': [{'key': _g, 'label': '%s overview' % GROUPS[_g][0]}]
+                         + [{'key': _k, 'label': LABELS[_k]}
+                            for _k in GROUPS[_g][1] if _k != _g]}
             for _g in ('general', 'cosmetic', 'preventative')
-        ] + [{'key': 'missing', 'label': LABELS['missing'],
-              'blurb': CATEGORY['missing']['sub']}]
+        ] + [{'key': 'missing', 'label': _short['missing'],
+              'blurb': CATEGORY['missing']['sub'],
+              'children': [{'key': 'missing', 'label': '%s overview' % LABELS['missing']}]}]
 
 
 # =============================================================================

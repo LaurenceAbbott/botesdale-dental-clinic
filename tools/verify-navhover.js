@@ -51,7 +51,9 @@ const fail = m => { console.log('  FAIL  ' + m); failed++; };
     if (!stillOpen) { fail('the panel closed while the pointer crossed the gap'); await ctx.close(); continue; }
 
     // And the link under the pointer is actually clickable, not covered.
-    const target = await p.$('.nav__col:last-child .nav__col-head');
+    // The column HEADING is a title, not a link (the overview page is the
+    // first item in the list), so target the first anchor in the column.
+    const target = await p.$('.nav__col:last-child a');
     const tb = await target.boundingBox();
     const hit = await p.evaluate(([x, y]) => {
       const el = document.elementFromPoint(x, y);

@@ -208,20 +208,23 @@
      nothing above it clips. Where it fills a container that already clips
      (below), the container owns the corner and this has to get out of the
      way, or a rounded box appears inside a square one. */
-  border-radius: var(--radius-media);
+  border-radius: var(--ph-radius, var(--radius-media));
   background: var(--placeholder);
 }
 /* Containers that already provide the clip. .strip__media and .card__media
    are square on purpose: the radius belongs to the whole row / the whole
    card, not to the tile inside it. */
 .ed__media > .ph, .shot > .ph, .team__portrait > .ph,
-.strip__media > .ph, .card__media > .ph { border-radius: 0; }
+.strip__media > .ph, .card__media > .ph,
+.split-card__media > .ph { --ph-radius: 0; }
 .ph::after {
   content: "";
   position: absolute;
   inset: clamp(8px, 1.4vw, 16px);
   border: var(--hair) solid rgba(var(--ink-rgb), .07);
-  border-radius: calc(var(--radius-media) - clamp(8px, 1.4vw, 16px));
+  /* Follows whatever corner the placeholder itself has, so a square .ph
+     does not get a rounded hairline drawn inside it. */
+  border-radius: max(0px, calc(var(--ph-radius, var(--radius-media)) - clamp(8px, 1.4vw, 16px)));
   pointer-events: none;
 }
 .ph__label {
@@ -533,14 +536,22 @@
 /* Media bleeds to the viewport edge; the copy column starts or stops on the
    container's own grid line, so the measure is identical at every width. */
 .ed__text {
-  display: flex; flex-direction: column; justify-content: center;
-  padding-block: var(--pad-block);
+  /* Top-aligned, not centred. The media is a fixed ratio pinned to the top of
+     the row, so centring the copy against it left the label starting some way
+     below the picture's top edge — two columns that should share a line and
+     visibly did not. */
+  display: flex; flex-direction: column; justify-content: flex-start;
+  align-self: start;
   padding-left: var(--ed-gap);
 }
 .ed--rev .ed__text { padding-left: 0; padding-right: var(--ed-gap); }
 .ed__text .label { display: block; margin-bottom: var(--s-4); }
 .ed__text h2 { margin-bottom: var(--s-4); max-width: 22ch; }
 .ed__text p { color: var(--ink-soft); max-width: 46ch; margin-bottom: var(--s-5); }
+/* .ed__text p is (0,1,1) and .statement-text is (0,1,0), so inside an .ed the
+   body rule silently won and the statement voice rendered --ink-soft grey at a
+   46ch measure. Same trap as .team__bio p over .team__gdc (2.2a). */
+.ed__text .statement-text { color: var(--black); max-width: 28ch; }
 .ed__text .arc-link { margin-top: var(--s-2); }
 
 /* Long copy: the heading keeps the full column, the paragraphs run two up
@@ -574,6 +585,65 @@
      heading below the fold on a phone. */
   .ed__text,  .ed--rev .ed__text  { grid-column: 1; grid-row: 1; padding-inline: 0; padding-block: 0; }
   .ed__media, .ed--rev .ed__media { grid-column: 1; grid-row: 2; margin-top: var(--s-7); aspect-ratio: 3 / 2; }
+}
+
+/* -----------------------------------------------------------------------------
+   07b. CENTRED INTRO — the opening copy on a page with no second picture
+   -----------------------------------------------------------------------------
+   Centred, which the rest of the site's running copy is not (1.5). It earns it
+   the same way the quote, the statement band and the closing CTA do: one idea
+   taken in at a glance, in a container with nothing beside it. The measure is
+   what keeps it readable — centred text past ~60ch is where the eye starts
+   losing the line.
+   -------------------------------------------------------------------------- */
+.intro-center { text-align: center; }
+.intro-center .label { display: block; margin-bottom: var(--s-3); }
+.intro-center h2 { max-width: 30ch; margin-inline: auto; margin-bottom: var(--s-6); }
+.intro-center p {
+  max-width: 60ch; margin-inline: auto; color: var(--ink-soft);
+  margin-bottom: var(--s-5);
+}
+.intro-center p:last-child { margin-bottom: 0; }
+
+/* -----------------------------------------------------------------------------
+   07a. SPLIT CARD — a dark copy panel and a picture inside one rounded card
+   -----------------------------------------------------------------------------
+   The two halves are flush: the card owns the corner and clips both, so there
+   is no gap and no inner radius. That is the whole point of the pattern — it
+   reads as one object rather than a panel next to a photograph.
+
+   The copy half sets its own ground, so it is a --dark surface and takes the
+   dark text tokens. The picture half is a plain media box; .split-card__media
+   carries no radius of its own for the same reason .strip__media does not.
+   -------------------------------------------------------------------------- */
+.split-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--black);
+}
+.split-card--rev .split-card__copy  { order: 2; }
+.split-card--rev .split-card__media { order: 1; }
+.split-card__copy {
+  background: var(--black); color: var(--paper-soft);
+  padding: clamp(var(--s-8), 4vw, var(--s-11));
+  display: flex; flex-direction: column; justify-content: center;
+  gap: var(--s-4);
+}
+.split-card__copy .label { display: block; color: var(--paper-mute); }
+.split-card__copy h2 { color: var(--paper); max-width: 18ch; }
+.split-card__copy p  { color: var(--paper-soft); max-width: 46ch; }
+.split-card__copy .arc-link { margin-top: var(--s-3); color: var(--accent); align-self: start; }
+.split-card__media { position: relative; display: grid; overflow: hidden; min-height: 340px; }
+.split-card__media img,
+.split-card__media .ph { width: 100%; height: 100%; object-fit: cover; }
+/* Stacked, the copy comes first — the same rule the editorial rows follow. */
+@media (max-width: 860px) {
+  .split-card { grid-template-columns: minmax(0, 1fr); }
+  .split-card--rev .split-card__copy  { order: 1; }
+  .split-card--rev .split-card__media { order: 2; }
+  .split-card__media { min-height: 0; aspect-ratio: 3 / 2; }
 }
 
 /* -----------------------------------------------------------------------------
@@ -835,7 +905,8 @@ a.card:hover { transform: translateY(-2px); }
    -------------------------------------------------------------------------- */
 .plan {
   border: var(--hair) solid var(--line);
-  padding: var(--s-7);
+  padding: var(--s-8);
+  border-radius: var(--radius-media);
   display: flex; flex-direction: column; gap: var(--s-4);
   background: var(--paper);
   transition: border-color var(--t-fast) var(--ease);
@@ -849,7 +920,7 @@ a.card:hover { transform: translateY(-2px); }
    result of stretching them across the whole wrap. */
 .plan-row {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-5); max-width: 720px;
+  gap: var(--s-5);
 }
 @media (max-width: 560px) { .plan-row { grid-template-columns: minmax(0, 1fr); } }
 

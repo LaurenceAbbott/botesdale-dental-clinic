@@ -436,9 +436,40 @@ Both muted tones were also failing where it counted. `--ink-mute` is **3.04:1** 
 
 This was invisible to the old check, which hid the text, sampled the background and computed contrast against the *declared* colour — so it reported 5.36:1 for a row rendering at 1.68:1. `verify-headtext.js` replaces that: it screenshots each element, classifies glyph and ground by luminance, and measures the **rendered** glyph against ground sampled in a ring 2–5px out — past the antialiasing, which is bright because it *is* the letter, and inside a text-shadow's reach. It also fails when declared and rendered diverge, which names the cause rather than the symptom.
 
+### 4.7a Split card — `.split-card`
+
+A dark copy panel and a picture inside **one** rounded card, flush.
+
+```html
+<section class="section"><div class="wrap">
+  <div class="split-card split-card--rev">
+    <div class="split-card__copy">…label, h2, paras, arc-link…</div>
+    <div class="split-card__media">…img or .ph…</div>
+  </div>
+</div></section>
+```
+
+The halves share a container, so there is no gap and no inner radius — the card owns the corner and clips both, which is what makes it read as one object rather than a panel beside a photograph. `--rev` swaps the sides with `order`. Stacked below 860px the copy comes first, the same rule the editorial rows follow (§4.8).
+
+**Use it where the pairing is the point** — one idea with one picture, as on the homepage's *Find us* and About us's *September 2024*. A run of editorial rows should stay on the `.ed` grid instead, so they line up with each other.
+
+`.split-card__copy` is a dark surface, which means it has to be in the dark-ground inline-link list in `base.css` — it was missed, and `--accent-700` on `--black` is **2.4:1**: an underline with nothing legible above it. That list is a standing trap, so `verify-links.js` now measures every inline link against the ground it actually sits on (41 of them) rather than trusting the list to be complete.
+
+### 4.7b Centred intro — `.intro-center`
+
+The opening copy on a page whose only picture is its header hero. The category pages carried a second photograph directly under the head, duplicating the job the hero does; with it gone the copy had a full-width container and nothing to sit beside, so it is centred.
+
+That makes it the **fourth** centred moment on the site, and it earns it the same way the other three do (§1.5): one idea taken in at a glance, not a passage worked through. The measure is what keeps it readable — `30ch` on the heading, `60ch` on the copy, because centred text past about 60ch is where the eye starts losing the line.
+
+**Hero photographs resolve by naming convention.** `c_hero_src()` looks for `assets/images/brand/<page-slug>-botesdale-dental-hero.png` and falls back to the declared path, so dropping a file in wires it up with no data edit. Four heroes had been sitting in the repo unreferenced because the `CATEGORY` entries still pointed at `images/heroes/*.jpg` placeholders that do not exist — `verify-assets.js` is what noticed, and it now checks the built HTML rather than grepping `content.py`, since these paths are assembled at runtime and never appear in the source.
+
 ### 4.8 Editorial block — `.ed`
 
 The workhorse: a media panel overhanging the rail beside a copy column (§2.3).
+
+**The copy column is top-aligned too.** `.ed__text` used to be `justify-content: center`, which against a fixed-ratio picture pinned to the top of the row left the label starting some way below the picture's top edge — two columns that should share a line and visibly did not.
+
+**`.ed__text p` is a specificity trap.** At (0,1,1) it beats `.statement-text` (0,1,0), so the statement voice inside an `.ed` rendered `--ink-soft` grey at a 46ch measure instead of `--black` at 28ch. Same shape as `.team__bio p` over `.team__gdc` (§2.2a); `.ed__text .statement-text` restores it.
 
 **The picture is a fixed 4:3, start-aligned — not stretched to the copy.** It used to take its height from whatever the copy column happened to be, so the same component drew a different-sized picture in every block. Two of them on one page made that obvious. A ratio means every editorial image on the site is the same shape, and a tall copy column simply leaves air beside a shorter picture rather than dragging it out of proportion.
 

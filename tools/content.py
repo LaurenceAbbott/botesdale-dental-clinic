@@ -325,6 +325,71 @@ def c_ed_shell(media_html, text_html, wrap_cls='ed'):
 </section>'''.format(wrap_cls=wrap_cls, media=media_html, text=text_html)
 
 
+def c_hero_src(H, key, fallback=None):
+    """The page's own hero photograph, by naming convention.
+
+    Files arrive named after the page slug —
+    assets/images/brand/<slug>-botesdale-dental-hero.png — so resolving them
+    here means dropping one in wires it up, with no data edit. Four had been
+    sitting in the repo unreferenced because the CATEGORY entries still
+    pointed at images/heroes/*.jpg placeholders that do not exist;
+    verify-assets.js is what noticed.
+    """
+    route = ROUTES.get(key, '')
+    slug = route.rsplit('/', 1)[-1][:-5] if route.endswith('.html') else ''
+    by_convention = 'images/brand/%s-botesdale-dental-hero.png' % slug
+    return by_convention if slug and H.asset_exists(by_convention) else fallback
+
+
+def c_split_card(H, depth, eyebrow, heading, paras, link=None, image=None,
+                 alt='', rev=False, image_size=None):
+    """A dark copy panel and a picture inside one rounded card, flush.
+
+    Unlike c_ed the two halves share a container, so there is no gap between
+    them and the card owns the corner. Use it where the pairing is the point —
+    a single idea with a single picture — rather than for a run of editorial
+    rows, which should stay on the .ed grid so they line up with each other.
+    """
+    body = ''.join('<p>%s</p>' % t for t in paras)
+    return '''<section class="section" data-reveal>
+  <div class="wrap">
+    <div class="split-card{rev}">
+      <div class="split-card__copy">
+        <span class="label">{eyebrow}</span>
+        <h2>{heading}</h2>
+        {body}
+        {link}
+      </div>
+      <div class="split-card__media">{media}</div>
+    </div>
+  </div>
+</section>'''.format(
+        rev=' split-card--rev' if rev else '',
+        eyebrow=_e(eyebrow), heading=_e(heading), body=body,
+        link=c_arc_link(link[0], link[1]) if link else '',
+        media=c_media(H, depth, image, alt or heading, image_size))
+
+
+def c_intro_center(H, depth, eyebrow, heading, paras):
+    """The opening copy on a page whose only picture is its header hero.
+
+    The category pages carried a second photograph directly under the head,
+    which duplicated the job the hero now does. With the media gone the copy
+    had a full-width container and nothing to sit beside, so it is centred —
+    the fourth centred moment on the site, and deliberate for the same reason
+    as the other three: one idea, read at a glance, not a passage worked
+    through (design.md 1.5).
+    """
+    return '''<section class="section intro-center" data-reveal>
+  <div class="wrap wrap--narrow">
+    <span class="label">{eyebrow}</span>
+    <h2>{heading}</h2>
+    {body}
+  </div>
+</section>'''.format(eyebrow=_e(eyebrow), heading=_e(heading),
+                   body=''.join('<p>%s</p>' % t for t in paras))
+
+
 def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
     """items: list of dicts {key|href, label, title, text, alt}
 
@@ -1656,7 +1721,8 @@ def r_leaf(key, depth, H):
     d = LEAF[key]
     parent = d['parent']
     crumbs = c_crumbs(H, depth, ['treatments', parent], LABELS[key])
-    out = [c_page_head(H, depth, LABELS[parent], LABELS[key], d['sub'], d['hero'], crumbs)]
+    out = [c_page_head(H, depth, LABELS[parent], LABELS[key], d['sub'],
+                       c_hero_src(H, key, d['hero']), crumbs)]
 
     prose = ['<p class="statement-text statement-text--wide">%s</p>' % _e(d['lead'])]
     prose += ['<p>%s</p>' % p for p in d['paras']]
@@ -1687,10 +1753,12 @@ def r_leaf(key, depth, H):
 def r_category(key, depth, H):
     d = CATEGORY[key]
     crumbs = c_crumbs(H, depth, ['treatments'], LABELS[key])
-    out = [c_page_head(H, depth, 'Treatments', LABELS[key], d['sub'], d['hero'], crumbs)]
+    out = [c_page_head(H, depth, 'Treatments', LABELS[key], d['sub'],
+                       c_hero_src(H, key, d['hero']), crumbs)]
 
-    out.append(c_ed(H, depth, LABELS[key], d['lead'], d['paras'],
-                    image=d.get('image'), alt=LABELS[key]))
+    # One picture per page, and it is the header hero. The .ed block that used
+    # to sit here put a second photograph immediately under the first.
+    out.append(c_intro_center(H, depth, LABELS[key], d['lead'], d['paras']))
 
     if d['children']:
         items = [{'key': k, 'label': LABELS[k], 'title': LABELS[k],
@@ -1777,7 +1845,7 @@ def r_home(depth, H):
                ('£0', 'Referral fee')],
         link=('Fees and membership', H.rel('fees', depth))) + '</div>')
 
-    blocks.append('<div id="visit">' + c_ed(
+    blocks.append('<div id="visit">' + c_split_card(
         H, depth, 'Find us', 'Come and say hello.',
         ['Holly Close, The Drift, Botesdale, Suffolk IP22 1DH — with on-site parking and '
          'step-free access throughout.',
@@ -1854,7 +1922,7 @@ def r_about(depth, H):
     </div>''',
         'ed ed--rev'))
 
-    out.append(c_ed(
+    out.append(c_split_card(
         H, depth, 'September 2024', 'A new smile in a purpose-built home.',
         ['We’re proud to welcome you to the new home of Botesdale Dental Practice &amp; Implant '
          'Clinic, now located in a purpose-built, state-of-the-art facility in the heart of '
@@ -1866,7 +1934,8 @@ def r_about(depth, H):
          'Together with our dedicated professional team, we’ve created a warm, friendly '
          'environment that’s also fully accessible, thoughtfully designed, and equipped with the '
          'latest in dental technology.'],
-        image='images/cards/practice-3.jpg', alt='Inside the new practice'))
+        image='images/cards/practice-3.jpg', alt='Inside the new practice',
+        rev=True))
 
     out.append(c_section('''<div class="section-split">
       <div class="section-head"><span class="label">Our mission</span>

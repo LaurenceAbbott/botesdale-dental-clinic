@@ -156,6 +156,8 @@ The ladder is now:
 
 **15px, not 16.** The head font is a wide geometric sans and sets large for its nominal size; at 16 the copy crowded a laptop viewport. The only paragraphs allowed above 15 are the display voices — `.statement`, `.quote`, `.statement-text` — which are set in the head font at heading sizes and are looked at rather than read through.
 
+**The style guide has to describe the system that exists.** It carried a *Lead* row for `--fs-lead` long after that token was deleted, and omitted `--fs-sm` and `--fs-xs` entirely — so the one page whose job is to document the scale was documenting a scale we no longer ship. `verify-styleguide.js` checks both directions: every `--fs-*` token in `base.css` has a row and every row names a token that exists, and each specimen *renders* at the size its row claims (a fixed size exactly, a fluid range within its bounds). The specimens for `--fs-sm` and `--fs-xs` are set from the token rather than inheriting body, or both would quietly show 15px.
+
 `verify-type.js` sweeps every page at 390 / 1024 / 1600 and fails on any `p`, `li`, `dd` or `dt` over 15px outside those three, and on any button that is not 48px tall. It also fails on a non-200 response: `audit-type.js` had been loading `pages/contact.html`, which does not exist, and quietly measuring the *server's* 404 page as if it were the site.
 
 If you are adding a component with a paragraph in it, it takes `--fs-body` unless it is a tile in a grid. Two specificity traps caught this: `.team__bio p` (0,0,1,1) silently beat `.team__gdc` (0,0,1,0), so the GDC line rendered as body copy rather than meta; and `.form__step-intro` had no rule of its own and borrowed `.field__hint`, so a step's intro rendered as a 13px grey hint.

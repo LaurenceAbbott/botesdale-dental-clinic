@@ -349,7 +349,9 @@ Every media area on the site is currently a placeholder rather than a photograph
 
 Flat grey, a hairline inset, and a small uppercase label naming the shot that belongs there. It stretches to fill its parent, so the parent owns the aspect ratio (`.card__media` is 3:2, `.strip__media` is 4:3, `.shot` is 3:2, `.ed__media` fills the row).
 
-**Swapping in real photography:** replace the whole `<div class="ph">` with `<img src="…" alt="…" loading="lazy">`. Nothing else changes — the parents already set `object-fit: cover`.
+**Swapping in real photography:** put the file in `assets/images/…` and pass its path as the block's `image` argument. `c_media()` renders an `<img>` when the file is on disk and the placeholder when it is not, so a photograph that has not been taken yet degrades instead of shipping a broken reference. Nothing else changes — the parents already set `object-fit: cover`.
+
+`c_ed` used to take an `image` argument and **ignore it**, rendering `c_ph()` unconditionally: every homepage block passed a path, and dropping the real photograph into `assets/` changed nothing on the page. `verify-assets.js` now fails if any `image=` naming a file that exists on disk is absent from the built HTML.
 
 The hero and page heads are dark panels rather than placeholders; each carries a commented-out `<img class="hero__media">` / `<img class="page-head__media">` showing exactly where the background photograph goes, plus a `.ph-note` marker in the corner. Delete the marker when the image lands.
 

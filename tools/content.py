@@ -186,6 +186,27 @@ def c_ph(label='', cls=''):
         (' ' + cls) if cls else '', _e(label or 'Image placeholder'), inner)
 
 
+def c_media(H, depth, image, alt, size=None, lazy=True):
+    """The real photograph if it is on disk, else the grey placeholder.
+
+    Every media block is authored with an `image` argument long before the
+    photograph for it exists, so the file has to be the switch — a missing
+    one has to fall back rather than ship a broken reference (see
+    build.asset_exists). c_ed used to ignore `image` entirely and always
+    render the placeholder, so dropping a real photograph into the folder
+    changed nothing on the page.
+
+    The parents already set object-fit and the aspect ratio (design.md 4.4),
+    so the img needs no sizing of its own.
+    """
+    if not image or not H.asset_exists(image):
+        return c_ph(alt)
+    dims = ' width="%d" height="%d"' % size if size else ''
+    return ('<img src="%s" alt="%s"%s%s decoding="async">'
+            % (H.asset(image, depth), _e(alt), dims,
+               ' loading="lazy"' if lazy else ''))
+
+
 def c_portrait(H, depth, name, image=None, size=None):
     """A team portrait: the real photograph if there is one, else a placeholder.
 
@@ -263,7 +284,7 @@ def c_page_head(H, depth, eyebrow, heading, sub='', image=None, crumbs='', short
 
 
 def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
-         warm=False, alt='', media_wide=False):
+         warm=False, alt='', media_wide=False, image_size=None):
     wrap_cls = 'ed'
     if rev:
         wrap_cls += ' ed--rev'
@@ -287,7 +308,7 @@ def c_ed(H, depth, eyebrow, heading, paras, link=None, image=None, rev=False,
     {body}
     {link}
   </div>
-</section>'''.format(wrap_cls=wrap_cls, ph=c_ph(alt or heading),
+</section>'''.format(wrap_cls=wrap_cls, ph=c_media(H, depth, image, alt or heading, image_size),
                      eyebrow=_e(eyebrow), heading=_e(heading), body=body, link=link_html)
 
 
@@ -1727,7 +1748,9 @@ def r_home(depth, H):
          'clinical excellence — fully accessible, thoughtfully designed and equipped with the '
          'latest dental technology.'],
         link=('Meet the team', H.rel('about', depth)),
-        image='images/cards/practice-1.jpg', alt='The practice building',
+        image='images/brand/the-practice-building-botesdale-dental.png',
+        image_size=(1400, 1000),
+        alt='The Botesdale Dental practice building',
         rev=True, warm=True) + '</div>')
 
     blocks.append('<div id="plan">' + c_statement(

@@ -88,7 +88,8 @@
    every usage has it. */
 .btn {
   position: relative; display: inline-block;
-  padding: 15px 30px;
+  /* 48px tall: 12 + 12 padding, 22px of 13px label, 2px of border. */
+  padding: 12px 30px;
   font-size: var(--fs-xs); letter-spacing: var(--ls-cta); text-transform: uppercase;
   font-weight: var(--fw-medium);
   border: var(--hair) solid var(--black);
@@ -237,7 +238,12 @@
 .hero {
   position: relative; overflow: hidden;
   display: flex; align-items: flex-end;
-  min-height: 420px; max-height: 660px; height: 78vh;
+  /* Deeper than it was (78vh capped at 660). A browser's own chrome — tab
+     strip, address bar, bookmarks — comes out of the viewport before the page
+     gets any, so a hero sized to look generous in a bare window arrives short
+     on a real laptop. 88vh with a 780px cap: still under a full screen, so
+     the section below stays visible and the page still reads as scrollable. */
+  min-height: 460px; max-height: 780px; height: 88vh;
   margin-top: calc(-1 * var(--nav-h));
   background: var(--grad-hero);
   clip-path: url(#heroArc);
@@ -256,7 +262,7 @@
 .hero__inner { position: relative; width: 100%; padding-bottom: var(--s-10); color: var(--paper); }
 .hero__inner .label { color: var(--paper-mute); display: block; margin-bottom: var(--s-4); }
 .hero h1 { color: var(--paper); max-width: 18ch; }
-.hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); font-size: var(--fs-lead); }
+.hero__sub { margin-top: var(--s-5); max-width: 42ch; color: var(--paper-soft); }
 .hero__actions { margin-top: var(--s-7); }
 
 /* Marks the dark panels that are built to take a background photograph.
@@ -373,9 +379,6 @@
    comes from size and weight, and legibility wins. Taking the crumbs, label
    and sub to full paper is what let the plateau drop from .75 to .68 and
    stop at 38% of the height instead of 58%. */
-.page-head--shot .crumbs a,
-.page-head--shot .crumbs [aria-current],
-.page-head--shot .crumbs,
 .page-head--shot .label,
 .page-head--shot p { color: var(--paper); }
 
@@ -385,16 +388,24 @@
 .crumbs {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
   font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
-  color: var(--paper-mute);
+  color: var(--paper);
   margin-bottom: var(--s-4);
 }
-.crumbs a { color: var(--paper-mute); transition: color var(--t-fast) var(--ease); }
-.crumbs a:hover { color: var(--paper); }
-.crumbs [aria-current] { color: var(--paper); }
-.crumbs__sep { opacity: .5; }
-.crumbs--on-paper { color: var(--ink-mute); }
-.crumbs--on-paper a { color: var(--ink-mute); }
-.crumbs--on-paper a:hover, .crumbs--on-paper [aria-current] { color: var(--black); }
+/* The trail is one tone, at full strength, and the links carry an underline
+   on hover. It used to run the other way — links at --paper-mute / --ink-mute
+   with the current page at full strength — which read as though the thing you
+   can click were the disabled one. Both muted tones were also failing AA
+   where it mattered: --ink-mute is 3.04:1 on paper, and over a bright sky
+   --paper-mute needs a .86 scrim to reach 4.5:1, which would black out the
+   photograph the head is there to show (§4.6). Underline, not dimming. */
+.crumbs a {
+  color: inherit;
+  text-decoration-color: transparent; text-underline-offset: .25em;
+  transition: text-decoration-color var(--t-fast) var(--ease);
+}
+.crumbs a:hover, .crumbs a:focus-visible { text-decoration: underline; text-decoration-color: currentColor; }
+.crumbs__sep { opacity: .55; }
+.crumbs--on-paper { color: var(--black); }
 
 /* -----------------------------------------------------------------------------
    07. EDITORIAL BLOCK — the workhorse 2-up media + copy row

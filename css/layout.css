@@ -82,7 +82,7 @@
 .section-head { max-width: 40rem; margin-bottom: var(--s-8); }
 .section-head--center { margin-inline: auto; text-align: center; }
 .section-head .label { display: block; margin-bottom: var(--s-3); }
-.section-head p { margin-top: var(--s-4); color: var(--ink-soft); font-size: var(--fs-lead); }
+.section-head p { margin-top: var(--s-4); color: var(--ink-soft); }
 .section--dark .section-head p { color: var(--paper-soft); }
 
 /* Hairlines */
@@ -115,27 +115,38 @@
    height, which drew a visible band straight across the sky on a
    photographic page head. Zero slope at both ends means no edge.
 
-   The 88px tail is set by the breadcrumb, not by the header. The crumbs now
-   ride at the top of the page head (§4.6) and land at 85-104px, so the
-   plateau has to hold to 66% to cover them — at the 54px tail it had already
-   fallen to .24 by the time it reached them, against the .56 they need over
-   bright sky. One gradient stretched, not a second one added underneath:
-   two overlapping curves of different shapes are what made the junction
-   visible in the first place. */
+   Short plateau, long tail. What reads as a hard black band across the top of
+   a photograph is the FLAT part, not the fade — so the plateau now covers
+   only what actually needs .56, and everything below it is falloff.
+
+   Profiled against the bare photograph rather than guessed (profile-topscrim.js
+   hides both scrims, screenshots, and solves for the minimum alpha under each
+   element): the nav links need .540 and the header CTA .475, both inside
+   y 15-57; the crumb row at y 85-104 needs .415 at its worst, over bright
+   sky. Nothing below that needs anything. So the plateau holds .560 to 60px
+   — through the header and no further — and smoothsteps across the remaining
+   160px, passing .46 at the foot of the crumbs and reaching nothing at 220px.
+
+   The previous shape held .560 all the way to 106px, which is 50px of flat
+   ink no element asked for. Same protection, roughly half the visible band.
+   One gradient stretched, not a second one added underneath: two overlapping
+   curves of different shapes are what made the junction visible originally. */
 .nav::before {
   content: "";
-  position: absolute; inset: 0 0 -88px 0;
+  position: absolute; inset: 0 0 -147px 0;
   pointer-events: none;
   background: linear-gradient(to bottom,
     rgba(var(--ink-rgb), .560) 0%,
-    rgba(var(--ink-rgb), .560) 66%,
-    rgba(var(--ink-rgb), .536) 70%,
-    rgba(var(--ink-rgb), .473) 74%,
-    rgba(var(--ink-rgb), .383) 79%,
-    rgba(var(--ink-rgb), .280) 83%,
-    rgba(var(--ink-rgb), .177) 87%,
-    rgba(var(--ink-rgb), .088) 92%,
-    rgba(var(--ink-rgb), .024) 96%,
+    rgba(var(--ink-rgb), .560) 27%,
+    rgba(var(--ink-rgb), .553) 32%,
+    rgba(var(--ink-rgb), .521) 39%,
+    rgba(var(--ink-rgb), .459) 47%,
+    rgba(var(--ink-rgb), .367) 56%,
+    rgba(var(--ink-rgb), .264) 65%,
+    rgba(var(--ink-rgb), .164) 74%,
+    rgba(var(--ink-rgb), .086) 82%,
+    rgba(var(--ink-rgb), .029) 90%,
+    rgba(var(--ink-rgb), .005) 96%,
     rgba(var(--ink-rgb), 0)    100%);
   transition: opacity var(--t-fast) var(--ease);
 }

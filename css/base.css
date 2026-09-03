@@ -87,12 +87,17 @@
   --fs-h2:    clamp(1.5rem, 1.22rem + 1.15vw, 2.125rem); /* 24 → 34 */
   --fs-h3:    clamp(1.25rem, 1.14rem + .45vw, 1.5rem);   /* 20 → 24 */
   --fs-h4:    1.0625rem;                                  /* 17      */
-  /* Running copy uses exactly one size: --fs-body. --fs-lead is for an
-     intro paragraph under a heading, --fs-sm for copy inside a narrow grid
-     tile, --fs-xs for meta and form hints. Body copy was previously set at
-     17 / 16 / 15 / 14 / 13 across components doing the same job. */
-  --fs-lead:  clamp(1rem, .95rem + .2vw, 1.125rem);      /* 16 → 18 */
-  --fs-body:  1rem;                                       /* 16      */
+  /* Running copy uses exactly one size: --fs-body. Not "one size plus a
+     slightly larger one for intros" — there was a --fs-lead at 16→18 for the
+     hero sub, the paragraph under a section head and .lead, and at 17-18px
+     against 16px body it read as an inconsistency rather than a hierarchy.
+     Intros are now distinguished by measure, line-height and colour, which
+     is what was actually doing the work.
+
+     15px, not 16: the head font is a wide geometric sans and sets large for
+     its nominal size. --fs-sm is for copy inside a narrow grid tile and
+     --fs-xs for meta and form hints. */
+  --fs-body:  .9375rem;                                   /* 15      */
   --fs-sm:    .875rem;                                    /* 14      */
   --fs-xs:    .8125rem;                                   /* 13      */
   --fs-label: .6875rem;                                   /* 11      */
@@ -317,7 +322,7 @@ code, kbd, samp {
 }
 .statement-text--wide { max-width: none; }
 
-.lead { font-size: var(--fs-lead); line-height: 1.65; color: var(--ink-soft); }
+.lead { font-size: var(--fs-body); line-height: 1.65; color: var(--ink-soft); }
 .muted { color: var(--ink-soft); }
 .meta  { font-size: var(--fs-xs); color: var(--ink-mute); }
 

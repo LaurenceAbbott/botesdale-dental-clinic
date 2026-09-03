@@ -115,38 +115,34 @@
    height, which drew a visible band straight across the sky on a
    photographic page head. Zero slope at both ends means no edge.
 
-   Short plateau, long tail. What reads as a hard black band across the top of
-   a photograph is the FLAT part, not the fade — so the plateau now covers
-   only what actually needs .56, and everything below it is falloff.
+   IT MUST NOT REACH THE BREADCRUMB. .nav is sticky with z-index 80, so it
+   is a stacking context that paints above the page head — which means this
+   scrim covers the crumb TEXT, not just the sky behind it. While its tail
+   ran to 220px the crumbs sat inside it and rendered at rgb(138,138,135)
+   against a rgb(90,102,119) ground: 1.68:1. Extending it to "help" them made
+   it worse, because a scrim above the text multiplies both sides toward the
+   same ink — no alpha can raise that ratio, only lower it.
 
-   Profiled against the bare photograph rather than guessed (profile-topscrim.js
-   hides both scrims, screenshots, and solves for the minimum alpha under each
-   element): the nav links need .540 and the header CTA .475, both inside
-   y 15-57; the crumb row at y 85-104 needs .415 at its worst, over bright
-   sky. Nothing below that needs anything. So the plateau holds .560 to 60px
-   — through the header and no further — and smoothsteps across the remaining
-   160px, passing .46 at the foot of the crumbs and reaching nothing at 220px.
+   So the tail stops at the crumb row (nav-h + --s-7 = 105px) and the ground
+   under the crumbs is darkened by the page head's own scrim instead, which
+   sits BELOW the copy. See .page-head--shot .page-head__scrim.
 
-   The previous shape held .560 all the way to 106px, which is 50px of flat
-   ink no element asked for. Same protection, roughly half the visible band.
-   One gradient stretched, not a second one added underneath: two overlapping
-   curves of different shapes are what made the junction visible originally. */
+   Short plateau, long tail: the flat part is what reads as a hard band over a
+   photograph, never the fade. The plateau holds .560 across the header — the
+   nav links need .540 and the CTA .475, both measured against the bare
+   photograph by profile-topscrim.js — then smoothsteps away over the 32px
+   below it. Zero slope at both ends means no visible edge. */
 .nav::before {
   content: "";
-  position: absolute; inset: 0 0 -147px 0;
+  position: absolute; inset: 0 0 -32px 0;
   pointer-events: none;
   background: linear-gradient(to bottom,
     rgba(var(--ink-rgb), .560) 0%,
-    rgba(var(--ink-rgb), .560) 27%,
-    rgba(var(--ink-rgb), .553) 32%,
-    rgba(var(--ink-rgb), .521) 39%,
-    rgba(var(--ink-rgb), .459) 47%,
-    rgba(var(--ink-rgb), .367) 56%,
-    rgba(var(--ink-rgb), .264) 65%,
-    rgba(var(--ink-rgb), .164) 74%,
-    rgba(var(--ink-rgb), .086) 82%,
-    rgba(var(--ink-rgb), .029) 90%,
-    rgba(var(--ink-rgb), .005) 96%,
+    rgba(var(--ink-rgb), .560) 70%,
+    rgba(var(--ink-rgb), .495) 76%,
+    rgba(var(--ink-rgb), .355) 82%,
+    rgba(var(--ink-rgb), .192) 88%,
+    rgba(var(--ink-rgb), .057) 94%,
     rgba(var(--ink-rgb), 0)    100%);
   transition: opacity var(--t-fast) var(--ease);
 }

@@ -288,11 +288,19 @@
   clip-path: url(#heroArc);
 }
 .page-head--short { min-height: 34vh; }
+/* A photograph needs room to be a photograph. The scrims are sized by the
+   content they protect, which is a fixed pixel height — so on a 396px head
+   the header scrim took the top 41% and the copy plateau the bottom 58%,
+   leaving 1% of the picture untouched. Taller head, same content, far more
+   image. */
+.page-head--shot { min-height: min(74vh, 660px); }
+@media (max-width: 720px) { .page-head--shot { min-height: min(80vh, 620px); } }
 .page-head__media {
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
-  filter: saturate(.85) contrast(1.02);
 }
+/* The placeholder gradients wanted taming; a real photograph does not. */
+.page-head:not(.page-head--shot) .page-head__media { filter: saturate(.85) contrast(1.02); }
 .page-head__scrim {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(var(--ink-rgb), .62) 0%, rgba(var(--ink-rgb), .28) 40%, rgba(var(--ink-rgb), .86) 100%);
@@ -318,25 +326,17 @@
    junction visible. The header's own scrim now extends past it and holds a
    plateau across the links, so it does the whole job. */
 .page-head--shot .page-head__scrim {
-  background:
-    linear-gradient(to top,
-      rgba(var(--ink-rgb), .750) 0%,
-      rgba(var(--ink-rgb), .750) 58%,
-      rgba(var(--ink-rgb), .694) 62%,
-      rgba(var(--ink-rgb), .556) 67%,
-      rgba(var(--ink-rgb), .375) 72%,
-      rgba(var(--ink-rgb), .194) 76%,
-      rgba(var(--ink-rgb), .056) 80%,
-      rgba(var(--ink-rgb), 0)    85%);
+  background: linear-gradient(to top,
+    rgba(var(--ink-rgb), .680) 0%,
+    rgba(var(--ink-rgb), .680) 38%,
+    rgba(var(--ink-rgb), .630) 42%,
+    rgba(var(--ink-rgb), .504) 46%,
+    rgba(var(--ink-rgb), .340) 50%,
+    rgba(var(--ink-rgb), .176) 54%,
+    rgba(var(--ink-rgb), .050) 58%,
+    rgba(var(--ink-rgb), 0)    62%);
 }
-/* --paper-mute over a bright photograph cannot reach AA at any scrim short of
-   blacking the picture out — it needs .92, against .56 at full paper. The
-   soft tone is for a flat dark ground; over a photograph the hierarchy comes
-   from size and weight instead, and legibility wins. */
-.page-head--shot .crumbs a,
-.page-head--shot .crumbs [aria-current],
-.page-head--shot .label { color: var(--paper); }
-.page-head--shot .crumbs { color: var(--paper); }
+
 .page-head__inner {
   position: relative;
   padding-top: calc(var(--nav-h) + var(--s-6));
@@ -345,6 +345,19 @@
 .page-head .label { display: block; color: var(--paper-mute); margin-bottom: var(--s-4); }
 .page-head h1 { color: var(--paper); max-width: 20ch; overflow-wrap: break-word; }
 .page-head p { margin-top: var(--s-4); max-width: 46ch; color: var(--paper-soft); }
+
+/* Translucent whites are expensive over a photograph. --paper-mute needs a
+   .92 scrim to reach AA on a bright pixel and --paper-soft .75, against .60
+   at full paper — and every point of scrim is a point of picture lost. The
+   soft tones are for a flat dark ground; over a photograph the hierarchy
+   comes from size and weight, and legibility wins. Taking the crumbs, label
+   and sub to full paper is what let the plateau drop from .75 to .68 and
+   stop at 38% of the height instead of 58%. */
+.page-head--shot .crumbs a,
+.page-head--shot .crumbs [aria-current],
+.page-head--shot .crumbs,
+.page-head--shot .label,
+.page-head--shot p { color: var(--paper); }
 
 /* -----------------------------------------------------------------------------
    06. BREADCRUMB

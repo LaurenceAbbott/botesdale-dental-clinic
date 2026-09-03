@@ -545,17 +545,36 @@ a.card:hover { transform: translateY(-2px); }
   background: var(--placeholder);
 }
 .team__portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-/* Flat at the foot so the overlaid text keeps its contrast whatever the
-   photograph does behind it, but no heavier than it needs to be — .88 buried
-   the picture. Measured against a blown-out white photograph, the worst case:
-   at .75 the name reads 9.6:1 and the role label 5.7:1 (the label is
-   --paper-soft, a translucent white, so it composites onto the scrim and is
-   the binding constraint, not the name). The floor is about .70; .75 keeps
-   real margin without flattening the image. */
+/* The scrim holds full strength behind the text, then eases away on a
+   smoothstep curve.
+
+   It was a flat zone meeting a straight ramp, which reads as a hard-edged
+   black band: a linear ramp starts with a non-zero slope, so the junction is
+   a sudden change in rate and the eye finds it immediately. Smoothstep has
+   ZERO slope at both ends, so it leaves the hold at the same rate the hold
+   was going — nothing — and the two blend invisibly. The tail is long (to
+   80%) so the falloff never bunches into a visible edge either.
+
+   The plateau is set by contrast, the curve by appearance. Over a blown-out
+   white photograph — the worst case — the name reads 9.6:1 and the role
+   label 5.7:1 anywhere in the text zone. The label is the binding
+   constraint: it is --paper-soft, a translucent white, so it composites onto
+   the scrim rather than sitting on it. */
 .team__portrait::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(to top,
-    rgba(0, 0, 0, .75) 0%, rgba(0, 0, 0, .75) 26%, rgba(0, 0, 0, 0) 52%);
+    rgba(0, 0, 0, .750) 0%,
+    rgba(0, 0, 0, .750) 22%,
+    rgba(0, 0, 0, .734) 27%,
+    rgba(0, 0, 0, .679) 33%,
+    rgba(0, 0, 0, .610) 38%,
+    rgba(0, 0, 0, .508) 44%,
+    rgba(0, 0, 0, .394) 50%,
+    rgba(0, 0, 0, .279) 56%,
+    rgba(0, 0, 0, .172) 62%,
+    rgba(0, 0, 0, .083) 68%,
+    rgba(0, 0, 0, .022) 74%,
+    rgba(0, 0, 0, 0)    80%);
 }
 .team__id {
   position: absolute; inset-inline: 0; bottom: 0; z-index: 1;

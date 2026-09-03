@@ -317,9 +317,13 @@ Transparent over the hero, then `.is-scrolled` swaps in a translucent paper back
 
 **The header scrim extends past the header, and eases.** It covers the nav plus 88px below it, holding its plateau to 66% so the falloff happens *below* everything it protects rather than across it — the same reason the team scrim holds a plateau behind its text. And it is smoothstep: it used to be `.88 → .55 at 60% → 0`, where the slope more than doubled at 60% of the header's height and drew a visible band straight across the sky on a photographic page head.
 
-**The tail is sized by the breadcrumb, not by the header.** The crumbs ride at the top of the page head (§4.6) and land at 85–104px, so the plateau has to reach them; at the 54px tail it had already fallen to `.24` by then, against the `.56` they need over bright sky. One gradient stretched, not a second one added underneath — two overlapping curves of different shapes are what made the junction visible in the first place, and a photographic page head still carries no top gradient of its own.
+**Short plateau, long tail — the flat part is what reads as a band.** What looks like a hard black bar across the top of a photograph is the plateau, not the fade. So the plateau covers only what actually needs `.56` and everything below it is falloff: `.560` held to 60px — through the header and no further — then smoothstep across the remaining 160px, reaching nothing at 220px.
 
-It is also lighter than it was, `.56` rather than `.88`. That is measured, not eased off by feel: the nav links land at 4.65:1 over the brightest sky, the header CTA at 5.29:1, the crumbs at 6.36:1, and where the page title scrolls under the wordmark the mark still reads at 3.91:1 against the 3:1 a graphic needs. It cannot go to zero: with no top scrim at all the nav links measure **1.44:1** over that sky and the burger 2.70:1.
+Those numbers come from `profile-topscrim.js`, which hides both scrims, screenshots the bare photograph and solves for the minimum alpha under each element rather than guessing: the nav links need `.540` and the header CTA `.475`, both inside y 15–57; the crumb row at y 85–104 needs `.415` at its worst over bright sky; nothing below that needs anything. The curve passes `.46` at the foot of the crumbs. The shape before it held `.560` all the way to 106px — 50px of flat ink no element had asked for. Same protection, roughly half the visible band.
+
+One gradient stretched, not a second one added underneath — two overlapping curves of different shapes are what made the junction visible in the first place, and a photographic page head still carries no top gradient of its own.
+
+It is also lighter than it was, `.56` rather than `.88`. That is measured, not eased off by feel: the nav links land at 4.65:1 over the brightest sky, the header CTA at 5.29:1, the crumbs at 4.94:1, and where the page title scrolls under the wordmark the mark still reads at 3.91:1 against the 3:1 a graphic needs. It cannot go to zero: with no top scrim at all the nav links measure **1.44:1** over that sky and the burger 2.70:1.
 
 **A scrim sits behind the transparent header.** `.is-scrolled` does not arrive until the hero has almost passed, so hero copy scrolls underneath the transparent header well before it goes solid — the page title collided with the wordmark, white on white. `.nav::before` is a top-down gradient in `--ink-rgb` that keeps the transparent-over-hero look while guaranteeing anything sliding under the header is darkened before it reaches the logo; it fades out as the solid state fades in, and `.nav__inner` takes `position: relative; z-index: 1` so the header's own content paints above it.
 
@@ -367,9 +371,9 @@ The bottom edge is clipped to the arc (`clip-path: url(#heroArc)`, §1). The pat
 
 **A photograph needs room to be a photograph.** The scrims are sized by the content they protect, and that content is a fixed pixel height — so on the 396px head the header scrim took the top 41% and the copy plateau the bottom 58%, leaving **1% of the picture untouched**. That, not the opacities, is what was muting the image. `.page-head--shot` is therefore `min(74vh, 660px)`, and `min(80vh, 620px)` below 720px: same content, same protection, far more picture. And `saturate(.85) contrast(1.02)` now applies only to heads *without* a photograph — it was there to tame the placeholder gradients, and a real image does not want it.
 
-**The values are measured, not guessed.** Against the lightest pixel actually behind each element on the about-us photograph, the minimum scrim needed is `.56` for the crumbs, `.54` for the h1, `.69` for the sub and `.50` for the nav links. The plateau is `.68` and holds to 32% of the head, reaching nothing by 56%. It came down from 38% when the crumbs moved to the top: they had been the topmost thing the foot had to protect. What the header scrim gained in tail, the foot gave back.
+**The values are measured, not guessed.** Against the lightest pixel actually behind each element on the about-us photograph, the minimum scrim needed is `.54` for the h1, `.69` for the sub, `.50` for the nav links and — up at the top, where the crumbs now sit — `.415`. The plateau is `.68` and holds to 32% of the head, reaching nothing by 56%. It came down from 38% when the crumbs moved to the top: they had been the topmost thing the foot had to protect. What the header scrim gained in tail, the foot gave back.
 
-**`--paper-mute` cannot be used over a photograph.** At 50% white on a bright pixel it needs a `.92` scrim to reach AA — effectively blacking the picture out — against `.56` at full paper, and every point of scrim is a point of picture lost. So on `--shot` the crumbs, label **and sub** go to `--paper`; taking the sub with them is what let the plateau drop from `.75` to `.68` and stop well short of the 58% it used to reach. The soft tones exist for a flat dark ground; over a photograph the hierarchy comes from size and weight instead, and legibility wins.
+**`--paper-mute` cannot be used over a photograph.** At 50% white on a bright pixel it needs a `.86`–`.92` scrim to reach AA — effectively blacking the picture out — against `.42`–`.56` at full paper, and every point of scrim is a point of picture lost. So on `--shot` the label **and sub** go to `--paper` (the crumbs are full paper on every head now — §4.7); taking the sub with them is what let the plateau drop from `.75` to `.68` and stop well short of the 58% it used to reach. The soft tones exist for a flat dark ground; over a photograph the hierarchy comes from size and weight instead, and legibility wins.
 
 That override block has to sit **after** the base `.page-head .label` / `.page-head p` rules, not before them: `.page-head--shot p` and `.page-head p` are the same specificity, so on the earlier source position the sub silently kept `--paper-soft` and measured 3.80:1.
 
@@ -392,7 +396,13 @@ The compact hero used on every inner page. Same structure as `.hero`; add `--sho
 
 ### 4.7 Breadcrumb — `.crumbs`
 
-Uppercase, 11px, with a `/` separator. `--on-paper` variant for use outside a dark page head.
+Uppercase, 11px, with a `/` separator. `--on-paper` variant for use outside a dark page head (currently unused — nothing emits it).
+
+**One tone, at full strength; links are marked by an underline, never by dimming.** It used to run the other way — links at `--paper-mute` / `--ink-mute` with the current page at full strength — so the item you *can* click was the faint one and the item you are already on was the loud one. That reads as a disabled link.
+
+Both muted tones were also failing where it counted. `--ink-mute` is **3.04:1** on paper, under AA outright. And over a bright sky `--paper-mute` needs a **`.86`** scrim to reach 4.5:1 — it would black out the photograph the head exists to show (§4.6). There is no scrim budget for a translucent white in the crumb row, so the trail is `--paper` on dark and `--black` on paper, and `.crumbs a` inherits it. Hover and `:focus-visible` bring in an underline via `text-decoration-color`, so nothing reflows.
+
+`verify-crumbs.js` asserts the link's computed colour equals the trail's, and that no part of the trail is translucent.
 
 ### 4.8 Editorial block — `.ed`
 

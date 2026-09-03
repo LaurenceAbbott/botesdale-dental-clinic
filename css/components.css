@@ -373,9 +373,6 @@
    comes from size and weight, and legibility wins. Taking the crumbs, label
    and sub to full paper is what let the plateau drop from .75 to .68 and
    stop at 38% of the height instead of 58%. */
-.page-head--shot .crumbs a,
-.page-head--shot .crumbs [aria-current],
-.page-head--shot .crumbs,
 .page-head--shot .label,
 .page-head--shot p { color: var(--paper); }
 
@@ -385,16 +382,24 @@
 .crumbs {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2);
   font-size: var(--fs-label); letter-spacing: .1em; text-transform: uppercase;
-  color: var(--paper-mute);
+  color: var(--paper);
   margin-bottom: var(--s-4);
 }
-.crumbs a { color: var(--paper-mute); transition: color var(--t-fast) var(--ease); }
-.crumbs a:hover { color: var(--paper); }
-.crumbs [aria-current] { color: var(--paper); }
-.crumbs__sep { opacity: .5; }
-.crumbs--on-paper { color: var(--ink-mute); }
-.crumbs--on-paper a { color: var(--ink-mute); }
-.crumbs--on-paper a:hover, .crumbs--on-paper [aria-current] { color: var(--black); }
+/* The trail is one tone, at full strength, and the links carry an underline
+   on hover. It used to run the other way — links at --paper-mute / --ink-mute
+   with the current page at full strength — which read as though the thing you
+   can click were the disabled one. Both muted tones were also failing AA
+   where it mattered: --ink-mute is 3.04:1 on paper, and over a bright sky
+   --paper-mute needs a .86 scrim to reach 4.5:1, which would black out the
+   photograph the head is there to show (§4.6). Underline, not dimming. */
+.crumbs a {
+  color: inherit;
+  text-decoration-color: transparent; text-underline-offset: .25em;
+  transition: text-decoration-color var(--t-fast) var(--ease);
+}
+.crumbs a:hover, .crumbs a:focus-visible { text-decoration: underline; text-decoration-color: currentColor; }
+.crumbs__sep { opacity: .55; }
+.crumbs--on-paper { color: var(--black); }
 
 /* -----------------------------------------------------------------------------
    07. EDITORIAL BLOCK — the workhorse 2-up media + copy row

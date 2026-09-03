@@ -361,7 +361,31 @@
    header — and the crumbs riding under it — and two overlapping curves with
    different shapes are what made the junction visible. */
 .page-head--shot .page-head__scrim {
-  background: linear-gradient(to top,
+  background:
+    /* TOP — the ground under the header and the crumb row. This layer exists
+       because .nav::before cannot do the job: .nav is a stacking context above
+       the page head, so its scrim covers the crumb TEXT as well as the sky and
+       drags both toward the same ink (1.68:1 when it reached them). This one
+       sits below the copy, so the letters stay full --paper.
+       Stops are in PIXELS, not per cent: the crumb row is at a fixed offset
+       from the top, while the head is 660px on desktop and 620px on mobile —
+       percentages would slide it off the row on one of them.
+       It rises under the header, where .nav::before is still at full strength,
+       so the handover is invisible; combined the two run .560 -> .500 with no
+       step. */
+    linear-gradient(to bottom,
+      rgba(var(--ink-rgb), 0)    73px,
+      rgba(var(--ink-rgb), .083) 80px,
+      rgba(var(--ink-rgb), .236) 86px,
+      rgba(var(--ink-rgb), .417) 93px,
+      rgba(var(--ink-rgb), .500) 100px,
+      rgba(var(--ink-rgb), .500) 132px,
+      rgba(var(--ink-rgb), .413) 150px,
+      rgba(var(--ink-rgb), .228) 168px,
+      rgba(var(--ink-rgb), .062) 185px,
+      rgba(var(--ink-rgb), 0)    200px),
+    /* FOOT — the label, h1 and sub. */
+    linear-gradient(to top,
     rgba(var(--ink-rgb), .680) 0%,
     rgba(var(--ink-rgb), .680) 32%,
     rgba(var(--ink-rgb), .630) 36%,
@@ -386,7 +410,10 @@
 .page-head__inner {
   position: relative;
   display: flex; flex-direction: column;
-  padding-top: calc(var(--nav-h) + var(--s-3));
+  /* --s-7, not --s-3: the header scrim has to reach nothing before the
+     crumb row starts, or it paints over the crumb text (see .nav::before).
+     32px is the room that fade needs. */
+  padding-top: calc(var(--nav-h) + var(--s-7));
   padding-bottom: var(--s-9);   /* clears the arc — see .hero__inner */
 }
 .page-head__top { margin-bottom: var(--s-6); }
@@ -406,6 +433,21 @@
 .page-head--shot .label,
 .page-head--shot p { color: var(--paper); }
 
+/* The crumbs sit highest in the head, where the header scrim has already
+   eased off, so they are the one element reading straight onto bright sky —
+   4.94:1 at 390px, which passes AA but does not LOOK it: 11px uppercase at
+   .1em tracking is thin, and a busy sky gives the eye no steady ground.
+   More scrim is the wrong answer; it costs picture everywhere to fix one
+   row of type. A shadow is local — it darkens only what sits directly behind
+   the glyphs, so the photograph keeps its brightness.
+   Two layers: a tight one that does the contrast work, and a wider, softer
+   one that stops the tight one reading as an outline. */
+.page-head--shot .crumbs {
+  text-shadow:
+    0 1px 2px rgba(var(--ink-rgb), .55),
+    0 0 8px  rgba(var(--ink-rgb), .35);
+}
+
 /* -----------------------------------------------------------------------------
    06. BREADCRUMB
    -------------------------------------------------------------------------- */
@@ -422,12 +464,21 @@
    where it mattered: --ink-mute is 3.04:1 on paper, and over a bright sky
    --paper-mute needs a .86 scrim to reach 4.5:1, which would black out the
    photograph the head is there to show (§4.6). Underline, not dimming. */
+/* Underlined at rest, not only on hover. The trail is one tone, so without
+   it nothing distinguishes the two crumbs you can click from the one you are
+   already on until you happen to point at them — and on a touch screen there
+   is no hover to reveal it at all. The underline is the affordance; hover
+   just thickens it. */
 .crumbs a {
   color: inherit;
-  text-decoration-color: transparent; text-underline-offset: .25em;
-  transition: text-decoration-color var(--t-fast) var(--ease);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  text-underline-offset: .25em;
+  transition: text-decoration-thickness var(--t-fast) var(--ease);
 }
-.crumbs a:hover, .crumbs a:focus-visible { text-decoration: underline; text-decoration-color: currentColor; }
+.crumbs a:hover, .crumbs a:focus-visible { text-decoration-thickness: 2px; }
+.crumbs [aria-current] { text-decoration: none; }
 .crumbs__sep { opacity: .55; }
 .crumbs--on-paper { color: var(--black); }
 

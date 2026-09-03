@@ -430,7 +430,11 @@ Uppercase, 11px, with a `/` separator. `--on-paper` variant for use outside a da
 
 Both muted tones were also failing where it counted. `--ink-mute` is **3.04:1** on paper, under AA outright. And over a bright sky `--paper-mute` needs a **`.86`** scrim to reach 4.5:1 — it would black out the photograph the head exists to show (§4.6). There is no scrim budget for a translucent white in the crumb row, so the trail is `--paper` on dark and `--black` on paper, and `.crumbs a` inherits it. Hover and `:focus-visible` bring in an underline via `text-decoration-color`, so nothing reflows.
 
-`verify-crumbs.js` asserts the link's computed colour equals the trail's, and that no part of the trail is translucent.
+`verify-crumbs.js` asserts the link's computed colour equals the trail's, and that no part of the trail is translucent. **Links are underlined at rest, not only on hover** — the trail is one tone, so without it nothing separates the crumbs you can click from the one you are on until you point at them, and on a touch screen there is no hover to reveal it at all. Hover thickens the rule from 1px to 2px; `[aria-current]` has none.
+
+**A scrim above the text cannot buy contrast — it can only spend it.** `.nav` is `position: sticky; z-index: 80`, so it is a stacking context painting *above* the page head. While `.nav::before` reached down to 220px the crumb row sat inside it and the scrim darkened the **letters** as well as the sky: `rgb(138,138,135)` on `rgb(90,102,119)`, **1.68:1**. Extending that scrim to help the crumbs made them worse, because multiplying both sides toward the same ink only ever lowers the ratio — at α 0 it is 2.05:1, at α .8 it is 1.25:1. Protection has to come from a layer *below* the copy, which is why `.page-head--shot`'s own scrim carries a second, pixel-stopped layer for the top of the head (§4.6) and `.nav::before` now stops at the crumb row.
+
+This was invisible to the old check, which hid the text, sampled the background and computed contrast against the *declared* colour — so it reported 5.36:1 for a row rendering at 1.68:1. `verify-headtext.js` replaces that: it screenshots each element, classifies glyph and ground by luminance, and measures the **rendered** glyph against ground sampled in a ring 2–5px out — past the antialiasing, which is bright because it *is* the letter, and inside a text-shadow's reach. It also fails when declared and rendered diverge, which names the cause rather than the symptom.
 
 ### 4.8 Editorial block — `.ed`
 

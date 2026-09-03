@@ -321,6 +321,8 @@ On a dark ground the ink colour would disappear, so it flips to `--paper` there.
 
 ### 4.3 Header & navigation — `layout.css` + `js/nav.js`
 
+The burger is three arcs, not three bars — the same curve as the brand mark (`ARC` is `M0,1 Q50,7 100,1`, a sag of 6 in 100), held to roughly that ratio rather than exaggerated: at 22px wide it should be a hint of a smile. It strokes `currentColor` so the single `is-scrolled` / `--solid` rule still flips it for the light header.
+
 **The brand mark.** `assets/images/brand/` holds the supplied artwork: `-logo-` (wordmark plus icon, 648×77) and `-icon-` (the mark alone, 63×77), each in a black and a white cut, plus the favicon derived from the icon.
 
 The mark is **three colours** — icon in `--black-2`, wordmark in `--black`, arc and dot in the brand blue — so it cannot be recoloured with `currentColor` or a CSS mask without flattening the blue to one tone. The header therefore ships both cuts as `<img>` and swaps them on `.is-scrolled` / `.nav--solid`; both are cached after the first page. The `<a>` carries the accessible name and both images take an empty `alt`, so the name is announced once rather than twice.
@@ -770,6 +772,16 @@ Appears past 700px of scroll.
 ### 4.28 Tab nav — `.tabnav` / `.tab` + `js/ui.js`
 
 Sticky in-page jump bar with an `IntersectionObserver` scroll-spy. Sits directly beneath the header (`top: var(--nav-h)`).
+
+### 4.28a Affordance — what may show a hover, and what may not
+
+A hover state is a promise that the thing under the cursor does something. Three containers were breaking it: `.card` (which styled the `<article>` form as well as the `<a>`), `.strip__item` (same), and `.plan` on the fees page, which is a price card you read and has never been a link. On iOS it is worse than a false affordance — `:hover` sticks after a tap, so the tile sits there looking selected. The border-darken and the lift now belong to `a.card` / `a.strip__item` only.
+
+**No current-page state in the menus.** The detection was correct — one link, on the right page — but a painted link reads as "this one is special" rather than "you are here", and there is no way for a reader arriving mid-scroll to tell which is meant. `build_header()` still marks the link with `data-current`, unpainted, so `js/nav.js` can open the group you are already in. The top-level section arc stays.
+
+**Colour follows action.** The `.pager__title` is the whole link, so it takes `--accent-700` rather than body black. The accordion `+`/`−` is the control you press, so it takes the same, while the question stays body black. `--accent-700` and not `--accent`: the plain accent is 2.8:1 on paper and unusable as text (2.1).
+
+Guarded by `tools/verify-hover.js` (hover every non-clickable container, assert nothing in its subtree repaints) and `tools/verify-affordance.js`.
 
 ### 4.29 Reveal on scroll — `[data-reveal]`
 

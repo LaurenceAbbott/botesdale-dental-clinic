@@ -160,7 +160,10 @@
      one block, as in .strip__row — the whole block, not each tile. */
   --radius:       0;
   --radius-btn:   4px;    /* just off square — softens the corner without
-                             reading as a rounded button */
+                             reading as a rounded button. Also the form
+                             controls: an input is the same kind of object. */
+  --radius-panel: 8px;    /* notices and alerts — a block of message, softer
+                             than a control but nowhere near photography */
   --radius-media: 32px;
   --radius-pill:  999px;
   --hair:        1px;

@@ -433,10 +433,9 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
           <span class="label">{label}</span>
           <h3><a href="{href}">{title}</a></h3>
           <p>{text}</p>
-          <a class="arc-link" href="{href}">{cta}</a>
+          <a class="arc-link" href="{href}">Read more</a>
         </div>
       </div>'''.format(href=href, d=min(i, 3), media=it['media'],
-                         cta=_e(it.get('cta', 'Read more')),
                          label=_e(it.get('label', '')), title=_e(it['title']),
                          text=_e(it['text'])))
             continue
@@ -446,9 +445,9 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
           <span class="label">{label}</span>
           <h3>{title}</h3>
           <p>{text}</p>
-          <span class="arc-link">{cta}</span>
+          <span class="arc-link">Read more</span>
         </div>
-      </a>'''.format(href=href, d=min(i, 3), cta=_e(it.get('cta', 'Read more')),
+      </a>'''.format(href=href, d=min(i, 3),
                      ph=c_media(H, depth,
                                 (c_page_image(H, it['key']) if it.get('key') else None)
                                 or it.get('image'),
@@ -472,7 +471,7 @@ def c_strip(H, depth, eyebrow, heading, items, cols=3, cls=''):
 
 
 def c_cards(H, depth, items, cols=3):
-    """items: {key|href, label, title, text, alt, media?, cta?}
+    """items: {key|href, label, title, text, alt, media?}
 
     `media` replaces the card's placeholder with arbitrary markup — a
     before/after comparison, in practice. A card carrying one CANNOT be an
@@ -483,7 +482,6 @@ def c_cards(H, depth, items, cols=3):
     out = []
     for it in items:
         href = it.get('href') or H.rel(it['key'], depth)
-        cta = _e(it.get('cta', 'Read more'))
         if it.get('media'):
             out.append('''<article class="card card--static" data-reveal>
       <div class="card__media">{media}</div>
@@ -491,9 +489,9 @@ def c_cards(H, depth, items, cols=3):
         <span class="label">{label}</span>
         <h3><a href="{href}">{title}</a></h3>
         <p>{text}</p>
-        <a class="arc-link" href="{href}">{cta}</a>
+        <a class="arc-link" href="{href}">Read more</a>
       </div>
-    </article>'''.format(href=href, media=it['media'], cta=cta,
+    </article>'''.format(href=href, media=it['media'],
                        label=_e(it.get('label', '')), title=_e(it['title']),
                        text=_e(it['text'])))
         else:
@@ -503,9 +501,9 @@ def c_cards(H, depth, items, cols=3):
         <span class="label">{label}</span>
         <h3>{title}</h3>
         <p>{text}</p>
-        <span class="arc-link">{cta}</span>
+        <span class="arc-link">Read more</span>
       </div>
-    </a>'''.format(href=href, ph=c_ph(it.get('alt') or it['title']), cta=cta,
+    </a>'''.format(href=href, ph=c_ph(it.get('alt') or it['title']),
                        label=_e(it.get('label', '')), title=_e(it['title']),
                        text=_e(it['text'])))
     return '<div class="cols-%d">%s</div>' % (cols, '\n    '.join(out))
@@ -2064,7 +2062,6 @@ def r_home(depth, H):
         + c_cards(H, depth, [
             {'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
              'text': _trim(c['teaser'], 150), 'alt': LABELS[c['key']],
-             'cta': 'Read the case',
              'media': c_case_compare(H, depth, c)}
             for c in CASES[:3]], cols=3)
         + '<div class="cluster u-mt-8">%s</div>'
@@ -2744,7 +2741,7 @@ def r_cases(depth, H):
 
     items = [{'key': c['key'], 'label': c['label'], 'title': LABELS[c['key']],
               'text': c['teaser'], 'image': c['thumb'], 'alt': LABELS[c['key']],
-              'cta': 'Read the case', 'media': c_case_compare(H, depth, c)} for c in CASES]
+              'media': c_case_compare(H, depth, c)} for c in CASES]
     out.append('<h2 class="visually-hidden">Our case studies</h2>')
     out.append(c_strip(H, depth, '', '', items, cols=3, cls='section--paper-3'))
 
